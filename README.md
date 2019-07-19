@@ -1,9 +1,9 @@
 # updaBEEr
 a BEE2 installer/updater/fixer e more!
-+------------------------------------------------------------------------------+
-|                                  WARNING!!                                   |
-| This project is experimental! don't use this for now while is in alpha state!|
-+------------------------------------------------------------------------------+
+
+WARNING!!
+This project is experimental! don't use this for now while is in alpha state!|
+
 
 planned features!
 -updater (BEE2)
