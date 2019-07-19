@@ -6,20 +6,12 @@ This project is experimental! don't use this for now while is in alpha state!|
 
 
 planned features!
-
 -updater (BEE2)
-
 -updater (app)
-
 -installer
-
 -fixer (original compiler replaced)
-
 -installer (More Music package)
-
 -installer (Radelite's package)
 
-
 realized features!
-
-no one (for now)
+-no one (for now)
