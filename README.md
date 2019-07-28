@@ -14,4 +14,5 @@ planned features!
 -installer (Radelite's package)
 
 realized features!
--no one (for now)
+-installer
+-fixer
