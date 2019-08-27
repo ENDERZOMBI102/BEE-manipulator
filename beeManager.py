@@ -11,7 +11,7 @@ os=platform
 
 class beeManager(Thread):
 	
-	def checkUpdates():
+	def checkUpdates():#return true if an update is available, false if there isn't'
 		latestjson = get('https://api.github.com/repos/BEEmod/BEE2.4/releases/latest').json()
 		onlineVersion=latestjson['tag_name']
 		currentVersion = config.load('beeVersion','beeVersion')
