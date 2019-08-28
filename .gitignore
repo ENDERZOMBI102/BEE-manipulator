@@ -1,2 +1,6 @@
 
 .vscode/settings.json
+__pycache__/ucpParser.cpython-37.pyc
+__pycache__/beeManager.cpython-37.pyc
+__pycache__/config.cpython-37.pyc
+__pycache__/web.cpython-37.pyc

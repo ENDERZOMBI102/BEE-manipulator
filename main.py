@@ -5,26 +5,26 @@ from sys import platform, argv #for checking the os and aurgments
 from threading import Thread #for multithreading option
 from ucpParser import ucpParser
 from beeManager import beeManager
-from web import isonline
+from web import web
 import io #base lib
 import json #for operations with json data
 
-
+reply=""
 def checkUpdates():
 	ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
 	if(not config.load('app version','app version')>=ov['tag_name']):
 		print('an update for BEE2.4 Manipular is avaiable!')
-		while(not (reply==no and reply==yes and reply==n and reply==y)):
+		while(not (reply=="no" and reply=="yes" and reply=="n" and reply=="y")):
 			reply = input('do you want to install it?')
 		
 
 #program start
-if(len(argv)>>0):
-	if(isonline):
+if(argv[0]=="-shortcutlaunch"):
+	if(web.isonline):
 		if(beeManager.checkUpdates):
 			print('an update for BEE2.4 is avaiable!')
-			while(not (reply==no and reply==yes and reply==n and reply==y)):
-				reply = input('do you want to install it?')
+			while(not (reply=="n" and reply=="y")):
+				reply = input('do you want to install it? (y/n)')
 			
 			
 os = platform
