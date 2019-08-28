@@ -15,7 +15,7 @@ class beeManager(Thread):
 		latestjson = get('https://api.github.com/repos/BEEmod/BEE2.4/releases/latest').json()
 		onlineVersion=latestjson['tag_name']
 		currentVersion = config.load('beeVersion','beeVersion')
-		if(currentVersion>=onlineVersion):
+		if(currentVersion>=onlineVersion):#check if online is present a newer version
 			return False
 		else:
 			return True

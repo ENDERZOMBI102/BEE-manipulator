@@ -1,14 +1,32 @@
 from requests import * #for downloading stuff
 from zipfile import * #for operations with zip files
 from subprocess import * #for start applications
-from sys import platform #for checking the os
+from sys import platform, argv #for checking the os and aurgments
 from threading import Thread #for multithreading option
 from ucpParser import ucpParser
 from beeManager import beeManager
+from web import isonline
 import io #base lib
 import json #for operations with json data
 
+
+def checkUpdates():
+	ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
+	if(not config.load('app version','app version')>=ov['tag_name']):
+		print('an update for BEE2.4 Manipular is avaiable!')
+		while(not (reply==no and reply==yes and reply==n and reply==y)):
+			reply = input('do you want to install it?')
+		
+
 #program start
+if(len(argv)>>0):
+	if(isonline):
+		if(beeManager.checkUpdates):
+			print('an update for BEE2.4 is avaiable!')
+			while(not (reply==no and reply==yes and reply==n and reply==y)):
+				reply = input('do you want to install it?')
+			
+			
 os = platform
 state = 1
 menu = 1
