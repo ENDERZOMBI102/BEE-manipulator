@@ -19,7 +19,7 @@ class config():
 		print('')
 	
 	def load(self, type):#load a config
-	#	if(type=="all"):
+		
 		return '4.3.4'
 	
 	def save(data,type):#save a config
