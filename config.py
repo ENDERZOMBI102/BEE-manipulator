@@ -14,13 +14,15 @@ import os#for open files
 """
 
 class config():
-	data ={}
+
 	def cconfig():#create the config file
 		print('')
 	
 	def load(type):#load a config
-		
-		return '4.3.4'
+		with open('config.cfg', 'r') as file:
+			cfg = file.json()
+			readedata = cfg[type]
+		return readedata
 	
 	def save(data,type):#save a config
 		print('')
