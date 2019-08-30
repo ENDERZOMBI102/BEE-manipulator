@@ -9,35 +9,38 @@ from web import web
 import io #base lib
 import json #for operations with json data
 
-reply=""
-def checkUpdates():
-	ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
-	if(not config.load('app version','app version')>=ov['tag_name']):
-		print('an update for BEE2.4 Manipular is avaiable!')
-		while(not (reply=="no" and reply=="yes" and reply=="n" and reply=="y")):
-			reply = input('do you want to install it?')
-		
+
+
 
 #program start
-if(argv[0]=="-shortcutlaunch"):
-	if(web.isonline):
-		if(beeManager.checkUpdates):
-			print('an update for BEE2.4 is avaiable!')
-			while(not (reply=="n" and reply=="y")):
-				reply = input('do you want to install it? (y/n)')
-			
-			
+
+if(web.checkUpdates()==True):
+	print('an update for BEE2.4 Manipulator is avaiable!')
+	while(not (reply==no and reply==yes and reply==n and reply==y)):
+		reply = input('do you want to install it?')
+	if(reply=='yes' or reply=='y'):
+		web.installUpdates()
+	else:
+		print('ok, i don\'t install this update now')
+				
+				
+				
+				
+				
+				
 os = platform
-state = 1
+state = config.load('bee state')
+if(beeManager.checkUpdates()==True):
+	state = 2
 menu = 1
 while menu>=1 :
 	print('BEE2.4 manipulator by ENDERZOMBI102\n\n')
 	if (state == 1) :
-		print('1) install')
+		print('1) install BEE2.4')
 	elif(state == 2):
-		print('1) update')
+		print('1) update BEE2.4')
 	else:
-		print('1)unistall')
+		print('1)unistall BEE2.4')
 	print('2) user created packages manager')
 	print('3) fixer')
 	print('4) options')
