@@ -1,6 +1,7 @@
 import http.client as httplib
 from requests import *
 from threading import Thread
+from config import config
 
 
 class web:
@@ -20,9 +21,12 @@ class web:
 		if(web.isonline==False):
 			return False
 		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
-		if(not config.load('app version','app version')>=ov['tag_name']):
+		if(not config.load('app version')>=ov['tag_name']):
 			return True
 		else:
 			return False
+
+	def installUpdates():
+		print("")
 				
 			

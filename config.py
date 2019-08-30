@@ -18,7 +18,7 @@ class config():
 	def cconfig():#create the config file
 		print('')
 	
-	def load(self, type):#load a config
+	def load(type):#load a config
 		
 		return '4.3.4'
 	

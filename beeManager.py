@@ -24,8 +24,8 @@ class beeManager(Thread):
 		else:
 			return False
 
-	def start(os, state, self):
-		if(state==1)
+	def start(os, state):
+		if(state==1):
 			install()
 			print('installed BEE v.'+config.load('beeVersion'))
 			return
