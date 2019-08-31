@@ -25,6 +25,6 @@ class config():
 		return readedata
 	
 	def save(data,type):#save a config
-		print('')
+		
 	
 		

@@ -1,6 +1,5 @@
-# updaBEEr
-
-a BEE2 installer/updater/fixer e more!
+-
+a BEE2.4 manager!
 
 
 
