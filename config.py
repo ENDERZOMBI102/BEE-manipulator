@@ -25,6 +25,9 @@ class config():
 		return readedata #return the readed data
 	
 	def save(data,type):#save a config
-		
+		with open('config.cfg', 'rw') as file:
+			cfg = file.json()#indicate to python thats a json file
+			json.dump(data, outfile)
+		return
 	
-		
+config.save("appVersion")
