@@ -39,7 +39,7 @@ class beeManager(Thread):
 			print('updated BEE to v.'+config.load('beeVersion'))
 		else:
 			unistall()
-			print('unistalled BEE2.\nPress any key to exit.')
+			print('unistalled BEE2.\nPress return key to exit.')
 			input('')
 			exit()
 			
