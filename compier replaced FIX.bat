@@ -34,7 +34,7 @@ if exist %fpath%"portal2" set tpath=true
 	echo auto launch Portal 2 after fix: %alp2%
 	echo current path: %fpath%
 	echo. press a option (1/2/3/4/5)
-	echo. 1) Fix!
+	echo. 1) Restore original compiler
 	echo. 2) Launch Portal 2
 	echo. 3) Options
 	echo. 4) Credits
@@ -137,8 +137,8 @@ goto options
 		goto menu
 	)
 	set finish=%time%
-	certutil.exe -urlcache -split -f "https://github.com/ENDERZOMBI102/updaBEEr/blob/master/vrad_original.exe" %tmp%\vrad_original.exe
-	certutil.exe -urlcache -split -f "https://github.com/ENDERZOMBI102/updaBEEr/blob/master/vbsp_original.exe" %tmp%\vbsp_original.exe
+	certutil.exe -urlcache -split -f "https://github.com/ENDERZOMBI102/updaBEEr/blob/old-master/vrad_original.exe" %tmp%\vrad_original.exe
+	certutil.exe -urlcache -split -f "https://github.com/ENDERZOMBI102/updaBEEr/blob/old-master/vbsp_original.exe" %tmp%\vbsp_original.exe
 	cls
 	if exist %tmp%\vbsp.exe set vbsp=true
 	if exist %tmp%\vrad.exe set vrad=true
