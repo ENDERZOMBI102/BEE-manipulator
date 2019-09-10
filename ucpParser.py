@@ -14,5 +14,8 @@ class ucpParser(Thread):
 	
 	def package_parser (self, pckg):
 		package = pckg.json()
+
+class package():
+
 		
 		
