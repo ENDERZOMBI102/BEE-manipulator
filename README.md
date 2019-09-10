@@ -19,6 +19,6 @@ planned features!
 
 -fixer (original compiler replaced)
 
--installer (user custom packages)
+-installer (user created packages)
 
 -beestart packages manager (customize the bee2.4 loading screen!)
