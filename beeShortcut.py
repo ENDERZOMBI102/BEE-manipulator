@@ -1,5 +1,6 @@
-from web import web
+from bases import web
 from beeManager import beeManager
+from config import config
 import subprocess
 
 """
@@ -10,3 +11,10 @@ have some updated packages.
 
 this will be a 'standalone' executable
 """
+if(beeManager.checkUpdates()==True)
+    print("an update for BEE2 is available, update now?")
+    if(input() in {"yes", "y", "YES", "Y"})
+        print("updating BEE2...")
+        beeManager.
+subprocess.call(executable=config.load("p2path"),timeout=1)
+exit()

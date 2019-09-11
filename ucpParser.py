@@ -1,5 +1,6 @@
 from requests import * #for downloading stuff
 from threading import Thread #for multithreading option
+from bases import package as package
 import io #base lib
 import json #for operations with json data
 
@@ -13,6 +14,8 @@ class ucpParser(Thread):
 	
 	
 	def package_parser (self, pckg):
-		 = pckg_json.json()
+		pckg.json()
+		
+
 
 		
