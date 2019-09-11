@@ -4,7 +4,7 @@ from zipfile import *
 from threading import Thread
 from sys import platform
 from config import config
-from web import web
+from bases import web
 import json
 import io
 

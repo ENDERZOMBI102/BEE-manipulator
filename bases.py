@@ -28,5 +28,14 @@ class web:
 
 	def installUpdates():
 		print("")
-				
-			
+
+class package():
+	#this class rappresents a package, with all infos
+	name = ""
+    repo_url = drive"
+    author = ""
+    co_author = Null
+    version = ""
+	icon = ""
+    direct_download = False
+    api_latest_url = ""

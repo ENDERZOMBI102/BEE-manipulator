@@ -53,5 +53,15 @@ while menu>=1 :
 	if(i==1 or i==2 or i==3 or i==4 or i==5 or i==6 or i==7):
 		if(i==1):
 			beeManager.start(os, state)
-		
-	
+		elif(i==2):
+			print("something")
+		elif(i==3):
+			print("something")
+		elif(i==4):
+			print("something")
+		elif(i==5):
+			print("something")
+		elif(i==6):
+			print("something")
+		elif(i==7):
+			print("no")
