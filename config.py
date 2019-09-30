@@ -27,9 +27,11 @@ class config():
 	def save(data,section):#save a config
 		try:
 			print("0")
-			with open('./config.cfg', 'r', encoding="utf-8") as file:
-				print(file)
-				f = file.json()#indicate to python thats a json file
+			with open('config.cfg', 'r', encoding="utf-8") as file:
+				r = file.readlines()
+				print(1)
+				print(r)
+				f = r.json()#indicate to python thats a json file
 				print("2")
 				cfg = dict(f)
 				print("3")
@@ -42,7 +44,7 @@ class config():
 		except:
 			return False#return false if the save fail
 	
-r = config.save("3","appVersion")
+r = config.load("last_version")
 if(r==False):
 	print("error")
 else:
