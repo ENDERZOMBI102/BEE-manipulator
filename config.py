@@ -20,24 +20,24 @@ class config():
 	
 	def load(section):#load a config
 		with open('config.cfg', 'r') as file:
-			cfg = file.json()#indicate to python thats a json file
+			cfg = json.dumps(file)#indicate to python thats a json file
 			readedata = cfg[section]# take the requested field
 		return readedata #return the readed data
 	
 	def save(data,section):#save a config
 		try:
 			print("0")
-			with open('config.cfg', 'r', encoding="utf-8") as file:
+			with open('config.cfg', 'r+w', encoding="utf-8") as file:
 				r = file.readlines()
 				print(1)
 				print(r)
-				f = r.json()#indicate to python thats a json file
+				json.dumps(r)#indicate to python thats a json file
 				print("2")
 				cfg = dict(f)
 				print("3")
 				cfg[section]=data
 				print("4")
-			with open('config.cfg', 'w') as file:
+			with open('config.cfg', 'r+w') as file:
 				json.dump(data, file)
 				print("5")
 			return True#return true if the save is done
