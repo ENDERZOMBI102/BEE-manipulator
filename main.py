@@ -23,12 +23,12 @@ if(web.checkUpdates()==True):
 		web.installUpdates()
 	else:
 		print('ok, i don\'t install this update now')
-				
-				
-				
-				
-				
-				
+
+
+
+
+
+
 os = platform
 state = config.load('bee state')
 if(beeManager.checkUpdates()==True):
@@ -48,7 +48,7 @@ while menu>=1 :
 	print('5) launch BEE2.4')
 	print('6) launch Portal 2')
 	print('7) quit')
-	
+
 	i = input('choose an option: ')
 	if(i==1 or i==2 or i==3 or i==4 or i==5 or i==6 or i==7):
 		if(i==1):
