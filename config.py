@@ -15,38 +15,27 @@ import os#for open files
 
 class config():
 
-	def cconfig():#create the config file
-		print('')
+	def create_config():#create the config file
+		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.3","last_version": "false"}'
+		with open('config.cfg', 'w', encoding="utf-8") as file:
+			json.dump(json.loads(cfg), file, indent=3)
 	
 	def load(section):#load a config
-		with open('config.cfg', 'r') as file:
-			cfg = json.loads(file)#indicate to python thats a json file
+		with open('config.cfg', 'r', encoding="utf-8") as file:
+			cfg = json.load(file)#iload the config
 			readedata = cfg[section]# take the requested field
 		return readedata #return the readed data
 
 	
 	def save(data,section):#save a config
 		try:
-			print("0")
-			with open('config.cfg', 'r+w', encoding="utf-8") as file:
-				r = file.readlines()
-				print(1)
-				print(r)
-				json.dumps(r)#indicate to python thats a json file
-				print("2")
-				cfg = dict(f)
-				print("3")
+			with open('config.cfg', 'r', encoding="utf-8") as file:
+				cfg = json.load(file)#load the config file
 				cfg[section]=data
-				print("4")
-			with open('config.cfg', 'r+w') as file:
-				json.dump(data, file)
-				print("5")
+			with open('config.cfg', 'w', encoding="utf-8") as file:
+				json.dump(cfg, file, indent=3)
 			return True#return true if the save is done
 		except:
 			return False#return false if the save fail
-	
-r = config.load("last_version")
-if(r==False):
-	print("error")
-else:
-	print("saved")
+
+config.create_config()
