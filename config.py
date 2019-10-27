@@ -21,11 +21,13 @@ class config():
 			json.dump(json.loads(cfg), file, indent=3)
 	
 	def load(section):#load a config
-		with open('config.cfg', 'r', encoding="utf-8") as file:
-			cfg = json.load(file)#iload the config
-			readedata = cfg[section]# take the requested field
-		return readedata #return the readed data
-
+		try:
+			with open('config.cfg', 'r', encoding="utf-8") as file:
+				cfg = json.load(file)#iload the config
+				readedata = cfg[section]# take the requested field
+			return readedata #return the readed data
+		except:
+			raise "error"
 	
 	def save(data,section):#save a config
 		try:
@@ -34,8 +36,5 @@ class config():
 				cfg[section]=data
 			with open('config.cfg', 'w', encoding="utf-8") as file:
 				json.dump(cfg, file, indent=3)
-			return True#return true if the save is done
 		except:
-			return False#return false if the save fail
-
-config.create_config()
+			raise "error"
