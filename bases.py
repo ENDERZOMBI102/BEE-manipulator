@@ -31,11 +31,12 @@ class web:
 
 class package():
 	#this class rappresents a package, with all infos
-	name = ""
-    repo_url = ""
-    author = ""
-    co_author = "Null"
-    version = ""
-	icon = ""
-    direct_download = False
-    api_latest_url = ""
+	def __init__(self):
+		name = ""
+		repo_url = ""
+		author = ""
+		co_author = "Null"
+		version = ""
+		icon = ""
+		direct_download = False
+		api_latest_url = ""

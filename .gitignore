@@ -9,3 +9,4 @@ __pycache__/web.cpython-37.pyc
 
 .venv
 .venv/.project
+.vscode/launch.json

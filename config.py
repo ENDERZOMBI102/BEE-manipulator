@@ -14,13 +14,25 @@ import os#for open files
 """
 
 class config():
+	def __init__(self):
+		return
 
-	def create_config():#create the config file
+	def create_config(self):#create the config file
 		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.3","last_version": "false"}'
 		with open('config.cfg', 'w', encoding="utf-8") as file:
 			json.dump(json.loads(cfg), file, indent=3)
 	
-	def load(section):#load a config
+	def load(self, section):#load a config
+		r""""
+		loads a section of the config (json-formatted) and return the
+		data.
+		raise an exception if the config or the requested section doesn't exist
+		example::
+
+			>>> import config
+			>>> print(config.load("version"))
+			'2.6'
+		"""
 		try:
 			with open('config.cfg', 'r', encoding="utf-8") as file:
 				cfg = json.load(file)#iload the config
@@ -29,7 +41,17 @@ class config():
 		except:
 			raise "error"
 	
-	def save(data,section):#save a config
+	def save(self, data, section):#save a config
+		r""""
+		save the data on the config (json-formatted), re-create the config if no one is found.
+		example::
+			>>> import config
+			>>> print(config.load("version"))
+			'2.6'
+			>>> config.save("2.5","version")
+			>>> print(config.load("version"))
+			'2.5'
+		"""
 		try:
 			with open('config.cfg', 'r', encoding="utf-8") as file:
 				cfg = json.load(file)#load the config file
@@ -37,4 +59,18 @@ class config():
 			with open('config.cfg', 'w', encoding="utf-8") as file:
 				json.dump(cfg, file, indent=3)
 		except:
-			raise "error"
+			self.create_config()
+			self.save(data,section)
+	def check(self):
+		r"""
+		check if the config file exist and if is a BM config file.
+		"""
+		try:
+			with open('config.cfg', 'r') as file:#
+				cfg = json.load(file)  # load the config file
+				if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+					return "ok"
+				else:
+					return "error"
+		except:
+			return "error"
