@@ -20,9 +20,10 @@ class config():
 	
 	def load(section):#load a config
 		with open('config.cfg', 'r') as file:
-			cfg = json.dumps(file)#indicate to python thats a json file
+			cfg = json.loads(file)#indicate to python thats a json file
 			readedata = cfg[section]# take the requested field
 		return readedata #return the readed data
+
 	
 	def save(data,section):#save a config
 		try:
