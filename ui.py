@@ -19,6 +19,8 @@ class root(tk.Tk):
             BEE_tab = tk.Frame(self.notebook)
             package_browser_tab = tk.Frame(self.notebook)
 
+            coming_soon_label = tk.Label(package_browser_tab, text="Coming Soon")
+            coming_soon_label.pack()
 
             self.notebook.add(app_tab, text="App")
             self.notebook.add(updater_tab, text="BEE")
