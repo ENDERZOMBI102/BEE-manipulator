@@ -25,7 +25,7 @@ for files in glob(workdir+"/*.jpg"):#resize to work size all images
     im = Image.open(files)
     imr = im.resize((1366, 765))
     imr.save(file+".jpg", "JPEG")
-    print("loaded resized "+file+".jpg into workdir")
+    print("loaded & resized "+file+".jpg into workdir")
 
 """here we create a dict for the info.json, with the author, the package name and later all the images"""
 info = {"name": "","author": ""}#crate a new dictionary for the info.json
@@ -67,5 +67,3 @@ print("package file created!")
 print("you can found it on "+workdir)
 print("\nPress return to exit")
 f = input("")
-
-

@@ -14,15 +14,12 @@ import os#for open files
 """
 
 class config():
-	def __init__(self):
-		return
-
-	def create_config(self):#create the config file
+	def create_config():#create the config file
 		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.3","last_version": "false"}'
 		with open('config.cfg', 'w', encoding="utf-8") as file:
 			json.dump(json.loads(cfg), file, indent=3)
 	
-	def load(self, section):#load a config
+	def load(section):#load a config
 		r""""
 		loads a section of the config (json-formatted) and return the
 		data.
@@ -41,7 +38,7 @@ class config():
 		except:
 			raise "error"
 	
-	def save(self, data, section):#save a config
+	def save(data, section):#save a config
 		r""""
 		save the data on the config (json-formatted), re-create the config if no one is found.
 		example::
@@ -59,9 +56,8 @@ class config():
 			with open('config.cfg', 'w', encoding="utf-8") as file:
 				json.dump(cfg, file, indent=3)
 		except:
-			self.create_config()
-			self.save(data,section)
-	def check(self):
+			return "error"
+	def check():
 		r"""
 		check if the config file exist and if is a BM config file.
 		"""
