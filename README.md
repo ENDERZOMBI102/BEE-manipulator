@@ -9,7 +9,7 @@ a BEE2.4 manager!
 [![Commits](https://img.shields.io/github/commits-since/ENDERZOMBI102/BEE-manipulator/latest?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/commits/master)
 [![PyVersion](https://img.shields.io/github/pipenv/locked/python-version/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://www.python.org/downloads/release/python-374/)
 [![License](https://img.shields.io/github/license/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/blob/master/LICENSE)
-[![Build Status](https://travis-ci.com/ENDERZOMBI102/BEE-manipulator.svg?branch=master)](https://travis-ci.com/ENDERZOMBI102/BEE-manipulator)
+[![Build Status](https://img.shields.io/travis/com/ENDERZOMBI102/BEE-manipulator/master?style=for-the-badge)](https://travis-ci.com/ENDERZOMBI102/BEE-manipulator)
 
 BEE Manipulator is a "manager" for BEE2.4, with BM (short for BEE Manipulator) you can browse user-created packages
 that are on the UCPDatabase, a database for all user created packages, you can submit one too!
