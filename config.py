@@ -14,38 +14,59 @@ import os#for open files
 """
 
 class config():
-
-	def cconfig():#create the config file
-		print('')
+	def create_config():#create the config file
+		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.3","last_version": "false"}'
+		with open('config.cfg', 'w', encoding="utf-8") as file:
+			json.dump(json.loads(cfg), file, indent=3)
 	
 	def load(section):#load a config
-		with open('config.cfg', 'r') as file:
-			cfg = json.dumps(file)#indicate to python thats a json file
-			readedata = cfg[section]# take the requested field
-		return readedata #return the readed data
-	
-	def save(data,section):#save a config
+		r""""
+		loads a section of the config (json-formatted) and return the
+		data.
+		raise an exception if the config or the requested section doesn't exist
+		example::
+
+			>>> import config
+			>>> print(config.load("version"))
+			'2.6'
+		"""
 		try:
-			print("0")
-			with open('config.cfg', 'r+w', encoding="utf-8") as file:
-				r = file.readlines()
-				print(1)
-				print(r)
-				json.dumps(r)#indicate to python thats a json file
-				print("2")
-				cfg = dict(f)
-				print("3")
-				cfg[section]=data
-				print("4")
-			with open('config.cfg', 'r+w') as file:
-				json.dump(data, file)
-				print("5")
-			return True#return true if the save is done
+			with open('config.cfg', 'r', encoding="utf-8") as file:
+				cfg = json.load(file)#iload the config
+				readedata = cfg[section]# take the requested field
+			return readedata #return the readed data
 		except:
-			return False#return false if the save fail
+			raise "error"
 	
-r = config.load("last_version")
-if(r==False):
-	print("error")
-else:
-	print("saved")
+	def save(data, section):#save a config
+		r""""
+		save the data on the config (json-formatted), re-create the config if no one is found.
+		example::
+			>>> import config
+			>>> print(config.load("version"))
+			'2.6'
+			>>> config.save("2.5","version")
+			>>> print(config.load("version"))
+			'2.5'
+		"""
+		try:
+			with open('config.cfg', 'r', encoding="utf-8") as file:
+				cfg = json.load(file)#load the config file
+				cfg[section]=data
+			with open('config.cfg', 'w', encoding="utf-8") as file:
+				json.dump(cfg, file, indent=3)
+		except:
+			return "error"
+	def check():
+		r"""
+		check if the config file exist and if is a BM config file.
+		"""
+		try:
+			with open('config.cfg', 'r') as file:#
+				cfg = json.load(file)  # load the config file
+				if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+					return "ok"
+				else:
+					return "error"
+		except:
+			return "error"

@@ -4,3 +4,9 @@ __pycache__/ucpParser.cpython-37.pyc
 __pycache__/beeManager.cpython-37.pyc
 __pycache__/config.cpython-37.pyc
 __pycache__/web.cpython-37.pyc
+.pytest_cache/v/cache/nodeids
+.pytest_cache/v/cache/stepwise
+
+.venv
+.venv/.project
+.vscode/launch.json
