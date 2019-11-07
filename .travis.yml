@@ -12,6 +12,8 @@ jobs:
       env: PATH=/c/Python37-32:/c/Python37-32/Scripts:$PATH
 install:
   - pip install pipenv
-  - pipenv sync
+  - pipenv --three
+  - pipenv install git+https://github.com/ENDERZOMBI102/BEE-manipulator.git
+  - pipenv install
 script:
   - pipenv run pyinstaller main.py
