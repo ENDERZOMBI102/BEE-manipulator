@@ -44,4 +44,4 @@ Libraries used in BEE Manipulator
 
 [![pyinstaller](https://img.shields.io/badge/using-Pyinstaller-brightgreen?style=flat-square&logo=python&logoWidth=20)](https://github.com/pyinstaller/pyinstaller)
 
-[![UCPDapi]()]()
+[![UCPDapi](https://img.shields.io/badge/using-UCPDapi-green?style=flat-square&logo=python&logoWidth=20)](https://github.com/ENDERZOMBI102/ucpDatabase)
