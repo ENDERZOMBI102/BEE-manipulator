@@ -7,7 +7,6 @@ jobs:
       language: shell       # 'language: python' is an error on Travis CI Windows
       env: PATH=/c/Python37-32:/c/Python37-32/Scripts:$PATH
 install:
-  - pip3 install --upgrade pip
   - pip install pipenv
   - pipenv sync
 script:
