@@ -1,11 +1,15 @@
 import tkinter as tk
 from tkinter import messagebox as msg
 from tkinter.ttk import Notebook
+from threading import Thread
+from updateui import updateui as uui
 from config import *
 
 class root(tk.Tk):
       def __init__(self):
             super().__init__()
+            uui()
+            
             self.title("BEE Manipulator "+str(config.load("appVersion")))
             self.geometry("500x400")
 
