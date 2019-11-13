@@ -1,6 +1,8 @@
-from bases import web
+import tkinter as tk
+from tkinter import messagebox as msg
+from tkinter.ttk import Notebook
 from beeManager import beeManager
-from config import config
+from config import *
 import subprocess
 
 """
@@ -11,10 +13,12 @@ have some updated packages.
 
 this will be a 'standalone' executable
 """
-if(beeManager.checkUpdates()==True)
-    print("an update for BEE2 is available, update now?")
-    if(input() in {"yes", "y", "YES", "Y"})
-        print("updating BEE2...")
-        beeManager.
-subprocess.call(executable=config.load("p2path"),timeout=1)
-exit()
+class beeUpdaterShortcut(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("240x100")
+        self.title("BEE2 Updater")
+        # create the loading bar
+        self.loading_bar = pbar(self)
+        self.loading_bar.start(interval=8)
+        self.loading_bar.pack()

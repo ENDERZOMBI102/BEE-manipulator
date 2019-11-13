@@ -17,14 +17,14 @@ class beeManager(Thread):
 			latestjson = get('https://api.github.com/repos/BEEmod/BEE2.4/releases/latest').json()
 			onlineVersion=latestjson['tag_name']
 			currentVersion = config.load('beeVersion')
-			if(currentVersion>=onlineVersion):#check if online is present a newer version
-				return False
+			if(currentVersion < onlineVersion):#check if online is present a newer version
+				return True
 			elif(latestjson["draft"]=="true"):
 				return False
 			elif(latestjson["prerelease"]=="true" and config.load("enablePrereleases")=="true"):
 				return True
 			else:
-				return True
+				return False
 		else:
 			return False
 
