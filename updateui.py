@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox as msg
-from tkinter.ttk import Notebook, Progressbar as pbar
+from tkinter.ttk import Notebook, Progressbar
 from requests import get
 from config import *
 from bases import web
@@ -13,7 +13,7 @@ class updateui(tk.Tk):
             self.geometry("240x100")
             self.title("BM Updater")
             # create the loading bar
-            self.loading_bar = pbar(self)
+            self.loading_bar = Progressbar(self)
             self.loading_bar.start(interval=8)
             self.loading_bar.pack()
             # check updates
