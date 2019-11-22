@@ -26,11 +26,23 @@ class bee2UpdaterShortcut(tk.Tk):
         self.label.pack()
         # create the loading bar
         self.loading_bar = Progressbar(self)
-        self.loading_bar.start(interval=8)
         self.loading_bar.pack()
         # check the updates
         if(beeManager.checkUpdates()):
-            beeManager.update()
+            url = config.load("winBeeDownloadUrl")
+            # Streaming, so we can iterate over the response.
+            r = requests.get(url, stream=True)
+            # Total size in bytes.
+            total_size = int(r.headers.get('content-length', 0))
+            block_size = 1024  # 1 Kibibyte
+            with open('bee2.zip', 'wb') as file:
+                for data in r.iter_content(block_size):
+                    t.update(len(data))
+                    file.write(data)
+            t.close()
+            if total_size != 0 and t.n != total_size:
+                print("ERROR, something went wrong")
+        
 
 if __name__ == "__main__":
     ui = bee2UpdaterShortcut()

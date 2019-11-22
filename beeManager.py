@@ -17,10 +17,14 @@ class beeManager(Thread):
 			onlineVersion=latestjson['tag_name']
 			currentVersion = config.load('beeVersion')
 			if(currentVersion < onlineVersion):#check if online is present a newer version
+				config.save(latestjson["assets"][0]["browser_download_url"], "macBeeDownloadUrl")
+				config.save(latestjson["assets"][1]["browser_download_url"], "winBeeDownloadUrl")
 				return True
 			elif(latestjson["draft"]=="true"):
 				return False
-			elif(latestjson["prerelease"]=="true" and config.load("enablePrereleases")=="true"):
+			elif(latestjson["prerelease"]=="true" and config.load("enableBee2Prereleases")=="true"):
+				config.save(latestjson["assets"][0]["browser_download_url"],"macBeeDownloadUrl")
+				config.save(latestjson["assets"][1]["browser_download_url"],"winBeeDownloadUrl")
 				return True
 			else:
 				return False
@@ -42,13 +46,15 @@ class beeManager(Thread):
 			url = data['assets'][1]['browser_download_url']
 		else:
 			url = data['assets'][0]['browser_download_url']
-		z = ZipFile(io.BytesIO(r.content))
-		z.extractall("BEE2")
+		
+		
+		zipdata = ZipFile(io.BytesIO(r.content))
+		zipdata.extractall("BEE2")
 		data = get('https://api.github.com/repos/BEEmod/BEE2-items/releases/latest').json()
 		d_url = data['assets'][0]['browser_download_url']
 		data = get(d_url)	
-		z = ZipFile(io.BytesIO(r.content))
-		z.extractall("BEE2")
+		zipdata = ZipFile(io.BytesIO(data.content))
+		zipdata.extractall("BEE2")
 
 	def startBee():
 		"""
