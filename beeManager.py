@@ -5,7 +5,6 @@ from threading import Thread
 from sys import platform
 from config import config
 from bases import web
-import json
 import io
 
 os=platform
@@ -17,28 +16,53 @@ class beeManager(Thread):
 			latestjson = get('https://api.github.com/repos/BEEmod/BEE2.4/releases/latest').json()
 			onlineVersion=latestjson['tag_name']
 			currentVersion = config.load('beeVersion')
-			if(currentVersion>=onlineVersion):#check if online is present a newer version
-				return False
+			if(currentVersion < onlineVersion):#check if online is present a newer version
+				config.save(latestjson["assets"][0]["browser_download_url"], "macBeeDownloadUrl")
+				config.save(latestjson["assets"][1]["browser_download_url"], "winBeeDownloadUrl")
+				return True
 			elif(latestjson["draft"]=="true"):
 				return False
-			elif(latestjson["prerelease"]=="true" and config.load("enablePrereleases")=="true"):
+			elif(latestjson["prerelease"]=="true" and config.load("enableBee2Prereleases")=="true"):
+				config.save(latestjson["assets"][0]["browser_download_url"],"macBeeDownloadUrl")
+				config.save(latestjson["assets"][1]["browser_download_url"],"winBeeDownloadUrl")
 				return True
 			else:
-				return True
+				return False
 		else:
 			return False
 
-	def start(os, state):
-		if(state==1):
-			install()
-			print('installed BEE v.'+config.load('beeVersion'))
-			return
-		elif(state==2):
-			update()
-			print('updated BEE to v.'+config.load('beeVersion'))
+	def update():
+		"""
+		this will update BEE, when called, the function
+		will download the latest version based on the
+		os is running on and unzip it
+		"""
+		# get the os, (macos, win32, linux)
+		os = platform
+		# get the json data
+		data = get('https://api.github.com/repos/BEEmod/BEE2.4/releases/latest').json()
+		# check the os for know witch one download
+		if os == "win32":
+			url = data['assets'][1]['browser_download_url']
 		else:
-			unistall()
-			print('unistalled BEE2.\nPress return key to exit.')
-			input('')
-			exit()
-			
+			url = data['assets'][0]['browser_download_url']
+		
+		
+		zipdata = ZipFile(io.BytesIO(r.content))
+		zipdata.extractall("BEE2")
+		data = get('https://api.github.com/repos/BEEmod/BEE2-items/releases/latest').json()
+		d_url = data['assets'][0]['browser_download_url']
+		data = get(d_url)	
+		zipdata = ZipFile(io.BytesIO(data.content))
+		zipdata.extractall("BEE2")
+
+	def startBee():
+		"""
+		Use this to start BEE2
+		this is dynamic, call a exec if is on 
+		windows and another one if is on MacOS
+		"""
+		if os == "win32":
+		    call(['.\BEE2.exe', ''])
+		else:
+ 		   call(['.\BEE2', ''])
