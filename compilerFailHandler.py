@@ -1,6 +1,8 @@
 from config import *
+from reconfig import steam_folder
 from sys import platform
 import tkinter as tk
+from tkinter.ttk import Notebook
 
 class compilerFailHandler(tk.Frame):
 	r"""
@@ -12,4 +14,6 @@ class compilerFailHandler(tk.Frame):
 	def __init__(self,baseClass):
 		super().__init__(baseClass.notebook)
 		
+	def fail(arg = None):
 		
+				
