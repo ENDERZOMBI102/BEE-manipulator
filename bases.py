@@ -15,6 +15,16 @@ class web:
 	  except:
 		  conn.close()
 		  return False
+		  
+		  
+	def checkUpdates():
+		if(web.isonline==False):
+			return False
+		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
+		if(not config.load('appVersion')>=ov['tag_name']):
+			return True
+		else:
+			return False
 
 	def installUpdates():
 		print("")
@@ -22,11 +32,11 @@ class web:
 class package():
 	#this class rappresents a package, with all infos
 	def __init__(self):
-		name = ""
-		repo_url = ""
-		author = ""
-		co_author = "Null"
-		version = ""
-		icon = ""
-		direct_download = False
-		api_latest_url = ""
+		self.name = ""
+		self.repo_url = ""
+		self.author = ""
+		self.co_author = "Null"
+		self.version = ""
+		self.icon = ""
+		self.direct_download = False
+		self.api_latest_url = ""

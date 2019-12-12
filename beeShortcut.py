@@ -37,7 +37,7 @@ class bee2UpdaterShortcut(tk.Tk):
             block_size = 1024  # 1 Kibibyte
             with open('bee2.zip', 'wb') as file:
                 for data in r.iter_content(block_size):
-                    t.update(len(data))
+                    self.loading_bar.step(len(data))
                     file.write(data)
             t.close()
             if total_size != 0 and t.n != total_size:

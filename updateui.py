@@ -11,7 +11,14 @@ class updateui(tk.Frame):
 	"""
 	def __init__(self, baseClass):
 		# create the frame on the main class
-		super().__init__(baseClass.notebook)
+		super().__init__(baseClass)
+		pass
 		
-		
+if __name__ == "__main__":
+	t = tk.Tk()
+	t.title("test")
+	h = Notebook(t)
+	h.add(updateui(h), "text")
+	h.pack()
+	t.mainloop()
 				

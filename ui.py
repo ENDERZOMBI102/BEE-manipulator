@@ -33,6 +33,7 @@ class root(tk.Tk):
 		self.notebook.add(about_tab, text="About")
 		#
 		self.notebook.pack(fill=tk.BOTH, expand=1)
+	#
 if __name__=="__main__":
 	root=root()
 	root.mainloop()
