@@ -40,3 +40,10 @@ class package():
 		self.icon = ""
 		self.direct_download = False
 		self.api_latest_url = ""
+
+class constants:
+	r"""
+		a lonely class for varius constants
+	"""
+	def discordToken():
+		return "655075172767760384"
