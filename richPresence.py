@@ -8,15 +8,31 @@ class richPresence:
             create an object to initialize the class
       """
       def __init__(self):
-            client_id = discordToken()
-            RPC = Presence(client_id)  # Initialize the Presence client
-            RPC.connect() # connect the client
-            RPC.update(state="Rich Presence using pypresence!")
+            self.RPC = Presence(costants.discordToken())  # Initialize the Presence client
+            self.RPC.connect() # connect the client
+            self.RPC.update(state="Starting BEE Manipulator!")
             """
                   this will let discord know that the app is still running
             """
             while True:
                   time.sleep(15)
       def update(self, data = "init"):
-            if data == 
-obj = richPresence()
+            if data == "init":
+                  self.RPC.update(state="Starting BEE Manipulator!")
+            elif data == "browsing":
+                  self.RPC.update(state="Browsing BEEmod packages.")
+            elif data == "idle":
+                  self.RPC.update(state="Idle")
+            elif data == "settings":
+                  self.RPC.update(state="In the settings tab")
+            elif data == "BEE":
+                  self.RPC.update(state="Using BEE2.4")
+      
+      # trying to shutdown the class object
+      def stop(self):
+            self.__del__(self)
+      def __del__(self):
+            pass
+
+if __name__ == "__main__":
+      obj = richPresence()
