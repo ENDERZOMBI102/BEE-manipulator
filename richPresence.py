@@ -28,11 +28,7 @@ class richPresence:
             elif data == "BEE":
                   self.RPC.update(state="Using BEE2.4")
       
-      # trying to shutdown the class object
-      def stop(self):
-            self.__del__(self)
-      def __del__(self):
-            pass
+      
 
 if __name__ == "__main__":
       obj = richPresence()
