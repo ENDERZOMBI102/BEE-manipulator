@@ -14,8 +14,7 @@ BEE Manipulator is a "manager" for BEE2.4, with BM (short for BEE Manipulator) y
 that are on the UCPDatabase, a database for all user created packages, you can submit one too!
 
 
-with BM you can also modify some aspects of BEE and Portal 2, with BEE Manipulator Packages (BMP for short)
-youn can customize the BEE2.4 starting splash screen
+with BM you can also modify the BEE2.4 splash screen and some aspects of Portal 2 with BEE Manipulator Packages (BMP for short).
 
 
 WARNING!!
@@ -23,20 +22,18 @@ WARNING!!
 This project still experimental! don't use this while is in alpha state!
 
 
-planned features!
+Planned & realized features!
 
--GUI
+- GUI
+- BEE & App Updater With A Togglable Auto Updater
+- BEE 2.4 installer
+- Package Browser & Manager
+- Custom Type of Package: BM Package
+- Custom Application For BEE2.4 Shortcuts (for the auto update feature)
+- Discord Rich Presence
+- Possibility to add functionality to BM using BM packages
 
--updater (BEE2)
-
--updater (app)
-
--installer (BEE2)
-
--installer (user created packages)
-
--bee manipulator package (customize the bee2.4 loading screen and some aspect of portal 2!)
-
+In future i will make a PACKAGE CREATOR 
 
 Libraries used in BEE Manipulator
 -
