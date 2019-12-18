@@ -1,7 +1,6 @@
 import json#for manipulating json files
 import os#for open files
 from sys import platform
-from steampak import *
 
 """list of the configs:
 	-auto exit, boolean, exit the app after complete the current operation.

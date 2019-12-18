@@ -13,4 +13,5 @@ class browser(tk.Frame):
 		the package browser, this will download the database.json file from the repo
 	"""
 	def __init__(self, baseClass):
-		pass
+		super().__init__(baseClass.notebook)
+		

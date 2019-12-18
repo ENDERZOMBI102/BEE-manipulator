@@ -12,7 +12,7 @@ pypresence = "*"
 pillow = "*"
 pyinstaller = "*"
 pytest = "*"
-srctools = "*"
+cython = "*"
 
 [requires]
 python_version = "3.7"

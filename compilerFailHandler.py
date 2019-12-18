@@ -1,5 +1,4 @@
 from config import *
-from reconfig import steam_folder
 from sys import platform
 import tkinter as tk
 from tkinter.ttk import Notebook
@@ -15,5 +14,5 @@ class compilerFailHandler(tk.Frame):
 		super().__init__(baseClass.notebook)
 		
 	def fail(arg = None):
-		
+		pass
 				
