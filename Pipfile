@@ -12,6 +12,7 @@ pypresence = "*"
 pillow = "*"
 pyinstaller = "*"
 pytest = "*"
+srctools = "*"
 
 [requires]
 python_version = "3.7"
