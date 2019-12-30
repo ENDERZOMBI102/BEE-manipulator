@@ -37,7 +37,7 @@ class config():
 				readedata = cfg[section]# take the requested field
 			return readedata #return the readed data
 		except:
-			raise configError("There's no config with that ID")
+			raise configLoadError
 	
 	def save(data, section):#save a config
 		r"""
@@ -57,7 +57,7 @@ class config():
 			with open('config.cfg', 'w', encoding="utf-8") as file:
 				json.dump(cfg, file, indent=3)
 		except:
-			raise configError("")
+			raise configError
 	
 	def check():
 		r"""
@@ -106,6 +106,11 @@ class reconfig():
 			pass
 			
 class configError(BaseException):
+	pass
+class configLoadError(BaseException):
+	r"""
+	There's no config with that ID
+	"""
 	pass
 
 
