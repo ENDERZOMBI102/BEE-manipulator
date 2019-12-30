@@ -1,5 +1,5 @@
 import json#for manipulating json files
-import os#for open files
+from os import path#for open files
 from sys import platform
 
 """list of the configs:
@@ -22,7 +22,7 @@ class config():
 			json.dump(json.loads(cfg), file, indent=3)
 	
 	def load(section):#load a config
-		r""""
+		r"""
 		loads a section of the config (json-formatted) and return the data.
 		raise an exception if the config or the requested section doesn't exist
 		example::
@@ -40,7 +40,7 @@ class config():
 			raise "error"
 	
 	def save(data, section):#save a config
-		r""""
+		r"""
 		save the data on the config (json-formatted), re-create the config if no one is found.
 		example::
 			>>> import config
@@ -58,7 +58,7 @@ class config():
 				json.dump(cfg, file, indent=3)
 		except:
 			return "error"
-			y
+	
 	def check():
 		r"""
 		check if the config file exist and if is a BM config file.
@@ -77,17 +77,27 @@ class reconfig():
 	r"""
 		some hardcoded configs are necessary even if i would like to create a fully modular application.
 		
-		in this section are present hardcoded values and value-searching values
+		in this section are present hardcoded config and value-searching config
 	"""
 	def osType():
 		return platform
 	
 	def steamDir():
+		r"""
+			this funcion return the steam installation folder
+		"""
 		if config.load("steamDir") is not "None":
 			return config.load("steamDir")
-		else:
-			if platform == "win32":
-				pass
+		elif platform == "win32":
+			# steam is installed on C?
+			if path.exists("C:\Program Files(x86)\Steam\steam.exe"):
+				return "C:\Program Files(x86)\Steam\steam.exe"
+			# steam is installed on D?
+			elif path.exists("D:\Program Files(x86)\Steam\steam.exe"):
+				return "D:\Program Files(x86)\Steam\steam.exe"
+			else:
+				return "error, can't automatically determine steam path"
+
 			
 	def portal2Dir():
 		if config.load("portal2Dir") is not "None":
