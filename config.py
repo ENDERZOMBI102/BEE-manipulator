@@ -59,19 +59,36 @@ class config():
 		except:
 			raise configError
 	
-	def check():
+	def check(arg = None):
 		r"""
-		check if the config file exist and if is a BM config file.
+		if no aurgment is present check if the config file exist and if is a BM config file, else will
+		check if the given section exists.
 		"""
 		try:
-			with open('config.cfg', 'r') as file:#
-				cfg = json.load(file)  # load the config file
-				if cfg['config_type'] == "BEE2.4 Manipulator Config File":
-					return "ok"
-				else:
-					return "error"
+			with open('config.cfg', 'r') as file:
+				pass
 		except:
-			return "error"
+			raise configDoesntExist
+		if arg == None:# check the aurgment is present
+			try:
+				with open('config.cfg', 'r') as file:# try to open the config file
+					cfg = json.load(file)  # load the config file
+					if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+						return True # the check is made successfully
+					else:
+						raise configError # the config file is not a BM config file
+			except:
+				raise configDoesntExist # the config file doesn't exist
+		else:
+			try:
+				with open("config.cfg", 'r') as file:  # try to open the config file
+					cfg = json.load(file) # load the config file
+					if cfg[arg]:
+						return True
+					else:
+						return False
+			except:
+				raise configDoesntExist # the config file doesn't exist
 
 class reconfig():
 	r"""
@@ -86,7 +103,9 @@ class reconfig():
 		r"""
 			this funcion return the steam installation folder
 		"""
-		if config.load("steamDir") is not "None":
+		if config.check("")
+
+		if not config.load("steamDir") == "None":
 			return config.load("steamDir")
 		elif platform == "win32":
 			# steam is installed on C?
@@ -100,19 +119,26 @@ class reconfig():
 
 			
 	def portal2Dir():
-		if config.load("portal2Dir") is not "None":
+		if not config.load("portal2Dir") == "None":
 			return config.load("portal2Dir")
 		else:
 			pass
 			
 class configError(BaseException):
+	r"""
+	base error for config operations
+	"""
 	pass
 class configLoadError(BaseException):
 	r"""
-	There's no config with that ID
+	There's no config with that ID!
 	"""
 	pass
-
+class configDoesntExist(BaseException):
+	r"""
+	The config file doesn't exist!
+	"""
+	pass
 
 			
 			
