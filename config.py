@@ -1,6 +1,7 @@
 import json#for manipulating json files
 from os import path#for open files
 from sys import platform
+from srctools import property_parser
 
 """list of the configs:
 	-auto exit, boolean, exit the app after complete the current operation.
@@ -103,17 +104,18 @@ class reconfig():
 		r"""
 			this funcion return the steam installation folder
 		"""
-		if config.check("")
+		if config.check("steamDir"):
+			pass
 
 		if not config.load("steamDir") == "None":
 			return config.load("steamDir")
 		elif platform == "win32":
 			# steam is installed on C?
-			if path.exists("C:\Program Files(x86)\Steam\steam.exe"):
-				return "C:\Program Files(x86)\Steam\steam.exe"
+			if path.exists("C:\Program Files (x86)\Steam\steam.exe"):
+				return "C:\Program Files (x86)\Steam"
 			# steam is installed on D?
-			elif path.exists("D:\Program Files(x86)\Steam\steam.exe"):
-				return "D:\Program Files(x86)\Steam\steam.exe"
+			elif path.exists("D:\Steam\steam.exe"):
+				return "D:\Steam"
 			else:
 				return "error, can't automatically determine steam path"
 
@@ -122,8 +124,11 @@ class reconfig():
 		if not config.load("portal2Dir") == "None":
 			return config.load("portal2Dir")
 		else:
-			pass
-			
+
+			with open(reconfig.steamDir() + "\steamapps\\appmanifest_620.acf", "r") as file:
+				x = Property.parse(file, "appmanifest_620.acf")
+				return x["installdir"]
+
 class configError(BaseException):
 	r"""
 	base error for config operations
