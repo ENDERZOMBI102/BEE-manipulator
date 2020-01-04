@@ -1,7 +1,9 @@
 import json#for manipulating json files
 from os import path#for open files
 from sys import platform
-from srctools import property_parser
+from srctools.property_parser import Property
+from srctools.tokenizer import Tokenizer
+
 
 """list of the configs:
 	-auto exit, boolean, exit the app after complete the current operation.
@@ -102,7 +104,7 @@ class reconfig():
 	
 	def steamDir():
 		r"""
-			this funcion return the steam installation folder
+			this function return the steam installation folder
 		"""
 		if config.check("steamDir"):
 			pass
@@ -120,14 +122,31 @@ class reconfig():
 				return "error, can't automatically determine steam path"
 
 			
-	def portal2Dir():
+	def portalDir():
 		if not config.load("portal2Dir") == "None":
 			return config.load("portal2Dir")
 		else:
 
 			with open(reconfig.steamDir() + "\steamapps\\appmanifest_620.acf", "r") as file:
-				x = Property.parse(file, "appmanifest_620.acf")
-				return x["installdir"]
+				manifest = Property.parse(file, "appmanifest_620.acf")# parse the property file
+				manifest = manifest.as_dict()# return the property as dictionary
+				manifest = manifest["appstate"] #take only the data
+				libray = reconfig.libraryFolder()
+				if manifest["installdir"] == "Portal 2":
+					return libray[0] + "\Portal 2\\"
+				
+	def libraryFolder():
+		paths = []
+		paths.append(reconfig.steamDir())
+		try:
+			with open(reconfig.steamDir() + "\steamapps\libraryfolders.vdf", "r") as file:
+				library = Property.parse(file, "libraryfolders.vdf").as_dict()
+				
+		except:
+			pass
+		
+		
+		return paths
 
 class configError(BaseException):
 	r"""
@@ -145,5 +164,7 @@ class configDoesntExist(BaseException):
 	"""
 	pass
 
+if __name__ == "__main__":
+	print(reconfig.portalDir())
 			
 			
