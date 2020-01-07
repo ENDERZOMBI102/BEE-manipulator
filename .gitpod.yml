@@ -1,13 +1,13 @@
 # The Docker image to run the workspace
 image: gitpod/workspace-full-vnc
-# Command to start on workspace startup (optional)
+# Command to start on workspace startup
 tasks:
   - init: yarn install & install vnc libs
     command: yarn build
     command: apt-get update \
     command: apt-get install -y libgtk-3-dev
 
-# Ports to expose on workspace startup (optional)
+# Ports to expose on workspace startup
 ports:
   - port: 8000
     onOpen: ignore
