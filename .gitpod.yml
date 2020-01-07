@@ -6,7 +6,7 @@ tasks:
     command: yarn build
     command: apt-get update \
     command: apt-get install -y libgtk-3-dev
-  - 
+
 # Ports to expose on workspace startup (optional)
 ports:
   - port: 8000
