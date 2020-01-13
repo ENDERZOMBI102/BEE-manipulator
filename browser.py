@@ -14,4 +14,5 @@ class browser(tk.Frame):
 	"""
 	def __init__(self, baseClass):
 		super().__init__(baseClass.notebook)
+        
 		
