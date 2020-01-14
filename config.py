@@ -20,7 +20,7 @@ from srctools.tokenizer import Tokenizer
 class config():
 	
 	def create_config():#create the config file
-		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.1","last_version": "false","enableBee2Prereleases":"false","steamDir":"None","portal2Dir":"None"}'
+		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.1","last_version": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
 		with open('config.cfg', 'w', encoding="utf-8") as file:
 			json.dump(json.loads(cfg), file, indent=3)
 	
@@ -76,6 +76,14 @@ class config():
 			try:
 				with open('config.cfg', 'r') as file:# try to open the config file
 					cfg = json.load(file)  # load the config file
+                    # check if EVERY config exists
+                    x = cfg["beePrereleases"]
+                    x = cfg["appVersion"]
+                    x = cfg["last_version"]
+                    x = cfg["beePrereleases"]
+                    x = cfg["beeUpdateUrl"]
+                    x = cfg["steamDir"]
+                    x = cfg["portal2Dir"]
 					if cfg['config_type'] == "BEE2.4 Manipulator Config File":
 						return True # the check is made successfully
 					else:
@@ -134,6 +142,9 @@ class reconfig():
 				libray = reconfig.libraryFolder()
 				if manifest["installdir"] == "Portal 2":
 					return libray[0] + "\Portal 2\\"
+    
+    def discordToken():
+		return "655075172767760384"
 				
 	def libraryFolder():
 		paths = []
@@ -147,6 +158,27 @@ class reconfig():
 		
 		
 		return paths
+	
+	def isonline():
+	  conn = httplib.HTTPConnection("www.google.com", timeout=5)
+	  try:
+		  conn.request("HEAD", "/")
+		  conn.close()
+		  return True
+	  except:
+		  conn.close()
+		  return False
+		  
+		  
+	def checkUpdates():
+		if(reconfig.isonline==False):
+			return False
+		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
+		if(not config.load('appVersion')>=ov['tag_name']):
+			return True
+		else:
+			return False
+
 
 class configError(BaseException):
 	r"""

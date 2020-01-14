@@ -3,7 +3,6 @@ from tkinter import messagebox as msg
 from tkinter.ttk import Notebook
 from config import *
 from json import *
-from bases import web
 from packages import *
 
 

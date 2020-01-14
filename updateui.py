@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox as msg
 from tkinter.ttk import Notebook
 from config import *
-#from bases import web
 
 class updateui(tk.Frame):
 	"""
