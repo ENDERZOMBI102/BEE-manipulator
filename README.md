@@ -5,7 +5,7 @@ a BEE2.4 manager!
 
 [![BEE Manipulator Releases](https://img.shields.io/github/downloads/ENDERZOMBI102/BEE-manipulator/total.svg?style=for-the-badge&label=Downloads)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/)
 [![Latest Release](https://img.shields.io/github/v/release/ENDERZOMBI102/BEE-manipulator?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/latest)
-[![Discord](https://img.shields.io/discord/546987939314532362?logo=discord&style=for-the-badge)](https://discord.gg/426f5hX)
+[![Discord](https://img.shields.io/discord/546987939314532362?logo=discord&style=for-the-badge)](https://discord.gg/hnGFJrz)
 [![Commits](https://img.shields.io/github/commits-since/ENDERZOMBI102/BEE-manipulator/latest?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/commits/master)
 [![PyVersion](https://img.shields.io/github/pipenv/locked/python-version/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://www.python.org/downloads/release/python-374/)
 [![License](https://img.shields.io/github/license/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/blob/master/LICENSE)
