@@ -76,18 +76,18 @@ class config():
 			try:
 				with open('config.cfg', 'r') as file:# try to open the config file
 					cfg = json.load(file)  # load the config file
-                    # check if EVERY config exists
-                    x = cfg["beePrereleases"]
-                    x = cfg["appVersion"]
-                    x = cfg["last_version"]
-                    x = cfg["beePrereleases"]
-                    x = cfg["beeUpdateUrl"]
-                    x = cfg["steamDir"]
-                    x = cfg["portal2Dir"]
-					if cfg['config_type'] == "BEE2.4 Manipulator Config File":
-						return True # the check is made successfully
-					else:
-						raise configError # the config file is not a BM config file
+				# check if EVERY config exists
+				x = cfg["beePrereleases"]
+				x = cfg["appVersion"]
+				x = cfg["last_version"]
+				x = cfg["beePrereleases"]
+				x = cfg["beeUpdateUrl"]
+				x = cfg["steamDir"]
+				x = cfg["portal2Dir"]
+				if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+					return True # the check is made successfully
+				else:
+					raise configError # the config file is not a BM config file
 			except:
 				raise configDoesntExist # the config file doesn't exist
 		else:
@@ -139,11 +139,11 @@ class reconfig():
 				manifest = Property.parse(file, "appmanifest_620.acf")# parse the property file
 				manifest = manifest.as_dict()# return the property as dictionary
 				manifest = manifest["appstate"] #take only the data
-				libray = reconfig.libraryFolder()
+				library = reconfig.libraryFolder()
 				if manifest["installdir"] == "Portal 2":
-					return libray[0] + "\Portal 2\\"
-    
-    def discordToken():
+					return library[0] + "\Portal 2\\"
+	
+	def discordToken():
 		return "655075172767760384"
 				
 	def libraryFolder():
