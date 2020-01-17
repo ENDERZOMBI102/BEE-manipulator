@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox as msg
-from tkinter.ttk import Notebook
+from tkinter.ttk import *
 from config import *
 
 class root(tk.Tk):
