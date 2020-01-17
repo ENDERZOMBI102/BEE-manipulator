@@ -18,36 +18,35 @@ class beeManager:
         except:# if an error is raised, the pc is offline, so we return False
             return False
         onlineVersion = []# create empty list
-        # iterate in every character in the version string, if there's a invalid character, its removed
+        # iterate in every character in the version string, if there's a invalid character, we remove it
         for i in data["tag_name"]:
             if i in ['0','1','2','3','4','5','6','7','8','9','.']:
                 onlineVersion.append(i)# add the char to the final list
         onlineVersion = "".join(onlineVersion)# the list is converted to a string
-        if not int(onlineVersion) > reconfig.version():# is the online version more updated? if not, return False
-            return False
-        elif boolcmp(data["draft"]):# is the online version a draft? if yes return False
-            return False
-        # check if a prerelease is avaiable, return True if beePresereleases and prerelease values are true
-        elif boolcmp(data["prerelease"]):
-            if boolcmp(config.load("beePrereleases"):
+        if int(onlineVersion) > reconfig.version():# is the online version more updated? if not, return False
+            if boolcmp(data["draft"]):# is the online version a draft? if yes return False
+                return False
+            # check if a prerelease is avaiable, return True if beePresereleases and prerelease values are true
+            elif boolcmp(data["prerelease"]):
+                if boolcmp(config.load("beePrereleases"):
+                    config.save(getUrl(data), "beeUpdateUrl")
+                    return True
+                else:
+                    return False
+            else:
                 config.save(getUrl(data), "beeUpdateUrl")
                 return True
-            else:
-                return False
-        else:
-            return True
 
     def getUrl(data):
         # cicle in the assets
         for asset in data["assets"]:
             # get the correct url
-            if "mac" in asset["name"]:
+            if "mac" in asset["name"] and "darwin" in os:
                 return asset["browser_download_url"]
-            elif "win" in asset["name"]:
+            elif "win" in asset["name"] and "win" in os:
                 return asset["browser_download_url"]
-        raise Exception("how this happened?")        
+        raise Exception("how this happened?, you're on linux?")        
     
-    # TODO: rewrite all ths code bellow to optimize it
 	def update():
 		r"""
 		this will update BEE, when called, the function
@@ -56,13 +55,15 @@ class beeManager:
 		"""
 		# get the json data
         try:
-		    r = get(config.load("beeUpdateUrl"))
-        except:
-            return
-		
-		zipdata = ZipFile(io.BytesIO(r.content))
-		zipdata.extractall("BEE2")
-		data = get('https://api.github.com/repos/BEEmod/BEE2-items/releases/latest').json()
+		    r = get(config.load("beeUpdateUrl"))#download BEE
+        except Exception as e:
+            raise downloadError("filed to complete the download.\n"+e)
+		zipdata = ZipFile(io.BytesIO(r.content)) # load and convert the data to a bytes stream
+		zipdata.extractall("BEE2")# extract BEE
+        try:
+		    data = get('https://api.github.com/repos/BEEmod/BEE2-items/releases/latest').json()
+        except Exception as e:
+            raise downloadError("failed to complete the donwload.\n"+e)
 		d_url = data['assets'][0]['browser_download_url']
 		data = get(d_url)	
 		zipdata = ZipFile(io.BytesIO(data.content))
@@ -78,3 +79,6 @@ class beeManager:
 		    call(['.\BEE2.exe', ''])
 		else:
  		   call(['.\BEE2', ''])
+
+class downloadError(Exception):
+    pass
