@@ -146,7 +146,7 @@ class reconfig():
 					manifest = manifest["appstate"] #take only the data
 					library = reconfig.libraryFolder()
 					if manifest["installdir"] == "Portal 2":
-						return library[0] + "\Portal 2\\"
+						return library[0] + "\common\Portal 2\\"
 			except:
 				raise Exception("failed to locate portal 2 directory")
 	
@@ -154,8 +154,8 @@ class reconfig():
 		return "655075172767760384"
 				
 	def libraryFolder():
-		paths = []
-		paths.append(reconfig.steamDir())
+		paths = []# create a list for paths
+		paths.append(reconfig.steamDir() + "/steamapps/")# add the default
 		try:
 			with open(reconfig.steamDir() + "\steamapps\libraryfolders.vdf", "r") as file:
 				library = Property.parse(file, "libraryfolders.vdf").as_dict()
