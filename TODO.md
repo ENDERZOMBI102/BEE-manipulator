@@ -1,3 +1,3 @@
-- delete bases.py and transport all the classes and functions to other files (ex. isOnline to config class)
 - finish up the logger
 - finish up the config file
+- add the menus to the menus :P

@@ -1,9 +1,8 @@
-import json#for manipulating json files
-from os import path#for open files
-from sys import platform
-from srctools.property_parser import Property
-from srctools.tokenizer import Tokenizer
-
+import json# for manipulating json files
+from os import path# for open files
+from sys import platform# for knowing where the file is executed on
+from requests import get# for the the connection
+from srctools.property_parser import Property# for parse vdfs files
 
 """list of the configs:
 	-auto exit, boolean, exit the app after complete the current operation.
@@ -19,12 +18,12 @@ from srctools.tokenizer import Tokenizer
 
 class config():
 	
-	def create_config():#create the config file
-		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.1","last_version": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
+	def create_config():# create the config file
+		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.1","lastVersion": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
 		with open('config.cfg', 'w', encoding="utf-8") as file:
 			json.dump(json.loads(cfg), file, indent=3)
 	
-	def load(section):#load a config
+	def load(section):# load a config
 		r"""
 		loads a section of the config (json-formatted) and return the data.
 		raise an exception if the config or the requested section doesn't exist
@@ -36,13 +35,13 @@ class config():
 		"""
 		try:
 			with open('config.cfg', 'r', encoding="utf-8") as file:
-				cfg = json.load(file)#iload the config
+				cfg = json.load(file)# load the config
 				readedata = cfg[section]# take the requested field
-			return readedata #return the readed data
+			return readedata # return the readed data
 		except:
 			raise configLoadError
 	
-	def save(data, section):#save a config
+	def save(data, section):# save a config
 		r"""
 		save the data on the config (json-formatted), re-create the config if no one is found.
 		example::
@@ -69,27 +68,30 @@ class config():
 		"""
 		try:
 			with open('config.cfg', 'r') as file:
-				pass
+				cfg = json.load(file)
 		except:
 			raise configDoesntExist
 		if arg == None:# check the aurgment is present
 			try:
-				with open('config.cfg', 'r') as file:# try to open the config file
-					cfg = json.load(file)  # load the config file
 				# check if EVERY config exists
 				x = cfg["beePrereleases"]
 				x = cfg["appVersion"]
-				x = cfg["last_version"]
+				x = cfg["lastVersion"]
 				x = cfg["beePrereleases"]
 				x = cfg["beeUpdateUrl"]
 				x = cfg["steamDir"]
 				x = cfg["portal2Dir"]
-				if cfg['config_type'] == "BEE2.4 Manipulator Config File":
-					return True # the check is made successfully
-				else:
-					raise configError # the config file is not a BM config file
+				x = cfg['config_type']
 			except:
-				raise configDoesntExist # the config file doesn't exist
+				# the config file is not a BM config file
+				raise configError("Not a BM config file!")
+			# final check
+			if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+				# the check is made successfully
+				return True
+			else:
+				# the config file is not a BM config file
+				raise configError("Not a BM config file!")
 		else:
 			try:
 				with open("config.cfg", 'r') as file:  # try to open the config file
@@ -110,7 +112,7 @@ class reconfig():
 	def osType():
 		return platform
 	
-	def steamDir():
+	def steamDir(cmde = False):
 		r"""
 			this function return the steam installation folder
 		"""
@@ -122,7 +124,10 @@ class reconfig():
 		elif platform == "win32":
 			# steam is installed on C?
 			if path.exists("C:\Program Files (x86)\Steam\steam.exe"):
-				return "C:\Program Files (x86)\Steam"
+				if cmde:
+					return '%programfiles(x86)%\Steam'
+				else:
+					return 'C:\Program Files (x86)\Steam'
 			# steam is installed on D?
 			elif path.exists("D:\Steam\steam.exe"):
 				return "D:\Steam"
@@ -134,14 +139,16 @@ class reconfig():
 		if not config.load("portal2Dir") == "None":
 			return config.load("portal2Dir")
 		else:
-
-			with open(reconfig.steamDir() + "\steamapps\\appmanifest_620.acf", "r") as file:
-				manifest = Property.parse(file, "appmanifest_620.acf")# parse the property file
-				manifest = manifest.as_dict()# return the property as dictionary
-				manifest = manifest["appstate"] #take only the data
-				library = reconfig.libraryFolder()
-				if manifest["installdir"] == "Portal 2":
-					return library[0] + "\Portal 2\\"
+			try:
+				with open(reconfig.steamDir() + "\steamapps\\appmanifest_620.acf", "r") as file:
+					manifest = Property.parse(file, "appmanifest_620.acf")# parse the property file
+					manifest = manifest.as_dict()# return the property as dictionary
+					manifest = manifest["appstate"] #take only the data
+					library = reconfig.libraryFolder()
+					if manifest["installdir"] == "Portal 2":
+						return library[0] + "\Portal 2\\"
+			except:
+				raise Exception("failed to locate portal 2 directory")
 	
 	def discordToken():
 		return "655075172767760384"
@@ -152,31 +159,31 @@ class reconfig():
 		try:
 			with open(reconfig.steamDir() + "\steamapps\libraryfolders.vdf", "r") as file:
 				library = Property.parse(file, "libraryfolders.vdf").as_dict()
-				
+				for i in library:
+					pass
 		except:
-			pass
+			raise Exception("Error while reading steam library file")
 		
 		
 		return paths
 	
 	def isonline():
-	  conn = httplib.HTTPConnection("www.google.com", timeout=5)
-	  try:
-		  conn.request("HEAD", "/")
-		  conn.close()
-		  return True
-	  except:
-		  conn.close()
-		  return False
+		try:
+			get("www.google.com")
+			return True
+		except:
+			return False
 		  
 		  
 	def checkUpdates():
-		if(reconfig.isonline==False):
+		if not reconfig.isonline:
 			return False
 		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
-		if(not config.load('appVersion')>=ov['tag_name']):
+		if not config.load('appVersion') >= ov['tag_name']:
+			config.save("true", "lastVersion")
 			return True
 		else:
+			config.save("false", "lastVersion")
 			return False
 
 
