@@ -3,6 +3,7 @@ from os import path# for open files
 from sys import platform# for knowing where the file is executed on
 from requests import get# for the the connection
 from srctools.property_parser import Property# for parse vdfs files
+from winreg import *
 
 """list of the configs:
 	-auto exit, boolean, exit the app after complete the current operation.
@@ -122,17 +123,20 @@ class reconfig():
 		if not config.load("steamDir") == "None":
 			return config.load("steamDir")
 		elif platform == "win32":
-			# steam is installed on C?
-			if path.exists("C:\Program Files (x86)\Steam\steam.exe"):
-				if cmde:
-					return '%programfiles(x86)%\Steam'
-				else:
-					return 'C:\Program Files (x86)\Steam'
-			# steam is installed on D?
-			elif path.exists("D:\Steam\steam.exe"):
-				return "D:\Steam"
-			else:
-				return "error, can't automatically determine steam path"
+			# get the steam directory from the windows registry
+			# HKEY_CURRENT_USER\Software\Valve\Steam
+			try:
+				with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
+					aKey = OpenKey(reg, r"Software\\Valve\Steam")
+			except Exception as e:
+				raise Exception(e)
+			try:
+				keyValue = QueryValueEx(aKey, "SteamPath")
+				return keyValue[0]
+			except:
+				return "Error while reading registry"
+
+				
 
 			
 	def portalDir():
@@ -146,7 +150,7 @@ class reconfig():
 					manifest = manifest["appstate"] #take only the data
 					library = reconfig.libraryFolder()
 					if manifest["installdir"] == "Portal 2":
-						return library[0] + "\common\Portal 2\\"
+						return library[0] + "common/Portal 2/"
 			except:
 				raise Exception("failed to locate portal 2 directory")
 	
