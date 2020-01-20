@@ -171,6 +171,18 @@ class reconfig():
 		
 		return paths
 	
+	def steamUsername():
+		try:
+			with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
+				aKey = OpenKey(reg, r"Software\\Valve\Steam")
+		except Exception as e:
+			raise Exception(e)
+		try:
+			keyValue = QueryValueEx(aKey, "LastGameNameUsed")
+			return keyValue[0]
+		except:
+			return "Error while reading registry"
+
 	def isonline():
 		try:
 			get("www.google.com")
