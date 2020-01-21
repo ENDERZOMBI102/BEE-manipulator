@@ -26,12 +26,26 @@ class root(tk.Tk):
         self.fileMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
         self.fileMenu.add_command(label="Open Portal 2 Directory", command=self.openp2dir)
         self.fileMenu.add_command(label="Open BEEmod Directory", command=self.openBEEdir)
+        self.fileMenu.add_command(label="Sync Games", command=self.syncGames)
+        self.fileMenu.add_command(label="Quit", command=self.quit)
+        
         # options ttb menu
         self.optionMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
-
+        self.optionMenu.add_command(label="Settings", command=self.openSettingsWindow)
+        self.optionMenu.add_command(label="Reload Configs", command=self.reloadConfig)
+        self.optionMenu.add_command(label="Reload Packages", command=self.reloadPackages)
+        self.optionMenu.add_command(label="Manage Games", command=self.openGameManager)
+        self.optionMenu.add_command(label="Manage Packages", command=self.openPackageManager)
+        
         # help ttb menu
         self.helpMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
         self.helpMenu.add_command(label="About..", command=self.openAboutWindow)
+        self.helpMenu.add_command(label="Check Updates", command=self.checkUpdates)
+        self.helpMenu.add_command(label="Offline Wiki", command=self.openOfflineWiki)
+        self.helpMenu.add_command(label="Online Wiki", command=self.openOnlineWiki)
+        self.helpMenu.add_command(label="Github", command=self.openGithub)
+        self.helpMenu.add_command(label="Discord", command=self.openDiscord)
+
         # put all the ttb together
         self.toolBarFrame.add_cascade(label="File", menu=self.fileMenu)
         self.toolBarFrame.add_cascade(label="Options", menu=self.optionMenu)
@@ -41,15 +55,49 @@ class root(tk.Tk):
         self.mainFrame.pack()
 		
 
-
+    # file menu
     def openp2dir(self):
         os.startfile(reconfig.portalDir())
 
-    def openAboutWindow(self):
-        self.viewNew = aboutWindow()
-
-
     def openBEEdir(self):
+        pass
+
+    def syncGames(self):
+        pass
+
+    # options menu
+    def openSettingsWindow(self):
+        self.viewNew = settingsWindow(self)    
+    
+    def reloadConfig(self):
+        pass
+
+    def reloadPackages(self):
+        pass
+
+    def openGameManager(self):
+        pass
+
+    def openPackageManager(self):
+        pass
+
+    # help menu
+    def openAboutWindow(self):
+        self.viewNew = aboutWindow(self)
+
+    def checkUpdates(self):
+        pass
+
+    def openOfflineWiki(self):
+        pass
+
+    def openOnlineWiki(self):
+        pass
+
+    def openGithub(self):
+        pass
+
+    def openDiscord(self):
         pass
 
 
@@ -58,9 +106,9 @@ class aboutWindow(tk.Toplevel):
     r"""
         The about window
     """
-    def __init__(self):
+    def __init__(self, master):
 
-        tk.Toplevel.__init__(self)
+        super().__init__(master)
 
         self.outputLabel2 = tk.Label(self)
         self.outputLabel2["text"] = ("Enter Value")
@@ -78,8 +126,13 @@ class aboutWindow(tk.Toplevel):
     def buttonPressed2(self):
         pass
 
-        
-
+class settingsWindow(tk.Toplevel):
+    r"""
+        this is the window for the settings
+    """
+    def __init__(self, master):
+        super().__init__(master)
+        pass
 
 
 
