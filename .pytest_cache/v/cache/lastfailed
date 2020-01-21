@@ -1,6 +1,0 @@
-{
-  "srctools/test/test_core.py": true,
-  "srctools/test/test_property_parser.py": true,
-  "srctools/test/test_tokenizer.py": true,
-  "srctools/test/test_vec.py": true
-}

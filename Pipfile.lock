@@ -75,12 +75,15 @@
             "index": "pypi",
             "version": "==0.29.14"
         },
+<<<<<<< HEAD
         "future": {
             "hashes": [
                 "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"
             ],
             "version": "==0.18.2"
         },
+=======
+>>>>>>> 67567ec45b3cf0960090ea2604024ae80832128c
         "idna": {
             "hashes": [
                 "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
@@ -107,6 +110,7 @@
             ],
             "index": "pypi",
             "version": "==3.3.2"
+<<<<<<< HEAD
         },
         "pywin32-ctypes": {
             "hashes": [
@@ -114,6 +118,8 @@
                 "sha256:9dc2d991b3479cc2df15930958b674a48a227d5361d413827a4cfd0b5876fc98"
             ],
             "version": "==0.2.0"
+=======
+>>>>>>> 67567ec45b3cf0960090ea2604024ae80832128c
         },
         "requests": {
             "hashes": [
