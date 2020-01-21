@@ -80,5 +80,12 @@ class beeManager:
 		else:
  		   call(['.\BEE2', ''])
 
+
+    def configManager():
+        r"""
+            BEE2.4 config manager
+            this definition contains some userful commands to
+            manipulate the config files
+        """
 class downloadError(Exception):
     pass

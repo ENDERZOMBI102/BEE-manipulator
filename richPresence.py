@@ -1,6 +1,6 @@
 from pypresence import Presence, Activity
 from config import reconfig
-from asyncio import sleep
+from time import sleep
 
 class richPresence():
       r"""
@@ -14,7 +14,8 @@ class richPresence():
             """
                   this will let discord know that the app is still running
             """
-            self.run()
+            while(True):
+                  sleep(15)
 
       def update(self, data = "init"):
             r"""
@@ -30,13 +31,6 @@ class richPresence():
                   self.RPC.update(state="In the settings tab")
             elif data.upper() == "BEE":
                   self.RPC.update(state="Using BEE2.4")
-
-      async def run(self):
-            r"""
-                  i hate async
-            """
-            while True:
-                  await sleep(15)
 
 
 if __name__ == "__main__":

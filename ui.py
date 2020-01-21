@@ -31,7 +31,7 @@ class root(tk.Tk):
 
         # help ttb menu
         self.helpMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
-
+        self.helpMenu.add_command(label="About..", command=self.openAboutWindow)
         # put all the ttb together
         self.toolBarFrame.add_cascade(label="File", menu=self.fileMenu)
         self.toolBarFrame.add_cascade(label="Options", menu=self.optionMenu)
@@ -45,20 +45,40 @@ class root(tk.Tk):
     def openp2dir(self):
         os.startfile(reconfig.portalDir())
 
+    def openAboutWindow(self):
+        self.viewNew = aboutWindow()
+
+
     def openBEEdir(self):
         pass
 
-class aboutWindow(tk.Tk):
+
+
+class aboutWindow(tk.Toplevel):
     r"""
-        the class for the about window
+        The about window
     """
     def __init__(self):
-        # initiate superclass
-        super.__init__()
-        # setup the window
-        self.title("About BEE Manipulator")
-        self.geometry("200x50")
 
+        tk.Toplevel.__init__(self)
+
+        self.outputLabel2 = tk.Label(self)
+        self.outputLabel2["text"] = ("Enter Value")
+        self.outputLabel2.grid(row=5, rowspan=2)
+
+        self.entrySpace2 = tk.Entry(self)
+        self.entrySpace2.grid(row=8, column=0, rowspan=2)
+
+        self.Button2 = tk.Button(self)
+        self.Button2["text"] = "Try Me"
+        #self means "MySecondGUI" not "MainControl" here
+        self.Button2["command"] = self.buttonPressed2
+        self.Button2.grid(row=14, column=0, rowspan=2)
+
+    def buttonPressed2(self):
+        pass
+
+        
 
 
 

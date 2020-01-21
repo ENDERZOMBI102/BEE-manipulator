@@ -1,12 +1,18 @@
 
 .vscode/settings.json
+.vscode/launch.json
 __pycache__/ucpParser.cpython-37.pyc
 __pycache__/beeManager.cpython-37.pyc
 __pycache__/config.cpython-37.pyc
 __pycache__/web.cpython-37.pyc
+__pycache__/richPresence.cpython-37.pyc
+__pycache__/*
+__pycache__/*.pyc
+__pycache__/
 .pytest_cache/v/cache/nodeids
 .pytest_cache/v/cache/stepwise
-
 .venv
 .venv/.project
-.vscode/launch.json
+
+
+*.pyc
