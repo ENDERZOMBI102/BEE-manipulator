@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox as msg
 from tkinter.ttk import *
 from config import *
+import webbrowser as wb
 import os
 
 class root(tk.Tk):
@@ -92,7 +93,7 @@ class root(tk.Tk):
         pass
 
     def openOnlineWiki(self):
-        pass
+        wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
 
     def openGithub(self):
         pass
