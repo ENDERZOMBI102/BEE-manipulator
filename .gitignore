@@ -13,9 +13,9 @@ srctools/__pycache__/*
 srctools/__pycache__/
 .pytest_cache/v/cache/nodeids
 .pytest_cache/v/cache/stepwise
-.venv
+.venv/*
 .venv/.project
-
+.venv
 
 *.pyc
 docs/~$BM_ui.pptx
