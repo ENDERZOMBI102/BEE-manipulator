@@ -24,14 +24,14 @@ class root(tk.Tk):
         # top tool bar
         self.toolBarFrame = tk.Menu(self, bg="lightgrey", fg="black")
         # file ttb menu
-        self.fileMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
+        self.fileMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
         self.fileMenu.add_command(label="Open Portal 2 Directory", command=self.openp2dir)
         self.fileMenu.add_command(label="Open BEEmod Directory", command=self.openBEEdir)
         self.fileMenu.add_command(label="Sync Games", command=self.syncGames)
         self.fileMenu.add_command(label="Quit", command=self.quit)
         
         # options ttb menu
-        self.optionMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
+        self.optionMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
         self.optionMenu.add_command(label="Settings", command=self.openSettingsWindow)
         self.optionMenu.add_command(label="Reload Configs", command=self.reloadConfig)
         self.optionMenu.add_command(label="Reload Packages", command=self.reloadPackages)
@@ -39,7 +39,7 @@ class root(tk.Tk):
         self.optionMenu.add_command(label="Manage Packages", command=self.openPackageManager)
         
         # help ttb menu
-        self.helpMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="lightgrey", fg="black")
+        self.helpMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
         self.helpMenu.add_command(label="About..", command=self.openAboutWindow)
         self.helpMenu.add_command(label="Check Updates", command=self.checkUpdates)
         self.helpMenu.add_command(label="Offline Wiki", command=self.openOfflineWiki)
