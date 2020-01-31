@@ -17,9 +17,9 @@ that are on the UCPDatabase, a database for all user created packages, you can s
 with BM you can also modify the BEE2.4 splash screen and some aspects of Portal 2 with BEE Manipulator Packages (BMP for short).
 
 
-WARNING!!
+**WARNING!!**
 
-This project still experimental! don't use this while is in alpha state!
+This project is in a experimental pre-alpha state, use at your own risk!
 
 
 Planned & realized features!
@@ -33,7 +33,17 @@ Planned & realized features!
 - Discord Rich Presence
 - Possibility to add functionality to BM using BM packages
 
-In future i will make a PACKAGE CREATOR 
+The Future
+
+yes, i'm already thinking of the future of this application ;)
+
+ - Portal 2 Data Manager (manage the folders and faster file verify)
+ - Custom Installer 
+ - Package Creator:
+    - Skybox Maker
+    - Style Maker
+    - Item Importer
+- Key Binder (bind commands to keys without file edits)
 
 Libraries used in BEE Manipulator
 -
