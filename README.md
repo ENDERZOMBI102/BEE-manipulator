@@ -44,6 +44,7 @@ yes, i'm already thinking of the future of this application ;)
     - Style Maker
     - Item Importer
 - Key Binder (bind commands to keys without file edits)
+- Rating system for the package browser
 
 Libraries used in BEE Manipulator
 -
