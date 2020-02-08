@@ -1,3 +1,0 @@
-- finish up the logger
-- finish up the config file
-- add the menus to the menus :P
