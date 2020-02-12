@@ -20,7 +20,7 @@ from winreg import *
 class config():
 	
 	def create_config():# create the config file
-		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.1","lastVersion": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
+		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "dev version 0.0.1","lastVersion": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
 		with open('config.cfg', 'w', encoding="utf-8") as file:
 			json.dump(json.loads(cfg), file, indent=3)
 	
@@ -136,9 +136,6 @@ class reconfig():
 			except:
 				return "Error while reading registry"
 
-				
-
-			
 	def portalDir():
 		if not config.load("portal2Dir") == "None":
 			return config.load("portal2Dir")
@@ -189,7 +186,13 @@ class reconfig():
 			return True
 		except:
 			return False
-		  
+	
+	def toNumbers(arg=None):
+		nums = []
+		for i in arg:
+			if i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.']:
+				nums.append(i)
+		return "".join(nums)
 		  
 	def checkUpdates():
 		if not reconfig.isonline:
@@ -197,12 +200,12 @@ class reconfig():
 		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
 		url = ov["assets"][0]["browser_download_url"]
 		ov = ov['tag_name']
-		onlineVersion = []
-		for i in ov:
-			if i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ',', '.']:
-				onlineVersion.append(i)
-		onlineVersion = "".join(onlineVersion)
-		if config.load('appVersion') < onlineVersion:
+		# loads and format the online version
+		onlineVersion = reconfig.toNumbers(ov)
+		# loads and format the app version config
+		appVersion = reconfig.toNumbers(config.load('appVersion'))
+		# here's the actual check
+		if  appVersion < onlineVersion:
 			config.save("true", "lastVersion")
 			return True
 		else:
