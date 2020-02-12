@@ -99,6 +99,6 @@ class database:
 			# convert it to base64
 			package.icon64 = encode(icon)
 			# check the validity of coAuthors
-			if package.coAuthors in ["null", ""]
+			if package.coAuthors in ["null", ""]:
 				package.coAuthors = []
 
