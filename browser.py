@@ -101,4 +101,9 @@ class database:
 			# check the validity of coAuthors
 			if package.coAuthors in ["null", ""]:
 				package.coAuthors = []
+			# and finally append the package to the database list
+			self.database.append(package)
+		
+		# return the list we made
+		return self.database
 
