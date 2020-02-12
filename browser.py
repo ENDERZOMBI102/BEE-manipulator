@@ -12,11 +12,10 @@ class browser(tk.Frame):
 	r"""
 		the package browser, this will download the database.json file from the repo
 	"""
-	def __init__(self, baseClass):
-		super().__init__(baseClass)
+	def __init__(self, masterClass):
+		super().__init__(masterClass)
 		try:
 			self.database = database()
-			self.database = self.database.loadObj()
 		except:
 			pass
 
@@ -30,7 +29,11 @@ class database:
 		try:
 			self.check()
 		except:
-			self.download()		
+			self.download()
+		try:
+			self.check()
+		except:
+			raise ConnectionError("Failed to download database!")		
 
 	def check(self):
 		r"""
@@ -84,7 +87,7 @@ class database:
 				package.config = pkg["config"]
 			# now that we have our package object, we have to verify and load some thing from the internet
 			# take the file name from the api latest OR from the database if the package isn't on github 
-			if package.service() == "github" and package.filename and not pkg["filename"]:
+			if package.service() == "github" and package.filename and reconfig.isonline() and not pkg["filename"]:
 				tmp = get(package.url)
 				package.filename == tmp["assets"][0]["name"]
 			elif package.filename:
@@ -92,7 +95,7 @@ class database:
 			# obtain the icon url
 			if package.service() == "github":
 				iconurl = package.repo() + "raw\\master\\icon.png"
-			elif pkg["icon_url"]:
+			elif pkg["icon_url"] and reconfig.isonline():
 				iconurl = pkg["icon_url"]
 			# obtain the icon
 			icon = get(iconurl)

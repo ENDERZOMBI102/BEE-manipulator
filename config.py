@@ -20,7 +20,7 @@ from winreg import *
 class config():
 	
 	def create_config():# create the config file
-		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "dev version 0.0.1","lastVersion": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
+		cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.0.1","lastVersion": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
 		with open('config.cfg', 'w', encoding="utf-8") as file:
 			json.dump(json.loads(cfg), file, indent=3)
 	

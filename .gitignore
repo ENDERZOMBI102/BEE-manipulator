@@ -9,3 +9,4 @@ build
 *.pyc
 docs/~$BM_ui.pptx
 config.cfg
+docs/compile.bat

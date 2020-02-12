@@ -17,7 +17,7 @@ class root(tk.Tk):
         self.title("BEE Manipulator v"+str(config.load("appVersion")))
         self.geometry("600x500")
         # set window icon
-        self.iconphoto(False, tk.PhotoImage(file="./assets/icon.ico"))
+        self.iconphoto(False, tk.PhotoImage(file="./assets/icon.png"))
         # the main container
         self.checkUpdates(window=False)
         r"""
@@ -98,7 +98,6 @@ class root(tk.Tk):
             self.updatePopup = updatePopup(self)
         elif window:
             self.latestPopup = latestPopup(self)
-            
 
     def openOfflineWiki(self):
         pass
@@ -111,8 +110,6 @@ class root(tk.Tk):
 
     def openDiscord(self):
         wb.open("https://discord.gg/hnGFJrz")
-
-
 
 class aboutWindow(tk.Toplevel):
     r"""
