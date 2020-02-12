@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8b2cdabed567aa1d94094475d38864e31c68d2468b8b88f510acebf8bd9774d4"
+            "sha256": "f5005d04d63321325aadfacc3ca8d1251a19bfab08f8c966c0fa956040132251"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -72,7 +72,14 @@
                 "sha256:f3818e578e687cdb21dc4aa4a3bc6278c656c9c393e9eda14dd04943f478863d",
                 "sha256:fe666645493d72712c46e4fbe8bec094b06aec3c337400479e9704439c9d9586"
             ],
+            "index": "pypi",
             "version": "==0.29.14"
+        },
+        "future": {
+            "hashes": [
+                "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"
+            ],
+            "version": "==0.18.2"
         },
         "idna": {
             "hashes": [
@@ -81,24 +88,48 @@
             ],
             "version": "==2.8"
         },
+        "pefile": {
+            "hashes": [
+                "sha256:a5d6e8305c6b210849b47a6174ddf9c452b2888340b8177874b862ba6c207645"
+            ],
+            "version": "==2019.4.18"
+        },
         "pyinstaller": {
             "hashes": [
                 "sha256:3730fa80d088f8bb7084d32480eb87cbb4ddb64123363763cf8f2a1378c1c4b7"
             ],
+            "index": "pypi",
             "version": "==3.6"
         },
         "pypresence": {
             "hashes": [
                 "sha256:d39f8eb79c521ae2f3dd8e2dbfa204d7df4201f044b68bcae6339c75b87dfb7b"
             ],
+            "index": "pypi",
             "version": "==3.3.2"
+        },
+        "pywin32-ctypes": {
+            "hashes": [
+                "sha256:24ffc3b341d457d48e8922352130cf2644024a4ff09762a2261fd34c36ee5942",
+                "sha256:9dc2d991b3479cc2df15930958b674a48a227d5361d413827a4cfd0b5876fc98"
+            ],
+            "version": "==0.2.0"
         },
         "requests": {
             "hashes": [
                 "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4",
                 "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"
             ],
+            "index": "pypi",
             "version": "==2.22.0"
+        },
+        "servepy": {
+            "hashes": [
+                "sha256:ddad56cc31c4fd60a4267fd6342bbd9b2db8040428894811727cf240ff7cc34b",
+                "sha256:f0e4121e780c0f0f802361c8ac53bb0d5903c110754989f7c88f15537febf54b"
+            ],
+            "index": "pypi",
+            "version": "==1.0.3"
         },
         "urllib3": {
             "hashes": [

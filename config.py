@@ -195,12 +195,27 @@ class reconfig():
 		if not reconfig.isonline:
 			return False
 		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
-		if not config.load('appVersion') >= ov['tag_name']:
+		url = ov["assets"][0]["browser_download_url"]
+		ov = ov['tag_name']
+		onlineVersion = []
+		for i in ov:
+			if i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ',', '.']:
+				onlineVersion.append(i)
+		onlineVersion = "".join(onlineVersion)
+		if config.load('appVersion') < onlineVersion:
 			config.save("true", "lastVersion")
 			return True
 		else:
 			config.save("false", "lastVersion")
+			config.save(onlineVersion, "onlineAppVersion")
+			config.save(url, "newVersionUrl")
 			return False
+
+	def version():
+		return config.load("appVersion")
+
+	def onlineVersion():
+		return config.load("onlineAppVersion")
 
 
 class configError(BaseException):

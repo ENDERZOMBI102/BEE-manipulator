@@ -14,6 +14,7 @@ class root(tk.Tk):
         # set window icon
         self.iconphoto(False, tk.PhotoImage(file="./assets/icon.ico"))
         # the main container
+        self.focus_force()
         self.mainFrame = tk.Frame(self)
         r"""
             there are the functions to make the main window, every # comment indicates
@@ -87,7 +88,9 @@ class root(tk.Tk):
         self.viewNew = aboutWindow(self)
 
     def checkUpdates(self):
-        pass
+        if reconfig.checkUpdates():
+            self.updatePopup = updatePopup(self)
+            
 
     def openOfflineWiki(self):
         pass
@@ -96,10 +99,10 @@ class root(tk.Tk):
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
 
     def openGithub(self):
-        pass
+        wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/")
 
     def openDiscord(self):
-        pass
+        wb.open("https://discord.gg/hnGFJrz")
 
 
 
@@ -110,19 +113,14 @@ class aboutWindow(tk.Toplevel):
     def __init__(self, master):
 
         super().__init__(master)
+        self.focus_force()
+        self.grid_columnconfigure(10)
+        self.grid_rowconfigure(10)
 
-        self.outputLabel2 = tk.Label(self)
-        self.outputLabel2["text"] = ("Enter Value")
-        self.outputLabel2.grid(row=5, rowspan=2)
-
-        self.entrySpace2 = tk.Entry(self)
-        self.entrySpace2.grid(row=8, column=0, rowspan=2)
-
-        self.Button2 = tk.Button(self)
-        self.Button2["text"] = "Try Me"
-        #self means "MySecondGUI" not "MainControl" here
-        self.Button2["command"] = self.buttonPressed2
-        self.Button2.grid(row=14, column=0, rowspan=2)
+        self.creditsText = tk.Label(self)
+        self.creditsText["text"] = (
+            '"BEE Manipulator" : \n{\n"Main Developer" : "ENDERZOMBI102",\n"Icon By" : "N\\A",\n"}')
+        self.creditsText.grid(row=5, column=0, sticky="s")
 
     def buttonPressed2(self):
         pass
@@ -133,8 +131,49 @@ class settingsWindow(tk.Toplevel):
     """
     def __init__(self, master):
         super().__init__(master)
-        pass
+        
 
+
+class updatePopup(tk.Toplevel):
+    r"""
+        The about window
+    """
+
+    def __init__(self, master):
+
+        super().__init__(master)
+        self.focus_force()
+        self.grid_columnconfigure(10)
+        self.grid_rowconfigure(10)
+
+        self.versionLabel = tk.Label(self)
+        self.versionLabel["text"] = ("A new version of BEE Manipulator is avaiable!\nCurrent: {0} New: {1}".format(reconfig.version(), reconfig.onlineVersion()))
+        self.versionLabel.grid(row=5, rowspan=2)
+
+        self.ATbtn = tk.Button(self)
+        self.ATbtn["text"] = "Another Time"
+        self.ATbtn["command"] = self.destroy
+        self.ATbtn.grid(row=10, column=0, sticky="w", padx=20, pady=5)
+
+        self.YESbtn = tk.Button(self)
+        self.YESbtn["text"] = "Update!"
+        self.YESbtn["command"] = self.update
+        self.YESbtn.grid(row=10, column=0, sticky="e", padx=20, pady=5, ipadx=10)
+
+    def update(self):
+        try:
+            url = config.load("newVersionUrl")
+            wb.open(url)
+            self.destroy()
+        except:
+            self.YESbtn.destroy()
+            self.ATbtn.destroy()
+            self.versionLabel["text"] = "Can't load download url from config file"
+            
+            self.YESbtn = tk.Button(self)
+            self.YESbtn["text"] = "Ok :C"
+            self.YESbtn["command"] = self.destroy
+            self.YESbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
 
 if __name__=="__main__":
