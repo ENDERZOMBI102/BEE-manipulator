@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from config import *
 import webbrowser as wb
 import os
+from browser import browser
 
 class root(tk.Tk):
     def __init__(self):
@@ -19,7 +20,6 @@ class root(tk.Tk):
         self.iconphoto(False, tk.PhotoImage(file="./assets/icon.ico"))
         # the main container
         self.checkUpdates(window=False)
-        self.mainFrame = tk.Frame(self)
         r"""
             there are the functions to make the main window, every # comment indicates
             what part is build there, to make it more clear and readable
@@ -57,8 +57,9 @@ class root(tk.Tk):
         self.toolBarFrame.add_cascade(label="Options", menu=self.optionMenu)
         self.toolBarFrame.add_cascade(label="Help", menu=self.helpMenu)
         self.configure(menu=self.toolBarFrame)
-        # pack the main frame
-        self.mainFrame.pack()
+        # pack the browser
+        self.browser = browser(self)
+        self.browser.pack()
 		
 
     # file menu
@@ -92,6 +93,7 @@ class root(tk.Tk):
         self.viewNew = aboutWindow(self)
 
     def checkUpdates(self, window = True):
+        # if there's an update open a popup, if not open another popup (if window = true)
         if reconfig.checkUpdates():
             self.updatePopup = updatePopup(self)
         elif window:
@@ -130,7 +132,7 @@ class aboutWindow(tk.Toplevel):
         # ok button
         self.okbtn = tk.Button(self)
         self.okbtn["text"] = "Ok :D"
-        self.okbtn["command"] = self.destroy
+        self.okbtn["command"] = self.destroy # if the button is pressed, destroy the window
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
 class settingsWindow(tk.Toplevel):
@@ -203,5 +205,9 @@ class latestPopup(tk.Toplevel):
 
 
 if __name__=="__main__":
-	root=root()
-	root.mainloop()
+    root=root()
+    root.mainloop()
+
+    
+
+
