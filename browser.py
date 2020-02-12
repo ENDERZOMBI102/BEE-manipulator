@@ -83,6 +83,12 @@ class database:
 				package.contents = pkg["contents"]
 				package.config = pkg["config"]
 			# now that we have our package object, we have to verify and load some thing from the internet
+			# take the file name from the api latest OR from the database if the package isn't on github 
+			if package.service() == "github" and package.filename and not pkg["filename"]:
+				tmp = get(package.url)
+				package.filename == tmp["assets"][0]["name"]
+			elif package.filename:
+				package.filename == pkg["filename"]
 			# obtain the icon url
 			if package.service() == "github":
 				iconurl = package.repo() + "raw\\master\\icon.png"
