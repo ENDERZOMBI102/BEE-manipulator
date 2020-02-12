@@ -18,10 +18,11 @@ class beePackage:
 		self.name = name
 		self.coAuthors = []
 	
-	r"""
-		this will return the used service, for now only github, dropbox and google drive
-	"""
+	
 	def service(self):
+		r"""
+			this will return the used service, for now only github, dropbox and google drive
+		"""
 		if "github" in self.url:
 			return "github"
 		elif "dropbox" in self.url:
@@ -29,20 +30,22 @@ class beePackage:
 		elif "drive.google" in self.url:
 			return "gdrive"
 	
-	r"""
-		this will return the repo link if the package is on github, if the package isn't on github will return None
-	"""
+	
 	def repo(self):
+		r"""
+			this will return the repo link if the package is on github, if the package isn't on github will return None
+		"""
 		if self.service() == "github":
 			splittedUrl = self.url.split("/")
 			return "https://github.com/{0}/{1}/".format(splittedUrl[4],splittedUrl[5])
 		else:
 			return None
 	
-	r"""
-		return the package icon as image object
-	"""
+	
 	def icon(self):
+		r"""
+			return the package icon as image object
+		"""
 		return decode(self.icon64)
 	
 class bmPackage:
@@ -64,16 +67,18 @@ class bmPackage:
 		self.name = name
 		self.coAuthors = []
 	
-	r"""
-		return the package icon as image object
-	"""
+	
 	def icon(self):
+		r"""
+			return the package icon as image object
+		"""
 		return decode(self.icon64)
 
-	r"""
-		this will return the used service, for now only github, dropbox and google drive
-	"""
+	
 	def service(self):
+		r"""
+			this will return the used service, for now only github, dropbox and google drive
+		"""
 		if "github" in self.url:
 			return "github"
 		elif "dropbox" in self.url:
@@ -81,21 +86,23 @@ class bmPackage:
 		elif "drive.google" in self.url:
 			return "gdrive"
 
-	r"""
-		this will return the repo link if the package is on github, if the package isn't on github will return None
-	"""
+	
 	def repo(self):
+		r"""
+			this will return the repo link if the package is on github, if the package isn't on github will return None
+		"""
 		if self.service() == "github":
 			splittedUrl = self.url.split("/")
 			return "https://github.com/{0}/{1}/".format(splittedUrl[4], splittedUrl[5])
 		else:
 			return None
-	r"""
-		for ConFiG OPerations, you can access the config dict directly, but this is the better method, i hope.
-		if no operation aurgment is given, use the default operation, r (read).
-		on read, if the requested "type" doesn't exist, a None is returned.
-	"""
+	
 	def cfgOP(self, type = None, data = None, operation = "r"):
+		r"""
+			for ConFiG OPerations, you can access the config dict directly, but this is the better method, i hope.
+			if no operation aurgment is given, use the default operation, r (read).
+			on read, if the requested "type" doesn't exist, a None is returned.
+		"""
 		if operation == "w":
 			self.config[type] == data
 		else:
