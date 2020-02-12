@@ -9,12 +9,16 @@ class root(tk.Tk):
     def __init__(self):
         # initialize the window
         super().__init__()
+        try:
+            config.check()
+        except:
+            config.create_config()
         self.title("BEE Manipulator v"+str(config.load("appVersion")))
         self.geometry("600x500")
         # set window icon
         self.iconphoto(False, tk.PhotoImage(file="./assets/icon.ico"))
         # the main container
-        self.focus_force()
+        self.checkUpdates(window=False)
         self.mainFrame = tk.Frame(self)
         r"""
             there are the functions to make the main window, every # comment indicates
@@ -87,9 +91,11 @@ class root(tk.Tk):
     def openAboutWindow(self):
         self.viewNew = aboutWindow(self)
 
-    def checkUpdates(self):
+    def checkUpdates(self, window = True):
         if reconfig.checkUpdates():
             self.updatePopup = updatePopup(self)
+        elif window:
+            self.latestPopup = latestPopup(self)
             
 
     def openOfflineWiki(self):
@@ -111,19 +117,21 @@ class aboutWindow(tk.Toplevel):
         The about window
     """
     def __init__(self, master):
-
+        # configure the window
         super().__init__(master)
         self.focus_force()
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
-
+        # the about text
         self.creditsText = tk.Label(self)
         self.creditsText["text"] = (
             '"BEE Manipulator" : \n{\n"Main Developer" : "ENDERZOMBI102",\n"Icon By" : "N\\A",\n"}')
         self.creditsText.grid(row=5, column=0, sticky="s")
-
-    def buttonPressed2(self):
-        pass
+        # ok button
+        self.okbtn = tk.Button(self)
+        self.okbtn["text"] = "Ok :D"
+        self.okbtn["command"] = self.destroy
+        self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
 class settingsWindow(tk.Toplevel):
     r"""
@@ -174,6 +182,24 @@ class updatePopup(tk.Toplevel):
             self.YESbtn["text"] = "Ok :C"
             self.YESbtn["command"] = self.destroy
             self.YESbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
+
+class latestPopup(tk.Toplevel):
+
+    def __init__(self, master):
+
+        super().__init__(master)
+        self.focus_force()
+        self.grid_columnconfigure(10)
+        self.grid_rowconfigure(10)
+
+        self.msgLabel = tk.Label(self)
+        self.msgLabel["text"] = "You have the latest version!"
+        self.msgLabel.grid(row=5, rowspan=2)
+            
+        self.okbtn = tk.Button(self)
+        self.okbtn["text"] = "Ok :D"
+        self.okbtn["command"] = self.destroy
+        self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
 
 if __name__=="__main__":
