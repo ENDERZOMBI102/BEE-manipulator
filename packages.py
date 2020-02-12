@@ -54,7 +54,7 @@ class bmPackage:
 		the icon is stored as base64 string and then returned as image object when icon() is called
 	"""
 
-	def __init__(self, ID=None, author=[], icon64=None, version=0, name = None, desc = None, url = None, content=[], config={}, name=None):
+	def __init__(self, ID=None, author=[], icon64=None, version=0, name = None, desc = None, url = None, content=[], config={}):
 		self.ID = ID
 		self.author = author
 		self.icon64 = icon64
