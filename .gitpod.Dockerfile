@@ -8,8 +8,6 @@ USER gitpod
 # RUN sudo apt-get -q update && #     sudo apt-get install -yq bastet && #     sudo rm -rf /var/lib/apt/lists/*
 #
 # More information: https://www.gitpod.io/docs/42_config_docker/
-
-USER root
-apt-get update
-apt-get i python3-tk
-apt-get i brew
+RUN sudo apt-get update
+RUN sudo apt-get i python3-tk
+RUN sudo apt-get i brew
