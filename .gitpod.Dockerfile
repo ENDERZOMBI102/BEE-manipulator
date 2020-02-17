@@ -10,6 +10,6 @@ USER gitpod
 # More information: https://www.gitpod.io/docs/42_config_docker/
 
 USER root
-sudo apt-get update
-sudo apt-get i python3-tk
-sudo apt-get i brew
+apt-get update
+apt-get i python3-tk
+apt-get i brew
