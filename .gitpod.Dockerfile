@@ -9,5 +9,4 @@ USER gitpod
 #
 # More information: https://www.gitpod.io/docs/42_config_docker/
 RUN sudo apt-get update
-RUN sudo apt-get i python3-tk
-RUN sudo apt-get i brew
+RUN sudo apt-get install -y python3-tk
