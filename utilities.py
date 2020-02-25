@@ -10,3 +10,5 @@ def boolcmp(val):
         return False
     else:
         raise ValueError("invalid input!")
+
+tkRoot = None

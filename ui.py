@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox as msg
-from tkinter.ttk import *
+import tkinter.ttk as ttk
+from typing import Union
 from config import *
+from utilities import *
 import webbrowser as wb
 import os
 from browser import browser
@@ -10,15 +12,12 @@ class root(tk.Tk):
     def __init__(self):
         # initialize the window
         super().__init__()
-        try:
-            config.check()
-        except:
-            config.create_config()
         self.title("BEE Manipulator v"+str(config.load("appVersion")))
         self.geometry("600x500")
         # set window icon
-        self.iconphoto(False, tk.PhotoImage(file="./assets/icon.png"))
-        # the main container
+        self.wm_iconbitmap(default="assets/icon.ico")
+        self.set_window_icon()
+        # check updates
         self.checkUpdates(window=False)
         r"""
             there are the functions to make the main window, every # comment indicates
@@ -42,13 +41,13 @@ class root(tk.Tk):
         self.optionMenu.add_command(label="Reload Packages", command=self.reloadPackages)
         self.optionMenu.add_command(label="Manage Games", command=self.openGameManager)
         self.optionMenu.add_command(label="Manage Packages", command=self.openPackageManager)
+        self.optionMenu.add_command(label="Manage Plugins", command=self.openPackageManager)
         
         # help ttb menu
         self.helpMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
         self.helpMenu.add_command(label="About..", command=self.openAboutWindow)
         self.helpMenu.add_command(label="Check Updates", command=self.checkUpdates)
-        self.helpMenu.add_command(label="Offline Wiki", command=self.openOfflineWiki)
-        self.helpMenu.add_command(label="Online Wiki", command=self.openOnlineWiki)
+        self.helpMenu.add_command(label="Open Wiki", command=self.openWiki)
         self.helpMenu.add_command(label="Github", command=self.openGithub)
         self.helpMenu.add_command(label="Discord", command=self.openDiscord)
 
@@ -99,10 +98,7 @@ class root(tk.Tk):
         elif window:
             self.latestPopup = latestPopup(self)
 
-    def openOfflineWiki(self):
-        pass
-
-    def openOnlineWiki(self):
+    def openWiki(self):
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
 
     def openGithub(self):
@@ -111,6 +107,24 @@ class root(tk.Tk):
     def openDiscord(self):
         wb.open("https://discord.gg/hnGFJrz")
 
+    
+
+    def set_window_icon(window: Union[tk.Toplevel, tk.Tk]):
+        """Set the window icon."""
+        import ctypes
+        # Use Windows APIs to tell the taskbar to group us as our own program,
+        # not with python.exe. Then our icon will apply, and also won't group
+        # with other scripts.
+        try:
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                'BEEMANIPULATOR.application',
+            )
+        except (AttributeError, WindowsError, ValueError):
+            pass  # It's not too bad if it fails.
+
+        LISTBOX_BG_SEL_COLOR = '#0078D7'
+        LISTBOX_BG_COLOR = 'white'
+
 class aboutWindow(tk.Toplevel):
     r"""
         The about window
@@ -118,17 +132,20 @@ class aboutWindow(tk.Toplevel):
     def __init__(self, master):
         # configure the window
         super().__init__(master)
-        self.focus_force()
+        self.winfo_toplevel().title("About BEE Manipulator")
+        self.winfo_toplevel().geometry("240x200")
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
         # the about text
         self.creditsText = tk.Label(self)
-        self.creditsText["text"] = (
-            '"BEE Manipulator" : \n{\n"Main Developer" : "ENDERZOMBI102",\n"Icon By" : "N\\A",\n"}')
+        self.creditsText["text"] = (r'''"BEE Manipulator" : {
+    "Main Developer" : "ENDERZOMBI102",
+    "Icon By" : "N\A"
+}''')
         self.creditsText.grid(row=5, column=0, sticky="s")
-        # ok button
+        # close button
         self.okbtn = tk.Button(self)
-        self.okbtn["text"] = "Ok :D"
+        self.okbtn["text"] = "Close"
         self.okbtn["command"] = self.destroy # if the button is pressed, destroy the window
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
@@ -137,7 +154,7 @@ class settingsWindow(tk.Toplevel):
         this is the window for the settings
     """
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__(master, name='settings')
         
 
 
@@ -148,8 +165,7 @@ class updatePopup(tk.Toplevel):
 
     def __init__(self, master):
 
-        super().__init__(master)
-        self.focus_force()
+        super().__init__(master, name='update Popup')
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
 
@@ -187,7 +203,6 @@ class latestPopup(tk.Toplevel):
     def __init__(self, master):
 
         super().__init__(master)
-        self.focus_force()
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
 
@@ -197,6 +212,24 @@ class latestPopup(tk.Toplevel):
             
         self.okbtn = tk.Button(self)
         self.okbtn["text"] = "Ok :D"
+        self.okbtn["command"] = self.destroy
+        self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
+
+
+class comingsoonPopup(tk.Toplevel):
+
+    def __init__(self, master):
+
+        super().__init__(master)
+        self.grid_columnconfigure(10)
+        self.grid_rowconfigure(10)
+
+        self.msgLabel = tk.Label(self)
+        self.msgLabel["text"] = "Coming Soon!"
+        self.msgLabel.grid(row=5, rowspan=2)
+
+        self.okbtn = tk.Button(self)
+        self.okbtn["text"] = "Close"
         self.okbtn["command"] = self.destroy
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
