@@ -195,7 +195,7 @@ class reconfig():
 		return "".join(nums)
 		  
 	def checkUpdates():
-		if not reconfig.isonline:
+		if not reconfig.isonline():
 			return False
 		ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
 		url = ov["assets"][0]["browser_download_url"]

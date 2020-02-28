@@ -7,5 +7,6 @@ class logWindow(tk.Toplevel):
       def __init__(self):
             pass
       def start(self):
-            super().__init__(tkRoot, name='Logs')
-            self.widgetName = 'Log Windowz'
+            super().__init__(tkRoot, name='logs')
+            self.widgetName = 'Log Window'
+      

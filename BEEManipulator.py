@@ -1,4 +1,5 @@
 import srctools.logger
+from config import *
 from logWindow import logWindow
 from utilities import tkRoot
 from ui import root
@@ -18,6 +19,7 @@ LOGGER.debug('Creating root object..')
 tkRoot = root()
 LOGGER.debug('Created root object!')
 LOGGER.info('Starting log window..')
-logWindow.start()
+logWin = logWindow()
+logWin.start()
 LOGGER.info('Log window started!')
 tkRoot.mainloop()
