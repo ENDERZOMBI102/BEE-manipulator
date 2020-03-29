@@ -1,5 +1,5 @@
 import srctools.logger
-from config import *
+import config
 from logWindow import logWindow
 from utilities import tkRoot
 from ui import root

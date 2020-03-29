@@ -9,4 +9,3 @@ class logWindow(tk.Toplevel):
       def start(self):
             super().__init__(tkRoot, name='logs')
             self.widgetName = 'Log Window'
-      

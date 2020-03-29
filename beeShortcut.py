@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox as msg
 from tkinter.ttk import Progressbar
+from requests import get
 from PIL import Image
-from beeManager import beeManager
-from config import *
+from beeManager import *
+import config
 import subprocess
 
 """
@@ -28,10 +29,10 @@ class bee2UpdaterShortcut(tk.Tk):
         self.loading_bar = Progressbar(self)
         self.loading_bar.pack()
         # check the updates
-        if(beeManager.checkUpdates()):
+        if(checkUpdates()):
             url = config.load("winBeeDownloadUrl")
             # Streaming, so we can iterate over the response.
-            r = requests.get(url, stream=True)
+            r = get(url, stream=True)
             # Total size in bytes.
             total_size = int(r.headers.get('content-length', 0))
             block_size = 1024  # 1 Kibibyte
@@ -39,9 +40,7 @@ class bee2UpdaterShortcut(tk.Tk):
                 for data in r.iter_content(block_size):
                     self.loading_bar.step(len(data))
                     file.write(data)
-            t.close()
-            if total_size != 0 and t.n != total_size:
-                print("ERROR, something went wrong")
+            r.close()
         
 
 if __name__ == "__main__":

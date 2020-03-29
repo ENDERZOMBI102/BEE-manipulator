@@ -12,6 +12,8 @@ pypresence = "*"
 requests = "*"
 cython = "*"
 servepy = "*"
+pyglet = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"

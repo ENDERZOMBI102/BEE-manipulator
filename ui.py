@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import messagebox as msg
 import tkinter.ttk as ttk
 from typing import Union
-from config import *
+import config
 from utilities import *
+from beeManager import *
 import webbrowser as wb
 import os
 from browser import browser
@@ -23,7 +24,7 @@ class root(tk.Tk):
             there are the functions to make the main window, every # comment indicates
             what part is build there, to make it more clear and readable
             ttb = top tool bar
-            TODO: make every menu a class/function
+            TODO: make every dropdown menu a class
         """
         # top tool bar
         self.toolBarFrame = tk.Menu(self, bg="lightgrey", fg="black")
@@ -42,6 +43,12 @@ class root(tk.Tk):
         self.optionMenu.add_command(label="Manage Games", command=self.openGameManager)
         self.optionMenu.add_command(label="Manage Packages", command=self.openPackageManager)
         self.optionMenu.add_command(label="Manage Plugins", command=self.openPackageManager)
+
+        # options ttb menu
+        self.portal2 = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
+        self.portal2.add_command(label="Verify Game Cache", command=self.verifyGameCache)
+        self.portal2.add_command(label="Uninstall BEE2.4", command=self.uninstallBee)
+        self.portal2.add_command(label="Install BEE2.4", command=self.installBee)
         
         # help ttb menu
         self.helpMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
@@ -54,6 +61,7 @@ class root(tk.Tk):
         # put all the ttb together
         self.toolBarFrame.add_cascade(label="File", menu=self.fileMenu)
         self.toolBarFrame.add_cascade(label="Options", menu=self.optionMenu)
+        self.toolBarFrame.add_cascade(label="Portal 2", menu=self.portal2)
         self.toolBarFrame.add_cascade(label="Help", menu=self.helpMenu)
         self.configure(menu=self.toolBarFrame)
         # pack the browser
@@ -63,10 +71,15 @@ class root(tk.Tk):
 
     # file menu
     def openp2dir(self):
-        os.startfile(reconfig.portalDir())
+        os.startfile(config.portalDir())
 
     def openBEEdir(self):
-        pass
+        if(config.beePath() is None):
+            popup = popup(self, "BEE isn't installed")
+        else:
+            pass
+
+
 
     def syncGames(self):
         pass
@@ -93,10 +106,10 @@ class root(tk.Tk):
 
     def checkUpdates(self, window = True):
         # if there's an update open a popup, if not open another popup (if window = true)
-        if reconfig.checkUpdates():
+        if config.checkUpdates():
             self.updatePopup = updatePopup(self)
         elif window:
-            self.latestPopup = latestPopup(self)
+            self.popup = popup(self, "you have the latest version!", 2)
 
     def openWiki(self):
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
@@ -106,6 +119,15 @@ class root(tk.Tk):
 
     def openDiscord(self):
         wb.open("https://discord.gg/hnGFJrz")
+
+    def verifyGameCache(self):
+        pass
+
+    def uninstallBee(self):
+        pass
+
+    def installBee(self):
+        pass
 
     
 
@@ -160,7 +182,7 @@ class settingsWindow(tk.Toplevel):
 
 class updatePopup(tk.Toplevel):
     r"""
-        The about window
+        The update window
     """
 
     def __init__(self, master):
@@ -170,7 +192,7 @@ class updatePopup(tk.Toplevel):
         self.grid_rowconfigure(10)
 
         self.versionLabel = tk.Label(self)
-        self.versionLabel["text"] = ("A new version of BEE Manipulator is avaiable!\nCurrent: {0} New: {1}".format(reconfig.version(), reconfig.onlineVersion()))
+        self.versionLabel["text"] = ("A new version of BEE Manipulator is avaiable!\nCurrent: {0} New: {1}".format(version(), onlineVersion()))
         self.versionLabel.grid(row=5, rowspan=2)
 
         self.ATbtn = tk.Button(self)
@@ -198,38 +220,33 @@ class updatePopup(tk.Toplevel):
             self.YESbtn["command"] = self.destroy
             self.YESbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
-class latestPopup(tk.Toplevel):
-
-    def __init__(self, master):
-
+class popup(tk.Toplevel):
+    r"""
+        a basic popup, text is the text it display
+        closeButtonStyle can be multiple values:
+        0 : Close
+        1 : Ok
+        2 : Ok :D
+    """
+    def __init__(self, master, text, closeButtonStyle = 0):
+        if closeButtonStyle == 0:
+            closeButtonText = "Close"
+        elif closeButtonStyle == 1:
+            closeButtonText = "Ok"
+        elif closeButtonStyle == 2:
+            closeButtonText = "Ok :D"
+        else:
+            closeButtonText = "Close"
         super().__init__(master)
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
 
         self.msgLabel = tk.Label(self)
-        self.msgLabel["text"] = "You have the latest version!"
-        self.msgLabel.grid(row=5, rowspan=2)
-            
-        self.okbtn = tk.Button(self)
-        self.okbtn["text"] = "Ok :D"
-        self.okbtn["command"] = self.destroy
-        self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
-
-
-class comingsoonPopup(tk.Toplevel):
-
-    def __init__(self, master):
-
-        super().__init__(master)
-        self.grid_columnconfigure(10)
-        self.grid_rowconfigure(10)
-
-        self.msgLabel = tk.Label(self)
-        self.msgLabel["text"] = "Coming Soon!"
+        self.msgLabel["text"] = text
         self.msgLabel.grid(row=5, rowspan=2)
 
         self.okbtn = tk.Button(self)
-        self.okbtn["text"] = "Close"
+        self.okbtn["text"] = closeButtonText
         self.okbtn["command"] = self.destroy
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
