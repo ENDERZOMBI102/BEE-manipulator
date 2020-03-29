@@ -7,8 +7,8 @@ from config import *
 from utilities import boolcmp
 import io
 
-def checkUpdates():#return true if an update is available, false if there isn't or the pc is offline
-    if not load("beeUpdateUrl") == None:
+def checkBeeUpdates():#return true if an update is available, false if there isn't or the pc is offline
+    if not load("beeUpdateUrl") == "None":
         return True 
     try:# get the latest metadata
         data = get("https://api.github.com/repos/BEEmod/BEE2.4/releases/latest")
@@ -20,17 +20,15 @@ def checkUpdates():#return true if an update is available, false if there isn't 
         if i in ['0','1','2','3','4','5','6','7','8','9','.']:
             onlineVersion.append(i)# add the char to the final list
     onlineVersion = "".join(onlineVersion)# the list is converted to a string
-    if int(onlineVersion) > reconfig.version():# is the online version more updated? if not, return False
+    if int(onlineVersion) > version():# is the online version more updated? if not, return False
         if boolcmp(data["draft"]):# is the online version a draft? if yes return False
+            save("None", "beeUpdateUrl")
             return False
-        # check if a prerelease is avaiable, return True if beePresereleases and prerelease values are true
+        # check if a prerelease is avaiable, return false if it is
         elif boolcmp(data["prerelease"]):
-            if boolcmp(load("beePrereleases")):
-                save(getUrl(data), "beeUpdateUrl")
-                return True
-            else:
-                return False
-        else:
+            save("None", "beeUpdateUrl")
+            return False
+        else:# else return true and save the download url
             save(getUrl(data), "beeUpdateUrl")
             return True
 
@@ -44,7 +42,7 @@ def getUrl(data):
             return asset["browser_download_url"]
     raise Exception("how this happened?, you're on linux?")        
 
-def update():
+def updateBee():
     r"""
     this will update BEE, when called, the function
     will download the latest version based on the
@@ -64,18 +62,18 @@ def update():
     d_url = data['assets'][0]['browser_download_url']
     data = get(d_url)	
     zipdata = ZipFile(io.BytesIO(data.content))
-    zipdata.extractall("BEE2")
+    zipdata.extractall(load("beePath"))
 
-def startBee():
+async def startBee():
     r"""
     Use this to start BEE2
     this is dynamic, call a exec if is on 
     windows and another one if is on MacOS
     """
     if os == "win32":
-        call([load('BEEpath'), ''])
+        await run(load('BEEpath')+"/BEE2.exe")
     else:
-        call(['.\BEE2', ''])
+        raise Exception("you should use this with windows")
 
 
 class configManager():

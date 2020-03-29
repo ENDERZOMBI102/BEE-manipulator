@@ -8,6 +8,7 @@ from beeManager import *
 import webbrowser as wb
 import os
 from browser import browser
+from settingsUI import settingsWindow
 
 class root(tk.Tk):
     def __init__(self):
@@ -17,7 +18,7 @@ class root(tk.Tk):
         self.geometry("600x500")
         # set window icon
         self.wm_iconbitmap(default="assets/icon.ico")
-        self.set_window_icon()
+        self.set_window_icon(self)
         # check updates
         self.checkUpdates(window=False)
         r"""
@@ -127,11 +128,11 @@ class root(tk.Tk):
         pass
 
     def installBee(self):
-        pass
+        
 
     
 
-    def set_window_icon(window: Union[tk.Toplevel, tk.Tk]):
+    def set_window_icon(self, window: Union[tk.Toplevel, tk.Tk]):
         """Set the window icon."""
         import ctypes
         # Use Windows APIs to tell the taskbar to group us as our own program,
@@ -170,13 +171,6 @@ class aboutWindow(tk.Toplevel):
         self.okbtn["text"] = "Close"
         self.okbtn["command"] = self.destroy # if the button is pressed, destroy the window
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
-
-class settingsWindow(tk.Toplevel):
-    r"""
-        this is the window for the settings
-    """
-    def __init__(self, master):
-        super().__init__(master, name='settings')
         
 
 

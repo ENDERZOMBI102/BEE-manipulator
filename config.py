@@ -145,6 +145,7 @@ def portalDir():
 		for path in library:
 			try:
 				with open(path + "appmanifest_620.acf", "r") as file:
+					print(path)
 					pass
 				# if yes save it
 				save(path + "common/Portal 2/", "portal2Dir")
@@ -163,15 +164,17 @@ def libraryFolders():
 	try:
 		with open(steamDir() + "/steamapps/libraryfolders.vdf", "r") as file:
 			library = Property.parse(file, "libraryfolders.vdf").as_dict()
+			print(library)
 			try:
 				# check for other libraries
 				for i in range(10):
-					paths.append(library[i] + "/steamapps/")
+					paths.append(library[str(i)] + "/steamapps/")
 			except:
 				pass
 	except:
 		raise Exception("Error while reading steam library file")
 	# return the "compiled" list of libraries
+	print(paths)
 	return paths
 
 def steamUsername():
