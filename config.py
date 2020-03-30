@@ -3,26 +3,29 @@ from os import path# for open files
 from sys import platform# for knowing where the file is executed on
 from requests import get# for the the connection
 from srctools.property_parser import Property# for parse vdfs files
+from srctools.logger import get_logger
 from utilities import *
 from winreg import *
 
-"""list of the configs:
-	-auto exit, boolean, exit the app after complete the current operation.
-	-auto launch bee2, boolean, auto launch bee2 after complete the current operation.
-	-bee2 current version, string-float, the version of the current installed bee2, if zero bee2 isn't installed.
-	-packages corrent version, array-string, the version of the current installed packages.
-	-manipulator current version, float, current version of the app.
-	-portal 2 path, string,  explaining.
-	-bee2 is used, boolean, sef explaining, given by if the vbsp_original file is present.
-	-enable prerelease, boolean,  explaining, enable prerelease as update.
-	-auto update, boolean,  explaining, auto update the app and bee2.4
-"""
+logger = get_logger("config")
 
-
-def createConfig():# create the config file
-	cfg='{"config_type": "BEE2.4 Manipulator Config File","appVersion": "0.0.1","lastVersion": "false","beePrereleases":"false","beeUpdateUrl": "None", "steamDir":"None","portal2Dir":"None"}'
+def createConfig():
+	r"""
+		a "simple" function that make the config file
+	"""
+	cfg={
+			"config_type": "BEE2.4 Manipulator Config File",
+			"appVersion": "0.0.1",
+			"lastVersion": False,
+			"beePrereleases":False,
+			"beeUpdateUrl": None,
+			"steamDir":None,
+			"portal2Dir":None,
+			"beePath": None,
+			"logLevel": "info"
+		}
 	with open('config.cfg', 'w', encoding="utf-8") as file:
-		json.dump(json.loads(cfg), file, indent=3)
+		json.dump(cfg, file, indent=3)
 
 def load(section):# load a config
 	r"""
@@ -71,9 +74,9 @@ def check(arg = None):
 	try:
 		with open('config.cfg', 'r') as file:
 			cfg = json.load(file)
+			return True
 	except:
-		createConfig()
-		return
+		return False
 	if arg is None:# check the aurgment is present
 		try:
 			# check if EVERY config exists
@@ -87,16 +90,14 @@ def check(arg = None):
 			x = cfg['config_type']
 		except:
 			# the config file is not a BM config file
-			createConfig()
-			return
+			return False
 		# final check
 		if cfg['config_type'] == "BEE2.4 Manipulator Config File":
 			# the check is made successfully
-			return
+			return True
 		else:
 			# the config file is not a BM config file
-			createConfig()
-			return
+			return False
 	try:
 		with open("config.cfg", 'r') as file:  # try to open the config file
 			cfg = json.load(file) # load the config file
@@ -119,7 +120,7 @@ def steamDir( cmde = False):
 	if check("steamDir"):
 		pass
 
-	if not load("steamDir") == "None":
+	if not load("steamDir") is None:
 		return load("steamDir")
 	elif platform == "win32":
 		# get the steam directory from the windows registry
@@ -137,7 +138,7 @@ def steamDir( cmde = False):
 			return "Error while reading registry"
 
 def portalDir():
-	if not load("portal2Dir") == "None":
+	if not load("portal2Dir") is None:
 		return load("portal2Dir")
 	else:
 		# check every library if has p2 installed in it
@@ -164,7 +165,6 @@ def libraryFolders():
 	try:
 		with open(steamDir() + "/steamapps/libraryfolders.vdf", "r") as file:
 			library = Property.parse(file, "libraryfolders.vdf").as_dict()
-			print(library)
 			try:
 				# check for other libraries
 				for i in range(10):
@@ -174,7 +174,6 @@ def libraryFolders():
 	except:
 		raise Exception("Error while reading steam library file")
 	# return the "compiled" list of libraries
-	print(paths)
 	return paths
 
 def steamUsername():
