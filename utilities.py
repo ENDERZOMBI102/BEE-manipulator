@@ -1,4 +1,6 @@
 from config import *
+from typing import Union
+import tkinter as tk
 
 def boolcmp(value):
     r"""
@@ -27,4 +29,23 @@ def toNumbers(arg=None):
 	        nums.append(i)
 	return int("".join(nums))
 
+
+def set_window_icon(window: Union[tk.Toplevel, tk.Tk]):
+	"""Set the window icon."""
+	import ctypes
+	# Use Windows APIs to tell the taskbar to group us as our own program,
+	# not with python.exe. Then our icon will apply, and also won't group
+	# with other scripts.
+	try:
+		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+			'BEEMANIPULATOR.application',
+		)
+	except (AttributeError, WindowsError, ValueError) as e:
+		print(e)
+		pass  # It's not too bad if it fails.
+
+	LISTBOX_BG_SEL_COLOR = '#0078D7'
+	LISTBOX_BG_COLOR = 'white'
+
+argv = []
 tkRoot = None

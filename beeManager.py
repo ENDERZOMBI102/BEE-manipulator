@@ -3,9 +3,10 @@ from subprocess import *
 from zipfile import *
 from threading import Thread
 from sys import platform as os
+from os import getenv
 from config import *
 from utilities import boolcmp
-import io
+from io import BytesIO
 
 def checkBeeUpdates():#return true if an update is available, false if there isn't or the pc is offline
     if not load("beeUpdateUrl") == "None":
@@ -35,7 +36,7 @@ def checkBeeUpdates():#return true if an update is available, false if there isn
 def getUrl(data):
     # cicle in the assets
     for asset in data["assets"]:
-        # get the correct url
+        # get the correct url for the OS we're on
         if "mac" in asset["name"] and "darwin" in os:
             return asset["browser_download_url"]
         elif "win" in asset["name"] and "win" in os:
@@ -52,8 +53,8 @@ def updateBee():
     try:
         r = get(load("beeUpdateUrl"))#download BEE
     except Exception as e:
-        raise downloadError("filed to complete the download.\n"+e)
-    zipdata = ZipFile(io.BytesIO(r.content)) # load and convert the data to a bytes stream
+        raise downloadError("failed to complete the download.\n"+e)
+    zipdata = ZipFile(BytesIO(r.content)) # load and convert the data to a bytes stream
     zipdata.extractall("BEE2")# extract BEE
     try:
         data = get('https://api.github.com/repos/BEEmod/BEE2-items/releases/latest').json()
@@ -61,27 +62,54 @@ def updateBee():
         raise downloadError("failed to complete the donwload.\n"+e)
     d_url = data['assets'][0]['browser_download_url']
     data = get(d_url)	
-    zipdata = ZipFile(io.BytesIO(data.content))
+    zipdata = ZipFile(BytesIO(data.content))
     zipdata.extractall(load("beePath"))
 
 async def startBee():
     r"""
     Use this to start BEE2
-    this is dynamic, call a exec if is on 
-    windows and another one if is on MacOS
+    raise an exception if we're not on windows
     """
     if os == "win32":
         await run(load('BEEpath')+"/BEE2.exe")
     else:
         raise Exception("you should use this with windows")
 
+def verifyGameCache():
+    # try to delete the bee2 folder ine p2 root dir
+    try:
+        os.rmdir(portalDir() + "/bee2")
+    except:
+        pass
+    # try to remove the bee2 dir inside the bin folder
+    try:
+        os.rmdir(portalDir() + "/bin/bee2")
+    except:
+        pass
+    # try to remove the bee2 compilers
+    try:
+        os.remove()
+    except:
+        pass
 
-class configManager():
+class configManager:
     r"""
     BEE2.4 config manager
     this definition contains some userful commands to
     manipulate the config files
     """
+    def addGame(path = ""):
+        data = r"""[Portal 2]
+steamid = 620
+dir = {0}
+""".format(path)
+        with open(getenv('APPDATA').replace("\\", "/") + "/BEEMOD2/config/games.cfg", "w") as file:
+            file.write(data)
+
+            
+
 
 class downloadError(Exception):
     pass
+if __name__ == "__main__":
+    configManager.addGame("c:/hellothere")

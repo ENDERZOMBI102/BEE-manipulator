@@ -1,13 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox as msg
 import tkinter.ttk as ttk
-from typing import Union
 import config
 from utilities import *
-from beeManager import *
+import beeManager
 import webbrowser as wb
 import os
+import logWindow
 from browser import browser
+from utilities import set_window_icon
 from settingsUI import settingsWindow
 
 class root(tk.Tk):
@@ -16,10 +17,13 @@ class root(tk.Tk):
         super().__init__()
         self.title("BEE Manipulator v"+str(config.load("appVersion")))
         self.geometry("600x500")
+        self.lift()
         # set window icon
         self.wm_iconbitmap(default="assets/icon.ico")
-        self.set_window_icon(self)
+        set_window_icon(self)
         # check updates
+        logWindow.init(self)
+        logWindow.toggleVisibility()
         self.checkUpdates(window=False)
         r"""
             there are the functions to make the main window, every # comment indicates
@@ -76,7 +80,7 @@ class root(tk.Tk):
 
     def openBEEdir(self):
         if(config.beePath() is None):
-            popup = popup(self, "BEE isn't installed")
+            popup = popup(self, "Error", "BEE isn't installed", canBeClosed=False)
         else:
             pass
 
@@ -110,7 +114,7 @@ class root(tk.Tk):
         if config.checkUpdates():
             self.updatePopup = updatePopup(self)
         elif window:
-            self.popup = popup(self, "you have the latest version!", 2)
+            self.popup = popup(self, "Update Checker", "you have the latest version!", 2, False)
 
     def openWiki(self):
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
@@ -122,31 +126,13 @@ class root(tk.Tk):
         wb.open("https://discord.gg/hnGFJrz")
 
     def verifyGameCache(self):
-        pass
+        beeManager.verifyGameCache()
 
     def uninstallBee(self):
         pass
 
     def installBee(self):
-        
-
-    
-
-    def set_window_icon(self, window: Union[tk.Toplevel, tk.Tk]):
-        """Set the window icon."""
-        import ctypes
-        # Use Windows APIs to tell the taskbar to group us as our own program,
-        # not with python.exe. Then our icon will apply, and also won't group
-        # with other scripts.
-        try:
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                'BEEMANIPULATOR.application',
-            )
-        except (AttributeError, WindowsError, ValueError):
-            pass  # It's not too bad if it fails.
-
-        LISTBOX_BG_SEL_COLOR = '#0078D7'
-        LISTBOX_BG_COLOR = 'white'
+        pass
 
 class aboutWindow(tk.Toplevel):
     r"""
@@ -165,7 +151,7 @@ class aboutWindow(tk.Toplevel):
     "Main Developer" : "ENDERZOMBI102",
     "Icon By" : "N\A"
 }''')
-        self.creditsText.grid(row=5, column=0, sticky="s")
+        self.creditsText.grid(row=5, column=0, sticky="snew")
         # close button
         self.okbtn = tk.Button(self)
         self.okbtn["text"] = "Close"
@@ -222,7 +208,7 @@ class popup(tk.Toplevel):
         1 : Ok
         2 : Ok :D
     """
-    def __init__(self, master, text, closeButtonStyle = 0):
+    def __init__(self, master, title, text, closeButtonStyle = 0, canBeClosed = True):
         if closeButtonStyle == 0:
             closeButtonText = "Close"
         elif closeButtonStyle == 1:
@@ -232,6 +218,10 @@ class popup(tk.Toplevel):
         else:
             closeButtonText = "Close"
         super().__init__(master)
+        self.wm_withdraw()
+        if not canBeClosed:
+            self.protocol('WM_DELETE_WINDOW', None)
+        self.title = title
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
 
@@ -243,6 +233,7 @@ class popup(tk.Toplevel):
         self.okbtn["text"] = closeButtonText
         self.okbtn["command"] = self.destroy
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
+        self.wm_deiconify()
 
 
 if __name__=="__main__":

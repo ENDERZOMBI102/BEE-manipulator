@@ -156,8 +156,7 @@ def portalDir():
 				continue
 	
 
-def discordToken():
-	return "655075172767760384"
+discordToken = "655075172767760384"
 			
 def libraryFolders():
 	paths = []# create a list for library paths
@@ -186,7 +185,7 @@ def steamUsername():
 		keyValue = QueryValueEx(aKey, "LastGameNameUsed")
 		return keyValue[0]
 	except:
-		return "Error while reading registry"
+		return None
 		
 def checkUpdates():
 	if not isonline():
@@ -208,8 +207,10 @@ def checkUpdates():
 		save(url, "newVersionUrl")
 		return False
 
+
 def version():
 	return load("appVersion")
+
 
 def onlineVersion():
 	return load("onlineAppVersion")
