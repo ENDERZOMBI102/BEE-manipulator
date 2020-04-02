@@ -12,7 +12,6 @@ argvUT = argv
 srctools.logger.init_logging("./logs/latest.log")
 LOGGER = srctools.logger.get_logger('BEE Manipulator')
 
-LOGGER.info('Starting BEE Manipulator!')
 LOGGER.info('Checking config file..')
 if config.check():
       LOGGER.info('Valid config file found!')
@@ -20,6 +19,7 @@ else:
       LOGGER.error('Invalid or inesistent config file detected! Creating new one..')
       config.createConfig()
       LOGGER.info('Config file created!')
+LOGGER.info(f'Starting BEE Manipulator v{config.version}!')
 LOGGER.info('started ui!')
 tkRoot = root()
 tkRoot.mainloop()

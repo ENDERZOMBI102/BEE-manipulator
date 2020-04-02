@@ -1,6 +1,7 @@
 import utilities
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter.scrolledtext import *
 import config
 import srctools.logger
 import logging
@@ -35,19 +36,17 @@ class handler(logging.Handler):
         super().__init__(getLevel())
         global textBox
         
-
         
-
-
 def init(tkRoot):
     global window, textBox
     window = tk.Toplevel(tkRoot)
+    window.transient(tkRoot)
     window.wm_withdraw()
     window.columnconfigure(0, weight=1)
     window.rowconfigure(0, weight=1)
-    window.title(f'Logs - {config.version()}')
-    window.protocol('WM_DELETE_WINDOW', window.wm_withdraw)
-    textBox = tk.Text(
+    window.title('Logs')
+    window.protocol('WM_DELETE_WINDOW', toggleVisibility)
+    textBox = ScrolledText(
 		window,
 		name='textBox',
 		width=60,

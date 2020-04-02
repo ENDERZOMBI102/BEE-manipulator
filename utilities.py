@@ -1,6 +1,7 @@
 from config import *
 from typing import Union
 import tkinter as tk
+import tkinter.commondialog as cd
 
 def boolcmp(value):
     r"""
@@ -17,6 +18,7 @@ def boolcmp(value):
 def isonline():
 	try:
 	    get("www.google.com")
+		
 	    return True
 	except:
 	    return False

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox as msg
 import tkinter.ttk as ttk
 import config
+from typing import Union
 from utilities import *
 import beeManager
 import webbrowser as wb
@@ -10,6 +11,7 @@ import logWindow
 from browser import browser
 from utilities import set_window_icon
 from settingsUI import settingsWindow
+from srctools.logger import get_logger
 
 class root(tk.Tk):
     def __init__(self):
@@ -23,7 +25,13 @@ class root(tk.Tk):
         set_window_icon(self)
         # check updates
         logWindow.init(self)
-        logWindow.toggleVisibility()
+        LOGGER = get_logger("mainLoop")
+        try:
+            if (config.load("logWinodowVisible")):
+                logWindow.toggleVisibility()
+        except:
+            logWindow.toggleVisibility()
+        self.LOGGER.debug("starting background update check for BEE Manipulator")
         self.checkUpdates(window=False)
         r"""
             there are the functions to make the main window, every # comment indicates
@@ -60,6 +68,7 @@ class root(tk.Tk):
         self.helpMenu.add_command(label="About..", command=self.openAboutWindow)
         self.helpMenu.add_command(label="Check Updates", command=self.checkUpdates)
         self.helpMenu.add_command(label="Open Wiki", command=self.openWiki)
+        self.helpMenu.add_command(label="Toggle Log Window", command=logWindow.toggleVisibility)
         self.helpMenu.add_command(label="Github", command=self.openGithub)
         self.helpMenu.add_command(label="Discord", command=self.openDiscord)
 
@@ -73,14 +82,15 @@ class root(tk.Tk):
         self.browser = browser(self)
         self.browser.pack()
 		
+        self.bind("<Control-l>", logWindow.toggleVisibility)
 
     # file menu
     def openp2dir(self):
         os.startfile(config.portalDir())
 
     def openBEEdir(self):
-        if(config.beePath() is None):
-            popup = popup(self, "Error", "BEE isn't installed", canBeClosed=False)
+        if(config.load("beePath") is None):
+            self.viewNew = simplePopup(self, "Error", "BEE isn't installed", canBeClosed=False)
         else:
             pass
 
@@ -91,6 +101,7 @@ class root(tk.Tk):
 
     # options menu
     def openSettingsWindow(self):
+        self.LOGGER.debug("opening settings window!")
         self.viewNew = settingsWindow(self)    
     
     def reloadConfig(self):
@@ -107,26 +118,35 @@ class root(tk.Tk):
 
     # help menu
     def openAboutWindow(self):
+        self.LOGGER.debug("opening about window")
         self.viewNew = aboutWindow(self)
 
     def checkUpdates(self, window = True):
         # if there's an update open a popup, if not open another popup (if window = true)
         if config.checkUpdates():
-            self.updatePopup = updatePopup(self)
+            self.LOGGER.debug("opening update popup")
+            self.viewNew = updatePopup(self)
         elif window:
-            self.popup = popup(self, "Update Checker", "you have the latest version!", 2, False)
+            self.LOGGER.info("latest version already instelled")
+            self.LOGGER.debug("opening \"latest version\" popup")
+            self.viewNew = simplePopup(self, 'Update Checker', "you have the latest version!", 2, False)
 
     def openWiki(self):
+        self.LOGGER.debug(
+            "starting browser instance with url: https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
 
     def openGithub(self):
+        self.LOGGER.debug("starting browser instance with url: https://github.com/ENDERZOMBI102/BEE-manipulator/")
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/")
 
     def openDiscord(self):
+        self.LOGGER.debug("starting browser instance with url: https://discord.gg/hnGFJrz")
         wb.open("https://discord.gg/hnGFJrz")
 
     def verifyGameCache(self):
-        beeManager.verifyGameCache()
+        self.LOGGER.debug("displaying message box \"usure\"")
+        self.viewNew = simplePopup(self, )
 
     def uninstallBee(self):
         pass
@@ -200,27 +220,32 @@ class updatePopup(tk.Toplevel):
             self.YESbtn["command"] = self.destroy
             self.YESbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
 
-class popup(tk.Toplevel):
+class simplePopup(tk.Toplevel):
     r"""
         a basic popup, text is the text it display
         closeButtonStyle can be multiple values:
         0 : Close
         1 : Ok
         2 : Ok :D
+        3 : use the closeButton parameter
+        closeButtonAction will make the close button start a callback
     """
-    def __init__(self, master, title, text, closeButtonStyle = 0, canBeClosed = True):
-        if closeButtonStyle == 0:
-            closeButtonText = "Close"
-        elif closeButtonStyle == 1:
-            closeButtonText = "Ok"
-        elif closeButtonStyle == 2:
-            closeButtonText = "Ok :D"
+    def __init__(self, master: Union[tk.Toplevel, tk.Tk], title: str, text: str, closeButtonStyle = 0, canBeClosed = True, closeButton = "", closeButtonAction = None):
+        #set button callback
+        self.callBack = closeButtonAction
+        # set the button text
+        if closeButtonStyle == 0: closeButtonText = "Close"
+        elif closeButtonStyle == 1: closeButtonText = "Ok"
+        elif closeButtonStyle == 2: closeButtonText = "Ok :D"
+        elif closeButtonStyle == 3: closeButtonText = closeButton
         else:
-            closeButtonText = "Close"
+            raise ValueError(f'{closeButtonStyle} isn\'t a valid selection! valid selections: 0, 1, 2 and 3')
         super().__init__(master)
+        self.transient(master)
         self.wm_withdraw()
+        set_window_icon(self)
         if not canBeClosed:
-            self.protocol('WM_DELETE_WINDOW', None)
+            self.protocol('WM_DELETE_WINDOW', self.wm_deiconify)
         self.title = title
         self.grid_columnconfigure(10)
         self.grid_rowconfigure(10)
@@ -231,15 +256,15 @@ class popup(tk.Toplevel):
 
         self.okbtn = tk.Button(self)
         self.okbtn["text"] = closeButtonText
-        self.okbtn["command"] = self.destroy
+        self.okbtn["command"] = self.runCallBack
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
         self.wm_deiconify()
+
+    def runCallBack(self):
+        self.destroy()
+        self.callBack()
 
 
 if __name__=="__main__":
     root=root()
     root.mainloop()
-
-    
-
-

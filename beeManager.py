@@ -92,6 +92,7 @@ def verifyGameCache():
     except:
         pass
 
+
 class configManager:
     r"""
     BEE2.4 config manager
@@ -99,14 +100,11 @@ class configManager:
     manipulate the config files
     """
     def addGame(path = ""):
-        data = r"""[Portal 2]
-steamid = 620
-dir = {0}
-""".format(path)
+        import configparser
+        data = configparser.ConfigParser()
+        data['Portal 2'] = {'steamid': '620', 'dir': path}
         with open(getenv('APPDATA').replace("\\", "/") + "/BEEMOD2/config/games.cfg", "w") as file:
-            file.write(data)
-
-            
+            data.write(file)
 
 
 class downloadError(Exception):
