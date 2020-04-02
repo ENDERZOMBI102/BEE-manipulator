@@ -127,10 +127,10 @@
         },
         "pypresence": {
             "hashes": [
-                "sha256:d39f8eb79c521ae2f3dd8e2dbfa204d7df4201f044b68bcae6339c75b87dfb7b"
+                "sha256:8eed4871d25f5c6bf52710bf2a9fe18601dc58c74726917e87c685de2e9151d9"
             ],
             "index": "pypi",
-            "version": "==3.3.2"
+            "version": "==4.0.0"
         },
         "requests": {
             "hashes": [
