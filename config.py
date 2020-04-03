@@ -22,6 +22,7 @@ def createConfig():
 			"steamDir":None,
 			"portal2Dir":None,
 			"beePath": None,
+			"logWindowVisible": False,
 			"logLevel": "info"
 		}
 	with open('config.cfg', 'w', encoding="utf-8") as file:
@@ -65,6 +66,28 @@ def save(data, section):# save a config
 			json.dump(cfg, file, indent=3)
 	except:
 		raise configError("error while saving the config")
+
+def loadAll():
+	try:
+		logger.debug("loading config file")
+		with open('config.cfg', 'r', encoding="utf-8") as file:
+			cfg = json.load(file)  # load the config file
+			logger.debug("config file loaded, returning it as dict")
+		return cfg
+	except:
+		logger.error("no config file found! creating & loading new one")
+		createConfig()# create new config file and call the function again
+		return loadAll()
+
+def saveAll(cfg: dict):
+	"""
+	this saves the config file object returned from loadAll()
+	"""
+	try:
+		with open('config.cfg', 'w', encoding="utf-8") as file:
+			json.dump(cfg, file, indent=3)
+	except:
+		logger.error("An error happened while saving config file, please open the console and")
 
 def check(arg = None):
 	r"""
@@ -126,16 +149,18 @@ def steamDir( cmde = False):
 		# get the steam directory from the windows registry
 		# HKEY_CURRENT_USER\Software\Valve\Steam
 		try:
+			logger.debug("Opening windows registry...")
 			with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
 				aKey = OpenKey(reg, r"Software\Valve\Steam")
 		except Exception as e:
+			logger.error("Can't open windows registry! this is *VERY* bad!")
 			raise Exception(e)
 		try:
 			keyValue = QueryValueEx(aKey, "SteamPath")
 			save(keyValue[0], "steamDir")
 			return keyValue[0]
 		except:
-			return "Error while reading registry"
+			raise KeyError("Can't open/find the steam registry keys")
 
 def portalDir():
 	if not load("portal2Dir") is None:

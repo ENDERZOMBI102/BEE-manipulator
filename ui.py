@@ -17,7 +17,7 @@ class root(tk.Tk):
     def __init__(self):
         # initialize the window
         super().__init__()
-        self.title("BEE Manipulator v"+str(config.load("appVersion")))
+        self.wm_title(f'BEE Manipulator v{config.version()}')
         self.geometry("600x500")
         self.lift()
         # set window icon
@@ -25,7 +25,7 @@ class root(tk.Tk):
         set_window_icon(self)
         # check updates
         logWindow.init(self)
-        LOGGER = get_logger("mainLoop")
+        self.LOGGER = get_logger("mainLoop")
         try:
             if (config.load("logWinodowVisible")):
                 logWindow.toggleVisibility()
@@ -51,6 +51,7 @@ class root(tk.Tk):
         # options ttb menu
         self.optionMenu = tk.Menu(self.toolBarFrame, tearoff=0, bg="white", fg="black")
         self.optionMenu.add_command(label="Settings", command=self.openSettingsWindow)
+        self.optionMenu.add_command(label="Toggle Log Window", command=logWindow.toggleVisibility)
         self.optionMenu.add_command(label="Reload Configs", command=self.reloadConfig)
         self.optionMenu.add_command(label="Reload Packages", command=self.reloadPackages)
         self.optionMenu.add_command(label="Manage Games", command=self.openGameManager)
@@ -68,7 +69,6 @@ class root(tk.Tk):
         self.helpMenu.add_command(label="About..", command=self.openAboutWindow)
         self.helpMenu.add_command(label="Check Updates", command=self.checkUpdates)
         self.helpMenu.add_command(label="Open Wiki", command=self.openWiki)
-        self.helpMenu.add_command(label="Toggle Log Window", command=logWindow.toggleVisibility)
         self.helpMenu.add_command(label="Github", command=self.openGithub)
         self.helpMenu.add_command(label="Discord", command=self.openDiscord)
 
@@ -228,27 +228,29 @@ class simplePopup(tk.Toplevel):
         1 : Ok
         2 : Ok :D
         3 : use the closeButton parameter
-        closeButtonAction will make the close button start a callback
+        callBack will make the close button start a callback
     """
-    def __init__(self, master: Union[tk.Toplevel, tk.Tk], title: str, text: str, closeButtonStyle = 0, canBeClosed = True, closeButton = "", closeButtonAction = None):
+    def __init__(self, master: Union[tk.Toplevel, tk.Tk], title: str, text: str, closeButtonStyle = 0, canBeClosed = True, closeButton = "", callBack = None):
         #set button callback
-        self.callBack = closeButtonAction
+        self.callBack = callBack
         # set the button text
         if closeButtonStyle == 0: closeButtonText = "Close"
         elif closeButtonStyle == 1: closeButtonText = "Ok"
         elif closeButtonStyle == 2: closeButtonText = "Ok :D"
         elif closeButtonStyle == 3: closeButtonText = closeButton
-        else:
-            raise ValueError(f'{closeButtonStyle} isn\'t a valid selection! valid selections: 0, 1, 2 and 3')
-        super().__init__(master)
+        else: raise ValueError(f'{closeButtonStyle} isn\'t a valid selection! valid selections: 0, 1, 2 and 3')
+        super().__init__(master, name=title.lower())
         self.transient(master)
         self.wm_withdraw()
-        set_window_icon(self)
-        if not canBeClosed:
-            self.protocol('WM_DELETE_WINDOW', self.wm_deiconify)
+        self.columnconfigure(10)
+        self.rowconfigure(10)
         self.title = title
-        self.grid_columnconfigure(10)
-        self.grid_rowconfigure(10)
+        set_window_icon(self)
+        if not canBeClosed: 
+            self.protocol('WM_DELETE_WINDOW', self.wm_deiconify)
+        #self.wm_title = title
+        #self.setvar("title", title)        
+        self.wm_resizable(False, False)
 
         self.msgLabel = tk.Label(self)
         self.msgLabel["text"] = text
@@ -259,10 +261,10 @@ class simplePopup(tk.Toplevel):
         self.okbtn["command"] = self.runCallBack
         self.okbtn.grid(row=10, column=0, sticky="s", pady=5, ipadx=10)
         self.wm_deiconify()
-
+        
     def runCallBack(self):
+        if self.callBack is not None: self.callBack()
         self.destroy()
-        self.callBack()
 
 
 if __name__=="__main__":

@@ -2,6 +2,9 @@ from config import *
 from typing import Union
 import tkinter as tk
 import tkinter.commondialog as cd
+from srctools.logger import get_logger
+
+LOGGER = get_logger("utils")
 
 def boolcmp(value):
     r"""
@@ -16,12 +19,14 @@ def boolcmp(value):
 
 
 def isonline():
+	global LOGGER
 	try:
-	    get("www.google.com")
-		
-	    return True
+		get("www.google.com")
+		LOGGER.debug("we're online folks!")
+		return True
 	except:
-	    return False
+		LOGGER.debug("we're offline folks!")
+		return False
 
 
 def toNumbers(arg=None):
@@ -43,8 +48,7 @@ def set_window_icon(window: Union[tk.Toplevel, tk.Tk]):
 			'BEEMANIPULATOR.application',
 		)
 	except (AttributeError, WindowsError, ValueError) as e:
-		print(e)
-		pass  # It's not too bad if it fails.
+		LOGGER.warning(f'failed for {window.title}')# It's not too bad if it fails.
 
 	LISTBOX_BG_SEL_COLOR = '#0078D7'
 	LISTBOX_BG_COLOR = 'white'
