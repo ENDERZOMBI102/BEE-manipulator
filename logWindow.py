@@ -1,10 +1,9 @@
 import utilities
-import tkinter as tk
-import tkinter.ttk as ttk
 import config
 import srctools.logger
 import logging
-from tkinter.constants import RIGHT, LEFT, Y, BOTH
+import wx
+
 
 # Colours to use for each log level
 LVL_COLOURS = {
@@ -27,46 +26,41 @@ window = None # then converted to tk.TopLevel
 START = '1.0'  # Row 1, column 0 = first character
 
 class textHandler(logging.Handler):
+    global window
     def __init__(self):
         level = getLevel()
         super().__init__(level)
-        global window
-        self.textBox: tk.Text
-        self.textBox = tk.Text(
-		    window,
-		    name='textBox',
-		    width=60,
-		    height=15
-	    ).grid(row=0, column=0, sticky='NSEW')
-        self.vbar = tk.Scrollbar(window)
-        self.vbar.grid(row=0, column=0)
-        self.vbar['command'] = self.textBox.yview
         
-        
-        
-def init(tkRoot):
-    global window
-    window = tk.Toplevel(tkRoot)
-    window.transient(tkRoot)
-    window.wm_withdraw()
-    window.columnconfigure(0, weight=1)
-    window.rowconfigure(0, weight=1)
-    window.title('Logs')
-    window.protocol('WM_DELETE_WINDOW', toggleVisibility)
-    utilities.set_window_icon(window)
-    logHandler = textHandler()
-    window.bind("<Control-l>", toggleVisibility)
-    window.bind("<Control-c>", textHandler.clear)
+    def emit(self, record: str):
+        window.text.WriteText(record+"\n")
 
+
+        
+
+class logWindow(wx.Frame):
+
+    def __init__(self, master):
+        super().__init__(master, title="Logs")
+        global window
+        window = self
+        self.SetSize(0, 0, 500, 350)
+        self.text = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+        self.text.AlwaysShowScrollbars(vflag=True)
+        #self.text.Disable()
+        
+
+
+def init(master):
+    window = logWindow(master)
 
 
 def toggleVisibility(placeHolder=None):
     global visible, window
     if not visible:
-        window.wm_deiconify()
+        window.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
         visible = True
     else:
-        window.wm_withdraw()
+        window.HideWithEffect(wx.SHOW_EFFECT_BLEND)
         visible = False
 
 def getLevel():
