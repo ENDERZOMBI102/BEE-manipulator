@@ -3,7 +3,7 @@ import config
 import os
 import webbrowser as wb
 import logWindow
-from srctools.logger import get_logger
+from srctools.logger import get_logger, init_logging
 
 
 class root (wx.Frame):
@@ -106,7 +106,8 @@ class root (wx.Frame):
 
     def syncGames(self, event):
         self.LOGGER.info("hi")
-        pass
+        self.LOGGER.warning("hiw")
+        self.LOGGER.debug("hid")
 
     def exit(self, event):
         self.DestroyChildren()
@@ -152,6 +153,8 @@ class root (wx.Frame):
 
 
 if __name__ == "__main__":
+    init_logging("./logs/latest.log")
+    LOGGER = get_logger('BEE Manipulator')
     app = wx.App()
     root = root()
     root.Show()

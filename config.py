@@ -8,23 +8,24 @@ from utilities import *
 from winreg import *
 
 logger = get_logger("config")
+cfg = {
+	"config_type": "BEE2.4 Manipulator Config File",
+	"appVersion": "0.0.1",
+	"lastVersion": False,
+	"beePrereleases":False,
+	"beeUpdateUrl": None,
+	"steamDir":None,
+	"portal2Dir":None,
+	"beePath": None,
+	"logWindowVisibility": False,
+	"logLevel": "info"
+}
 
-def createConfig():
+def createConfig() -> None:
 	r"""
-		a "simple" function that make the config file
+		a simple function that make the config file
 	"""
-	cfg={
-			"config_type": "BEE2.4 Manipulator Config File",
-			"appVersion": "0.0.1",
-			"lastVersion": False,
-			"beePrereleases":False,
-			"beeUpdateUrl": None,
-			"steamDir":None,
-			"portal2Dir":None,
-			"beePath": None,
-			"logWindowVisible": False,
-			"logLevel": "info"
-		}
+	global cfg
 	with open('config.cfg', 'w', encoding="utf-8") as file:
 		json.dump(cfg, file, indent=3)
 
@@ -36,7 +37,7 @@ def load(section):# load a config
 
 		>>> import config
 		>>> print(config.load("version"))
-		'2.6'
+		2.6
 	"""
 	try:
 		with open('config.cfg', 'r', encoding="utf-8") as file:
@@ -46,7 +47,7 @@ def load(section):# load a config
 	except:
 		raise configError("can't load " + section)
 
-def save(data, section):# save a config
+def save(data, section) -> None:# save a config
 	r"""
 	save the data on the config (json-formatted), re-create the config if no one is found.
 	example::
@@ -67,7 +68,8 @@ def save(data, section):# save a config
 	except:
 		raise configError("error while saving the config")
 
-def loadAll():
+
+def loadAll() -> dict:
 	try:
 		logger.debug("loading config file")
 		with open('config.cfg', 'r', encoding="utf-8") as file:
@@ -79,7 +81,8 @@ def loadAll():
 		createConfig()# create new config file and call the function again
 		return loadAll()
 
-def saveAll(cfg: dict):
+
+def saveAll(cfg: dict) -> None:
 	"""
 	this saves the config file object returned from loadAll()
 	"""
@@ -89,33 +92,26 @@ def saveAll(cfg: dict):
 	except:
 		logger.error("An error happened while saving config file, please open the console and")
 
-def check(arg = None):
+
+def check(arg = None) -> bool:
 	r"""
 	if no aurgment is present check if the config file exist and if is a BM config file, else will
 	check if the given section exists.
 	"""
 	try:
 		with open('config.cfg', 'r') as file:
-			cfg = json.load(file)
+			cfgj = json.load(file)
 			return True
 	except:
 		return False
 	if arg is None:# check the aurgment is present
-		try:
-			# check if EVERY config exists
-			x = cfg["beePrereleases"]
-			x = cfg["appVersion"]
-			x = cfg["lastVersion"]
-			x = cfg["beePrereleases"]
-			x = cfg["beeUpdateUrl"]
-			x = cfg["steamDir"]
-			x = cfg["portal2Dir"]
-			x = cfg['config_type']
-		except:
-			# the config file is not a BM config file
+		global cfg
+		# check if EVERY config exists
+		for i in cfg.keys():
+			if cfgj[i]: continue
 			return False
 		# final check
-		if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+		if cfgj['config_type'] == "BEE2.4 Manipulator Config File":
 			# the check is made successfully
 			return True
 		else:
@@ -123,8 +119,8 @@ def check(arg = None):
 			return False
 	try:
 		with open("config.cfg", 'r') as file:  # try to open the config file
-			cfg = json.load(file) # load the config file
-			if cfg[arg]:
+			cfgj = json.load(file) # load the config file
+			if cfgj[arg]:
 				return True
 			else:
 				return False
@@ -133,49 +129,51 @@ def check(arg = None):
 
 
  # dynamic/static configs
-def osType():
+def osType() -> str:
 	return platform
 
-def steamDir( cmde = False):
+def steamDir( cmde = False) -> str:
 	r"""
 		this function return the steam installation folder
 	"""
-	if check("steamDir"):
-		pass
+	if not check("steamDir"):
+		save(None, "steamDir")# create the condif value in case it doesn't exist
 
 	if not load("steamDir") is None:
-		return load("steamDir")
+		return load("steamDir")# return the folder
 	elif platform == "win32":
 		# get the steam directory from the windows registry
 		# HKEY_CURRENT_USER\Software\Valve\Steam
 		try:
 			logger.debug("Opening windows registry...")
 			with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
-				aKey = OpenKey(reg, r"Software\Valve\Steam")
+				aKey = OpenKey(reg, "Software/Valve/Steam")# open the steam folder in the windows registry
 		except Exception as e:
-			logger.error("Can't open windows registry! this is *VERY* bad!")
+			logger.critical("Can't open windows registry! this is *VERY* bad!", exc_info=1)
 			raise Exception(e)
 		try:
-			keyValue = QueryValueEx(aKey, "SteamPath")
-			save(keyValue[0], "steamDir")
+			keyValue = QueryValueEx(aKey, "SteamPath")# find the steam path
+			save(keyValue[0], "steamDir")# save the path, so we don't have to redo all this
 			return keyValue[0]
 		except:
 			raise KeyError("Can't open/find the steam registry keys")
 
-def portalDir():
+def portalDir() -> str:
 	if not load("portal2Dir") is None:
-		return load("portal2Dir")
+		return load("portal2Dir")# check if we already saved the path, in case, return it
 	else:
 		# check every library if has p2 installed in it
 		library = libraryFolders()
 		for path in library:
 			try:
+				LOGGER.info(f'searching in {path}..')
 				with open(path + "appmanifest_620.acf", "r") as file:
-					print(path)
 					pass
 				# if yes save it
-				save(path + "common/Portal 2/", "portal2Dir")
-				return path + "common/Portal 2/"
+				path += "common/Portal 2/"
+				LOGGER.info(f'portal 2 found! path: {path}')
+				save(path, "portal2Dir")
+				return path
 			except:
 				# if no, just continue
 				continue
@@ -183,27 +181,31 @@ def portalDir():
 
 discordToken = "655075172767760384"
 			
-def libraryFolders():
+def libraryFolders() -> list:
 	paths = []# create a list for library paths
 	paths.append(steamDir() + "/steamapps/")# add the default
 	try:
+		# open the file that contains the library paths
 		with open(steamDir() + "/steamapps/libraryfolders.vdf", "r") as file:
 			library = Property.parse(file, "libraryfolders.vdf").as_dict()
-			try:
-				# check for other libraries
-				for i in range(10):
-					paths.append(library[str(i)] + "/steamapps/")
-			except:
-				pass
+			# remove useless stuff
+			library.pop("TimeNextStatsReport")
+			library.pop("ContentStatsID")
 	except:
 		raise Exception("Error while reading steam library file")
+
+	# check for other library paths, if the dict is empty, there's no one
+	if not len(library) is 0:
+		for i in len(library):
+			paths.append(library[str(i)] + "/steamapps/")# append the path
+	
 	# return the "compiled" list of libraries
 	return paths
 
 def steamUsername():
 	try:
 		with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
-			aKey = OpenKey(reg, r"Software\\Valve\\Steam")
+			aKey = OpenKey(reg, "Software/Valve/Steam")
 	except Exception as e:
 		raise Exception(e)
 	try:
@@ -212,7 +214,7 @@ def steamUsername():
 	except:
 		return None
 		
-def checkUpdates():
+def checkUpdates() -> bool:
 	if not isonline():
 		return False
 	ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
@@ -232,10 +234,8 @@ def checkUpdates():
 		save(url, "newVersionUrl")
 		return False
 
-
 def version():
 	return load("appVersion")
-
 
 def onlineVersion():
 	return load("onlineAppVersion")
