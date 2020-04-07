@@ -21,7 +21,7 @@ cfg = {
 	"logLevel": "info"
 }
 
-def createConfig() -> None:
+def createConfig():
 	r"""
 		a simple function that make the config file
 	"""
@@ -47,7 +47,7 @@ def load(section):# load a config
 	except:
 		raise configError("can't load " + section)
 
-def save(data, section) -> None:# save a config
+def save(data, section):# save a config
 	r"""
 	save the data on the config (json-formatted), re-create the config if no one is found.
 	example::
@@ -58,7 +58,7 @@ def save(data, section) -> None:# save a config
 		>>> print(config.load("version"))
 		'2.5'
 	"""
-	check()
+	if not check(): createConfig()
 	try:
 		with open('config.cfg', 'r', encoding="utf-8") as file:
 			cfg = json.load(file)# load the config file
@@ -82,7 +82,7 @@ def loadAll() -> dict:
 		return loadAll()
 
 
-def saveAll(cfg: dict) -> None:
+def saveAll(cfg: dict):
 	"""
 	this saves the config file object returned from loadAll()
 	"""
@@ -147,7 +147,7 @@ def steamDir( cmde = False) -> str:
 		try:
 			logger.debug("Opening windows registry...")
 			with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
-				aKey = OpenKey(reg, "Software/Valve/Steam")# open the steam folder in the windows registry
+				aKey = OpenKey(reg, "Software\\Valve\\Steam")# open the steam folder in the windows registry
 		except Exception as e:
 			logger.critical("Can't open windows registry! this is *VERY* bad!", exc_info=1)
 			raise Exception(e)
@@ -205,7 +205,7 @@ def libraryFolders() -> list:
 def steamUsername():
 	try:
 		with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
-			aKey = OpenKey(reg, "Software/Valve/Steam")
+			aKey = OpenKey(reg, "Software\\Valve\\Steam")
 	except Exception as e:
 		raise Exception(e)
 	try:

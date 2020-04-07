@@ -21,7 +21,7 @@ class logHandler(logging.Handler):
         super().__init__(logging.NOTSET)
         self.setLevel(logging.NOTSET)
 
-    def emit(self, record: logging.LogRecord) -> None:
+    def emit(self, record: logging.LogRecord):
         """
         recive, format, colorize and display a log message
         """
@@ -63,12 +63,14 @@ class logWindow(wx.Frame):
             style='{',
         ))
         logging.getLogger().addHandler(self.logHandler)
+        self.Bind(wx.EVT_CLOSE, self.OnClose, self)
 
+    def OnClose(self, event):
+        toggleVisibility()
 
 def init(master) -> None:
     """init the logwindow"""
-    
-    asyncio.run(logWindow(master))
+    logWindow(master)
     updateVisibility()
 
 
@@ -81,7 +83,7 @@ def toggleVisibility(placeHolder=None) -> None:
     updateVisibility()
 
 
-def updateVisibility() -> None:
+def updateVisibility():
     global visible
     #save the visibility
     config.save(visible, "logWindowVisibility")
@@ -90,7 +92,7 @@ def updateVisibility() -> None:
     else:
         window.HideWithEffect(wx.SHOW_EFFECT_BLEND)
 
-def changeLevel(level: str) -> None:
+def changeLevel(level: str):
     """change and saves the log level"""
     global window
     if level == "INFO":
@@ -106,7 +108,7 @@ def changeLevel(level: str) -> None:
 
 
 
-def getLevel() -> int:
+def getLevel():
     if "-dev" in utilities.argv:
         return logging.DEBUG
     # check for the level

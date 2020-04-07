@@ -1,8 +1,8 @@
+from uiWX import root
 import srctools.logger
 import config
 from utilities import argv as argvUT
 import wx
-from uiWX import root
 import logging
 from sys import argv as argv
 
@@ -29,8 +29,7 @@ else:
       config.createConfig()
       LOGGER.info('Config file created!')
 LOGGER.info(f'Starting BEE Manipulator v{config.version()}!')
-LOGGER.info('started ui!')  
-
+LOGGER.info('started ui!') 
 # start the ui + main loop
 root = root()
 root.Show()
