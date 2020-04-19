@@ -1,5 +1,6 @@
 import wx
-import wx.html2
+import wx.html
+import wx.richtext
 from markdown2 import markdown
 import webbrowser as wb
 import config
@@ -9,14 +10,25 @@ from srctools.logger import get_logger
 
 
 def init(master):
-    window=wx.html2.WebView
+    window=aboutWindow(master)
+    
+    
+    
+    
+    
+class aboutWindow(wx.Frame):
+    #
     logger = get_logger()
-    logger.debug('opening about.md..')
-    try:
-        with open('./assets/about.md', 'r') as file:
-            text: str = file.read(len(file))
-    except:
-        return
-    html = markdown(text.replace(r'{0}', config.version()))
-    window.setPage(html=html)
-    window.SetHTMLBackgroundColour(wx.Colour(50, 168, 160))
+    #
+    def __init__(self, master):
+        super().__init__(master,title='About BEE Manipulator')
+        self.SetIcon(wx.Icon('./assets/icon.ico'))
+        self.box = wx.html.HtmlWindow(master)
+        self.logger.debug('opening about.md..')
+        # set the page to the converted markdown text
+        if not self.box.LoadFile('./assets/about.html'):
+            self.logger.error(f'failed to read the about.html file')
+            self.Destroy()
+            return
+        self.Show()
+
