@@ -1,21 +1,24 @@
 import wx
+import webbrowser as wb
 import config
 import os
-import webbrowser as wb
 import logWindow
+import aboutWindow
 from srctools.logger import get_logger, init_logging
 
+LOGGER = get_logger()
 
 class root (wx.Frame):
     
     def __init__(self):
         super().__init__(None, title="BEE Manipulator "+str(config.version()))
 
-        # init logging and the logging window
+        # init the logging window
         logWindow.init(self)
-        self.CenterOnScreen()
-        self.LOGGER = get_logger()
-        
+        try:
+            self.SetPosition(wx.Point(config.load('mainWindowPos')))
+        except:
+            self.CenterOnScreen()
         """
         A menu bar is composed of menus, which are composed of menu items.
         This section builds the menu bar and binds actions to them
@@ -42,11 +45,11 @@ class root (wx.Frame):
 
         # help menu bar
         self.helpMenu = wx.Menu()
-        aboutItem = self.helpMenu.Append(11, "About BEE Manipulator", " ")
-        checkUpdatesItem = self.helpMenu.Append(12, "Check Updates", " ")
-        wikiItem = self.helpMenu.Append(13, "Wiki", " ")
-        githubItem = self.helpMenu.Append(14, "Github", " ")
-        discordItem = self.helpMenu.Append(15, "Discord", " ")
+        aboutItem = self.helpMenu.Append(11, "About BEE Manipulator", "Opens the about window")
+        checkUpdatesItem = self.helpMenu.Append(12, "Check Updates", "Check for app updates")
+        wikiItem = self.helpMenu.Append(13, "Wiki", "Opens the online wiki")
+        githubItem = self.helpMenu.Append(14, "Github", "Opens the github page")
+        discordItem = self.helpMenu.Append(15, "Discord", "Invite to the BEEmod server")
 
         # makes the menu bar
         self.menuBar = wx.MenuBar()
@@ -81,6 +84,8 @@ class root (wx.Frame):
         self.Bind(wx.EVT_MENU, self.openWiki, wikiItem)
         self.Bind(wx.EVT_MENU, self.openGithub, githubItem)
         self.Bind(wx.EVT_MENU, self.openDiscord, discordItem)
+        # other events
+        self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         
         """
         A notebook is a controller which manages multiple windows with associated tabs.
@@ -90,9 +95,12 @@ class root (wx.Frame):
         browserTab = wx.Window(self.book)
         self.book.AddPage(browserTab, "Package Browser")
 
-
-
-
+    def OnClose(self, event: wx.CloseEvent):
+        # get the window posistion as wx.Point and convert it to list
+        pos = list(self.GetPosition().Get())
+        LOGGER.debug(f'saved main window position: {pos}')
+        config.save(pos, 'mainWindowPos')
+        event.Skip()
 
     # file menu items actions
     def openp2dir(self, event):
@@ -105,9 +113,7 @@ class root (wx.Frame):
             pass
 
     def syncGames(self, event):
-        self.LOGGER.info("hi")
-        self.LOGGER.warning("hiw")
-        self.LOGGER.debug("hid")
+        pass
 
     def exit(self, event):
         self.DestroyChildren()
@@ -136,20 +142,26 @@ class root (wx.Frame):
 
     # help menu items actions
     def openAboutWindow(self, event):
-        pass
+        aboutWindow.init(self)
 
     def checkUpdates(self, event, window=True):
         # if there's an update open a popup, if not open another popup (if window = true)
         pass
 
     def openWiki(self, event):
+        LOGGER.info(
+            f'opening https://github.com/ENDERZOMBI102/BEE-manipulator/wiki with default browser')
         wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
 
     def openGithub(self, event):
-        wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/")
+        LOGGER.info(
+            f'opening https://github.com/ENDERZOMBI102/BEE-manipulator with default browser')
+        wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator")
 
     def openDiscord(self, event):
+        LOGGER.info(f'opening https://discord.gg/hnGFJrz with default browser')
         wb.open("https://discord.gg/hnGFJrz")
+
 
 
 if __name__ == "__main__":

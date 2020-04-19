@@ -6,7 +6,12 @@ import wx
 import logging
 from sys import argv as argv
 
+# to start without entering the venv shell
 # pipenv run py BEEManipulator.py
+# to enter the venv shell
+# %userprofile%/Documents/GitHub/BEE-manipulator/.venv/Scripts/activate.bat
+# to start with venv shell
+# py BEEManipulator.py
 
 
 argvUT = argv

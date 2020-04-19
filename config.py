@@ -240,6 +240,9 @@ def version():
 def onlineVersion():
 	return load("onlineAppVersion")
 
+def devMode() -> bool:
+	return load("devMode")
+
 
 class configError(BaseException):
 	r"""

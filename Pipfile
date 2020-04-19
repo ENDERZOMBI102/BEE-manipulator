@@ -15,6 +15,7 @@ servepy = "*"
 pyglet = "*"
 pillow = "*"
 wxpython = "*"
+markdown2 = "*"
 
 [requires]
 python_version = "3.7"
