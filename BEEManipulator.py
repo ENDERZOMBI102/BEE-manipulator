@@ -22,6 +22,7 @@ LOGGER = srctools.logger.get_logger('BEE Manipulator')
 try:
       LOGGER.debug("setting application name..")
       app.SetAppName("BEE Manipulator")
+      app.SetAppDisplayName("BEE Manipulator")
       LOGGER.debug("successfully setted app name")
 except:
       LOGGER.debug("Can't set app name!")
@@ -38,4 +39,5 @@ LOGGER.info('started ui!')
 # start the ui + main loop
 root = root()
 root.Show()
+app.SetTopWindow(root)
 app.MainLoop()
