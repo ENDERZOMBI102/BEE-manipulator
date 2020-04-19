@@ -8,6 +8,7 @@ from utilities import *
 from winreg import *
 
 logger = get_logger("config")
+# the plugins dict HAS to be the last
 cfg = {
 	"config_type": "BEE2.4 Manipulator Config File",
 	"appVersion": "0.0.1",
@@ -18,7 +19,10 @@ cfg = {
 	"portal2Dir":None,
 	"beePath": None,
 	"logWindowVisibility": False,
-	"logLevel": "info"
+	"logLevel": "info",
+	"databasePath": "./assets/database.json",
+	"plugins": {}
+
 }
 
 def createConfig():
