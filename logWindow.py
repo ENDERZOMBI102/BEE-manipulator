@@ -54,6 +54,7 @@ class logWindow(wx.Frame):
         super().__init__(master, title="Logs")# init the window
         global window
         window = self
+        self.SetIcon(wx.Icon('./assets/icon.ico'))
         self.SetSize(0, 0, 500, 350)
         self.AlwaysShowScrollbars(vflag=True)
         try: self.SetPosition(wx.Point(config.load("logWindowPos")))

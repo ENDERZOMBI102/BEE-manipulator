@@ -3,6 +3,7 @@ import webbrowser as wb
 import config
 import os
 import logWindow
+import browser
 import aboutWindow
 from srctools.logger import get_logger, init_logging
 
@@ -12,7 +13,8 @@ class root (wx.Frame):
     
     def __init__(self):
         super().__init__(None, title="BEE Manipulator "+str(config.version()))
-
+        # sets the app icon
+        self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
         logWindow.init(self)
         try:
@@ -60,7 +62,6 @@ class root (wx.Frame):
 
         # Give the menu bar to the frame
         self.SetMenuBar(self.menuBar)
-
         self.CreateStatusBar()
         self.SetStatusText(f'Hi {config.steamUsername()}!')
 
@@ -92,7 +93,7 @@ class root (wx.Frame):
         This section makes the notebook
         """
         self.book = wx.Notebook(self, name="Main Menu")
-        browserTab = wx.Window(self.book)
+        browserTab = browser.browser(self.book)
         self.book.AddPage(browserTab, "Package Browser")
 
     def OnClose(self, event: wx.CloseEvent):
@@ -118,11 +119,10 @@ class root (wx.Frame):
     def exit(self, event):
         self.DestroyChildren()
         self.Destroy()
-
+    
     # options menu items actions
     def openSettingsWindow(self, event):
         pass
-        
 
     def reloadConfig(self, event):
         pass
