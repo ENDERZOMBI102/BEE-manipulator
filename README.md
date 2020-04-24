@@ -24,14 +24,21 @@ This project is in a experimental pre-alpha state, use at your own risk!
 
 Planned & realized features!
 
-- GUI
-- BEE & App Updater With A Togglable Auto Updater
-- BEE 2.4 installer
-- Package Browser & Manager
-- Custom Type of Package: BM Package
-- Custom Application For BEE2.4 Shortcuts (for the auto update feature)
-- Discord Rich Presence
-- Possibility to add functionality to BM using BM packages
+- GUI (45% done)
+- BEE & App Updater With A Togglable Auto Updater (10% done)
+- BEE 2.4 Installer (40% done)
+- App (Auto)Updater (100% done)
+- Package Browser & Manager (working on it)
+- Custom Type of Package: BM Package (90% done)
+- Custom Application For BEE2.4 Shortcuts (for the auto update feature) (1% done) 
+- Discord Rich Presence (0% done)
+- Add Functionality to BM Using BM Packages (aka plugins) (15% done)
+
+Libraries that i'm making for this project
+
+- config.py:<br>
+  a config manager (load, save, and check json-formatted config.cfg) with some handy capabilities as retrive steam's games folders and username
+
 
 The Future
 
@@ -45,6 +52,8 @@ yes, i'm already thinking of the future of this application ;)
     - Item Importer
 - Key Binder (bind commands to keys without file edits)
 - Rating system for the package browser
+
+You can find plugins docs in the wiki
 
 Libraries used in BEE Manipulator
 -
