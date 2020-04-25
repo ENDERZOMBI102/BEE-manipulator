@@ -16,6 +16,7 @@ pyglet = "*"
 pillow = "*"
 wxpython = "*"
 markdown2 = "*"
+pymitter = "*"
 
 [requires]
 python_version = "3.7"
