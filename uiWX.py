@@ -2,6 +2,7 @@ import wx
 import webbrowser as wb
 import config
 import os
+import utilities
 import logWindow
 import browser
 import aboutWindow
@@ -17,10 +18,14 @@ class root (wx.Frame):
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
         logWindow.init(self)
+        #set the utilities.root pointer to the object of this class
+        utilities.root = self
         try:
             self.SetPosition(wx.Point(config.load('mainWindowPos')))
         except:
             self.CenterOnScreen()
+        self.SetSize(width=600, height=500)
+        LOGGER.info(f'connected: {utilities.isonline()}')
         """
         A menu bar is composed of menus, which are composed of menu items.
         This section builds the menu bar and binds actions to them
