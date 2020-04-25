@@ -1,7 +1,6 @@
 from config import *
 from typing import Union
-import tkinter as tk
-import tkinter.commondialog as cd
+import wx
 from srctools.logger import get_logger
 
 LOGGER = get_logger("utils")
@@ -19,13 +18,18 @@ def boolcmp(value):
 
 
 def isonline():
-	global LOGGER
+	global logger
 	try:
-		get("www.google.com")
-		LOGGER.debug("we're online folks!")
+		get("https://www.google.com/")
 		return True
 	except:
-		LOGGER.debug("we're offline folks!")
+		return False
+
+def keyExist(data: dict, key: str) -> bool:
+	try:
+		x = data[key]
+		return True
+	except:
 		return False
 
 
@@ -36,22 +40,5 @@ def toNumbers(arg=None):
 	        nums.append(i)
 	return int("".join(nums))
 
-
-def set_window_icon(window: Union[tk.Toplevel, tk.Tk]):
-	"""Set the window icon."""
-	import ctypes
-	# Use Windows APIs to tell the taskbar to group us as our own program,
-	# not with python.exe. Then our icon will apply, and also won't group
-	# with other scripts.
-	try:
-		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-			'BEEMANIPULATOR.application',
-		)
-	except (AttributeError, WindowsError, ValueError) as e:
-		LOGGER.warning(f'failed for {window.title}')# It's not too bad if it fails.
-
-	LISTBOX_BG_SEL_COLOR = '#0078D7'
-	LISTBOX_BG_COLOR = 'white'
-
 argv = []
-tkRoot = None
+root: wx.Frame = None
