@@ -45,11 +45,20 @@ def load(section):# load a config
 	"""
 	try:
 		with open('config.cfg', 'r', encoding="utf-8") as file:
-			cfg = json.load(file)# load the config
-			readeData = cfg[section]# take the requested field
+			config = json.load(file)# load the config
+			readeData = config[section]# take the requested field
 		return readeData # return the readed data
 	except:
-		raise configError("can't load " + section)
+		global cfg
+		try:
+			x = cfg[section]
+			logger.warning(f'can\'t load {section} from config file, using default')
+			return cfg[section]
+		except:
+			logger.error(f'can\'t load {section} from config file')
+			raise configError(f'can\'t load {section} from config file')
+		
+	
 
 def save(data, section):# save a config
 	r"""
@@ -129,7 +138,7 @@ def check(arg = None) -> bool:
 			else:
 				return False
 	except:
-		createConfig()
+		return False
 
 
  # dynamic/static configs
@@ -183,7 +192,7 @@ def portalDir() -> str:
 				continue
 	
 
-discordToken = "655075172767760384"
+discordToken: str = "655075172767760384"
 			
 def libraryFolders() -> list:
 	paths = []# create a list for library paths
