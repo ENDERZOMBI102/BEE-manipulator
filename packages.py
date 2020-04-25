@@ -1,4 +1,8 @@
 from json import *
+import wx
+import random
+from typing import Union
+from utilities import root
 from base64 import b64decode as decode
 
 class beePackage:
@@ -110,6 +114,19 @@ class bmPackage:
 				return self.config[type]
 			else:
 				return None
+
+class packageFrame(wx.Panel):
+	"""
+	this is a frame in the package browser
+	"""
+
+	def __init__(self, master: wx.Window, package: Union[beePackage, bmPackage]):
+		super().__init__(parent=master, size=wx.Size(500,100), name=f'BROWSERFRAME_{package.ID}')
+
+
+		
+
+
 	
 if __name__ == "__main__":
 	x = beePackage(ID="id.id", url="https://api.github.com/repos/BEEmod/BEE2.4/releases/latest")
