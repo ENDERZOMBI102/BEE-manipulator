@@ -103,10 +103,13 @@ class root (wx.Frame):
 
     def OnClose(self, event: wx.CloseEvent):
         # get the window posistion as wx.Point and convert it to list
-        pos = list(self.GetPosition().Get())
-        LOGGER.debug(f'saved main window position: {pos}')
-        config.save(pos, 'mainWindowPos')
-        event.Skip()
+        try:
+            pos = list(self.GetPosition().Get())
+            LOGGER.debug(f'saved main window position: {pos}')
+            config.save(pos, 'mainWindowPos')
+        except:
+            pass
+        self.Destroy()
 
     # file menu items actions
     def openp2dir(self, event):
