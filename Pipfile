@@ -4,19 +4,16 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-autopep8 = "*"
 
 [packages]
 pyinstaller = "*"
 pypresence = "*"
+pymitter = "*"
 requests = "*"
 cython = "*"
 servepy = "*"
 pyglet = "*"
 pillow = "*"
-wxpython = "*"
-markdown2 = "*"
-pymitter = "*"
 
 [requires]
 python_version = "3.7"
