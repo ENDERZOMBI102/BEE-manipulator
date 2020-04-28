@@ -6,6 +6,7 @@ import utilities
 import logWindow
 import browser
 import aboutWindow
+import richPresence
 from srctools.logger import get_logger, init_logging
 
 LOGGER = get_logger()
@@ -18,6 +19,7 @@ class root (wx.Frame):
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
         logWindow.init(self)
+        richPresence.init()
         #set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
@@ -25,7 +27,7 @@ class root (wx.Frame):
         except:
             self.CenterOnScreen()
         self.SetSize(width=600, height=500)
-        LOGGER.info(f'connected: {utilities.isonline()}')
+        LOGGER.info(f'internet connected: {utilities.isonline()}')
         """
         A menu bar is composed of menus, which are composed of menu items.
         This section builds the menu bar and binds actions to them
@@ -100,6 +102,7 @@ class root (wx.Frame):
         self.book = wx.Notebook(self, name="Main Menu")
         browserTab = browser.browser(self.book)
         self.book.AddPage(browserTab, "Package Browser")
+        richPresence.presence.rpc.update(state='Idle', start=utilities.startTime)
 
     def OnClose(self, event: wx.CloseEvent):
         # get the window posistion as wx.Point and convert it to list
@@ -109,6 +112,8 @@ class root (wx.Frame):
             config.save(pos, 'mainWindowPos')
         except:
             pass
+        #close the discord RPC
+        richPresence.getRpc().close()
         self.Destroy()
 
     # file menu items actions
@@ -125,8 +130,7 @@ class root (wx.Frame):
         pass
 
     def exit(self, event):
-        self.DestroyChildren()
-        self.Destroy()
+        self.OnClose(wx.CloseEvent)#there's already an handler, so use that
     
     # options menu items actions
     def openSettingsWindow(self, event):

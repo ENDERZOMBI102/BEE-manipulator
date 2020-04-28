@@ -18,7 +18,6 @@ def boolcmp(value):
 
 
 def isonline():
-	global logger
 	try:
 		get("https://www.google.com/")
 		return True
@@ -42,3 +41,4 @@ def toNumbers(arg=None):
 
 argv = []
 root: wx.Frame = None
+startTime = None

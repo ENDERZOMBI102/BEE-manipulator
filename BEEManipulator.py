@@ -1,9 +1,10 @@
 from uiWX import root
 import srctools.logger
 import config
-from utilities import argv as argvUT
+from utilities import startTime, argv as argvUT
 import wx
 import logging
+import time
 from sys import argv as argv
 
 # to start without entering the venv shell
@@ -15,6 +16,7 @@ from sys import argv as argv
 
 
 argvUT = argv
+startTime = int(time.time())
 app = wx.App()
 
 srctools.logger.init_logging("./logs/latest.log")
