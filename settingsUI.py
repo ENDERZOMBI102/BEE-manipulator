@@ -1,8 +1,7 @@
-import tkinter as tk
-import tkinter.ttk as ttk
 from config import *
+import wx
 
-class settingsWindow(tk.Toplevel):
+class settingsWindow(wx.Frame):
     r"""
         this is the window for the settings
     """
