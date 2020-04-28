@@ -41,7 +41,7 @@ class beePackage:
 		"""
 		if self.service() == "github":
 			splittedUrl = self.url.split("/")
-			return f'https://github.com/{plittedUrl[4]}/{splittedUrl[5]}/'
+			return f'https://github.com/{splittedUrl[4]}/{splittedUrl[5]}/'
 		else:
 			return None
 	
@@ -111,7 +111,7 @@ class bmPackage:
 		"""
 		if self.service() == "github":
 			splittedUrl = self.url.split("/")
-			return f'https://github.com/{plittedUrl[4]}/{splittedUrl[5]}/'
+			return f'https://github.com/{splittedUrl[4]}/{splittedUrl[5]}/'
 		else:
 			return None
 	
