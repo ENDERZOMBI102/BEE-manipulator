@@ -151,11 +151,7 @@ class packageFrame(wx.Panel):
 	"""
 
 	def __init__(self, master: wx.Window, package: Union[beePackage, bmPackage]):
-		rootSize = wx.App
-		#GetTopWindow()
-		rootSize = rootSize.GetSize()
-		size = wx.Size(rootSize.x-10, rootSize.y/5)
-		super().__init__(parent=master, size=size, name=f'BROWSERFRAME_{package.ID}')
+		super().__init__(parent=master, size=wx.Size(500, 100), name=f'BROWSERFRAME_{package.ID}')
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		titleBar = wx.Panel(self, -1, size=wx.Size(50,100))
 		titleText = wx.StaticText(titleBar, -1, label=package.name)
