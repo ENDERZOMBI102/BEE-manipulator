@@ -12,14 +12,14 @@ class beePackage:
 		the icon is stored as base64 string and then returned as image object when icon() is called
 	"""
 	def __init__(self, ID = None, icon64 = None, version = 0, author = [], description = None, url = "None", filename = None, name =  None):
-		self.ID = ID
-		self.author = author
-		self.icon64 = icon64
+		self.ID: str = ID
+		self.author: str = author
+		self.icon64: str = icon64
 		self.version = version
-		self.description  = description
-		self.url = url
-		self.filename = filename
-		self.name = name
+		self.description: str = description
+		self.url: str = url
+		self.filename: str = filename
+		self.name: str = name
 		self.coAuthors = []
 	
 	
@@ -41,7 +41,7 @@ class beePackage:
 		"""
 		if self.service() == "github":
 			splittedUrl = self.url.split("/")
-			return "https://github.com/{0}/{1}/".format(splittedUrl[4],splittedUrl[5])
+			return f'https://github.com/{plittedUrl[4]}/{splittedUrl[5]}/'
 		else:
 			return None
 	
@@ -52,6 +52,21 @@ class beePackage:
 		"""
 		return decode(self.icon64)
 	
+	def __getitem__( self, index: str):
+		if index in ['ID', 'id'] : return self.ID
+		elif index == 'author' : return self.author
+		elif index == 'icon64' : return self.icon64
+		elif index in ['version', 'ver'] : return self.version
+		elif index == 'name' : return self.name
+		elif index in ['desc', 'description'] : return self.description
+		elif index == 'url' : return self.url
+		elif index in ['filename', 'file'] : return self.filename
+		elif index in ['coAuhors', 'coauthors'] : return self.coAuthors
+		elif index == 'icon' : return self.icon()
+		elif index == 'service' : return self.service()
+		elif index in ['repo', 'repository'] : return self.repo()
+
+
 class bmPackage:
 	r"""
 		rappresents a BeeManipulator package, with all it's data and co.
@@ -68,7 +83,6 @@ class bmPackage:
 		self.url = url
 		self.contents = content
 		self.config = config
-		self.name = name
 		self.coAuthors = []
 	
 	
@@ -97,7 +111,7 @@ class bmPackage:
 		"""
 		if self.service() == "github":
 			splittedUrl = self.url.split("/")
-			return "https://github.com/{0}/{1}/".format(splittedUrl[4], splittedUrl[5])
+			return f'https://github.com/{plittedUrl[4]}/{splittedUrl[5]}/'
 		else:
 			return None
 	
@@ -114,6 +128,22 @@ class bmPackage:
 				return self.config[type]
 			else:
 				return None
+	
+	def __getitem__( self, index: str):
+		if index in ['ID', 'id'] : return self.ID
+		elif index == 'author' : return self.author
+		elif index == 'icon64' : return self.icon64
+		elif index in ['version', 'ver'] : return self.version
+		elif index == 'name' : return self.name
+		elif index in ['desc', 'description'] : return self.desc
+		elif index == 'url' : return self.url
+		elif index in ['contents', 'content'] : return self.contents
+		elif index == 'config' : return self.config
+		elif index in ['coAuhors', 'coauthors'] : return self.coAuthors
+		elif index == 'icon' : return self.icon()
+		elif index == 'service' : return self.service()
+		elif index in ['repo', 'repository'] : return self.repo()
+
 
 class packageFrame(wx.Panel):
 	"""
@@ -121,7 +151,17 @@ class packageFrame(wx.Panel):
 	"""
 
 	def __init__(self, master: wx.Window, package: Union[beePackage, bmPackage]):
-		super().__init__(parent=master, size=wx.Size(500,100), name=f'BROWSERFRAME_{package.ID}')
+		rootSize = wx.App
+		#GetTopWindow()
+		rootSize = rootSize.GetSize()
+		size = wx.Size(rootSize.x-10, rootSize.y/5)
+		super().__init__(parent=master, size=size, name=f'BROWSERFRAME_{package.ID}')
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		titleBar = wx.Panel(self, -1, size=wx.Size(50,100))
+		titleText = wx.StaticText(titleBar, -1, label=package.name)
+		sizer.Add(titleBar)
+
+		self.Show()
 
 
 		
@@ -129,6 +169,6 @@ class packageFrame(wx.Panel):
 
 	
 if __name__ == "__main__":
-	x = beePackage(ID="id.id", url="https://api.github.com/repos/BEEmod/BEE2.4/releases/latest")
-	print(x.repo())
-	print(x.ID)
+	x = bmPackage(ID="id.id", url="https://api.github.com/repos/BEEmod/BEE2.4/releases/latest")
+	print(x['id'])
+	print(x['icon'])
