@@ -1,10 +1,11 @@
 from uiWX import root
 import srctools.logger
 import config
-from utilities import startTime, argv as argvUT
+import utilities
 import wx
 import logging
 import time
+import pymitter
 from sys import argv as argv
 
 # to start without entering the venv shell
@@ -14,9 +15,9 @@ from sys import argv as argv
 # to start with venv shell
 # py BEEManipulator.py
 
-
-argvUT = argv
-startTime = int(time.time())
+#some data initialization
+utilities.argv = argv
+utilities.startTime = int(time.time())
 app = wx.App()
 
 srctools.logger.init_logging("./logs/latest.log")
