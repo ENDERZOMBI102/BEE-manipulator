@@ -77,6 +77,7 @@ async def startBee():
 
 def verifyGameCache():
     # try to delete the bee2 folder ine p2 root dir
+    return
     try:
         os.rmdir(portalDir() + "/bee2")
     except:
