@@ -2,7 +2,7 @@ import pypresence
 import config
 from utilities import startTime
 from srctools.logger import get_logger
-from time import sleep
+from time import sleep, time
 
 presence = None
 logger = get_logger()
@@ -37,4 +37,9 @@ def getRpc() -> pypresence.Presence:
 
       
 if __name__ == "__main__":
-      pass
+      rpc = pypresence.Presence(config.discordToken)
+      rpc.connect()
+      rpc.update(start=int(time()), state="Developing an awesome app",
+                 details="Making the package browser")
+      while True:
+            sleep(20)

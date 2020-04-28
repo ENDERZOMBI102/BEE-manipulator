@@ -22,7 +22,7 @@ class browser(wx.ScrolledWindow):
 		logger.debug('loading database path..')
 		databasePath = config.load('databasePath')
 		logger.debug('loaded database path from config!')
-		logger.info(f'Loading database! (pos: {databasePath})')
+		logger.info(f'Loading database! (path: {databasePath})')
 		checkDatabase()
 		self.loadDatabase()
 	
