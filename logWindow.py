@@ -3,7 +3,6 @@ import config
 import logging
 import wx
 import srctools.logger
-import asyncio
 
 
 # the visibility of the log window, is initially setted to the value saved in the config file
