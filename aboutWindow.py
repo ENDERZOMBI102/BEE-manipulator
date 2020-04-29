@@ -12,10 +12,6 @@ from srctools.logger import get_logger
 def init(master):
     window=aboutWindow(master)
     
-    
-    
-    
-    
 class aboutWindow(wx.Frame):
     #
     logger = get_logger()

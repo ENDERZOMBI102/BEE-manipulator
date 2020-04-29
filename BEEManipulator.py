@@ -6,7 +6,7 @@ import wx
 import logging
 import time
 import pymitter
-from sys import argv as argv
+from sys import argv
 
 # to start without entering the venv shell
 # pipenv run py BEEManipulator.py
@@ -17,7 +17,6 @@ from sys import argv as argv
 
 #some data initialization
 utilities.argv = argv
-utilities.startTime = int(time.time())
 app = wx.App()
 
 srctools.logger.init_logging("./logs/latest.log")

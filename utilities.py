@@ -20,6 +20,7 @@ def boolcmp(value):
 def isonline():
 	try:
 		get("https://www.google.com/")
+		get("https://github.com/")
 		return True
 	except:
 		return False
@@ -41,4 +42,3 @@ def toNumbers(arg=None):
 
 argv = []
 root: wx.Frame = None
-startTime = None

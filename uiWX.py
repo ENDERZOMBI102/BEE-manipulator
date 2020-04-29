@@ -6,7 +6,7 @@ import utilities
 import logWindow
 import browser
 import aboutWindow
-import richPresence
+#import richPresence
 from srctools.logger import get_logger, init_logging
 
 LOGGER = get_logger()
@@ -18,8 +18,8 @@ class root (wx.Frame):
         # sets the app icon
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
-        logWindow.init(self)
-        richPresence.init()
+        #logWindow.init(self)
+        #richPresence.init()
         #set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
@@ -102,7 +102,7 @@ class root (wx.Frame):
         self.book = wx.Notebook(self, name="Main Menu")
         browserTab = browser.browser(self.book)
         self.book.AddPage(browserTab, "Package Browser")
-        richPresence.presence.rpc.update(state='Idle', start=utilities.startTime)
+        #richPresence.presence.rpc.update(state='Idle', start=utilities.startTime)
 
     def OnClose(self, event: wx.CloseEvent):
         # get the window posistion as wx.Point and convert it to list
@@ -113,7 +113,7 @@ class root (wx.Frame):
         except:
             pass
         #close the discord RPC
-        richPresence.getRpc().close()
+        #richPresence.getRpc().close()
         self.Destroy()
 
     # file menu items actions
