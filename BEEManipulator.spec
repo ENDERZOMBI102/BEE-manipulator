@@ -3,15 +3,16 @@
 a = Analysis(['BEEManipulator.py'],
              pathex=['./'],
              binaries=[],
-             datas=[('assets', 'assets')],
+             datas=[ ('assets/about.md', 'assets'),
+                     ('assets/icon.ico', 'assets'),
+                     ('assets/BEE2.png', 'assets')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
              excludes=[
-                'bz2',  # We aren't using this compression format (shutil, zipfile etc handle ImportError)..
-                'sqlite3',  # Imported from aenum, but we don't use that enum subclass.
-                # Imported by logging handlers which we don't use..
-                'win32evtlog',
+                'bz2', # We aren't using this compression format (shutil, zipfile etc handle ImportError)..
+                'sqlite3', # Imported from aenum, but we don't use that enum subclass.
+                'win32evtlog', # Imported by logging handlers which we don't use..
                 'win32evtlogutil',
                 'unittest',  # Imported in __name__==__main__..
                 'doctest',
