@@ -32,7 +32,7 @@ def update(updateData: dict):
             lastUpdate[key] = data
       
 
-struct.pack()
+
 
 def init():
       asyncio.run(rich())

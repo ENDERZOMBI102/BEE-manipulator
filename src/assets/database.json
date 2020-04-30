@@ -1,0 +1,27 @@
+[
+   {
+      "type": "bee",
+      "ID": "Radelite_package",
+      "name": "radelite",
+      "author": "ENDERZOMBI102",
+      "co_author": [
+         "Flash4433",
+         "Libbybapa"
+      ],
+      "desc": "Adds items from the past Radelite's addons",
+      "version": "null",
+      "icon_url": "https://github.com/ENDERZOMBI102/Radelite_BEE2_package/raw/master/icon.png",
+      "api_latest_url": "https://api.github.com/repos/ENDERZOMBI102/Radelite_BEE2_package/releases/latest"
+   },
+   {
+      "type": "bee",
+      "ID": "Custom_Signage",
+      "name": "Libbybapa custom signages",
+      "author": "Libbybapa",
+      "co_author": null,
+      "desc": "package with libby's signages",
+      "filename": "signage_custom",
+      "version": "1.0",
+      "api_latest_url": "https://drive.google.com/uc?id=1HcTjfJR8dMMi1T1666mKURFX-e7mM9Kw&authuser=0&export=download"
+   }
+]

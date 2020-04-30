@@ -11,7 +11,7 @@ from sys import argv
 # to start without entering the venv shell
 # pipenv run py BEEManipulator.py
 # to enter the venv shell
-# %userprofile%/Documents/GitHub/BEE-manipulator/.venv/Scripts/activate.bat
+# "C:\Users\Flavia\.virtualenvs\BEE-manipulator-xMPheCny\Scripts\activate.bat"
 # to start with venv shell
 # py BEEManipulator.py
 

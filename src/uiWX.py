@@ -18,7 +18,7 @@ class root (wx.Frame):
         # sets the app icon
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
-        #logWindow.init(self)
+        logWindow.init(self)
         #richPresence.init()
         #set the utilities.root pointer to the object of this class
         utilities.root = self

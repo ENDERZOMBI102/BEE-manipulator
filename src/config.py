@@ -202,15 +202,15 @@ def libraryFolders() -> list:
 		with open(steamDir() + "/steamapps/libraryfolders.vdf", "r") as file:
 			library = Property.parse(file, "libraryfolders.vdf").as_dict()
 			# remove useless stuff
-			library.pop("TimeNextStatsReport")
-			library.pop("ContentStatsID")
-	except:
-		raise Exception("Error while reading steam library file")
+			library['libraryfolders'].pop("timenextstatsreport")
+			library['libraryfolders'].pop("contentstatsid")
+	except Exception as e:
+		raise Exception(f'Error while reading steam library file: {e}')
 
 	# check for other library paths, if the dict is empty, there's no one
-	if not len(library) is 0:
-		for i in len(library):
-			paths.append(library[str(i)] + "/steamapps/")# append the path
+	if not len(library['libraryfolders']) is 0:
+		for i in len(library['libraryfolders']):
+			paths.append(library['libraryfolders'][str(i)] + "/steamapps/")# append the path
 	
 	# return the "compiled" list of libraries
 	return paths
