@@ -39,6 +39,8 @@ Libraries that i'm making for this project
 - config.py:<br>
   a config manager (load, save, and check json-formatted config.cfg) with some handy capabilities as retrive steam's games folders and username
 
+- activityManager<br>
+  a discord rich presence enhancer to be used with pypresence, still w0rking on it (c++, uses discord game sdk)
 
 The Future
 
