@@ -29,7 +29,7 @@ void discordManager::initDiscord(const char* client_it, const char* exe_path) {
     do {
         discord::Core::Create(461618159171141643, DiscordCreateFlags_Default, &core);// init the discord core
     } while (!core);
-    core->ActivityManager().RegisterCommand( exe_path );
+    //core->ActivityManager().RegisterCommand( exe_path );
 }
 
 void discordManager::update() {

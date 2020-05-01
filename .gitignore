@@ -1,6 +1,4 @@
-.vscode/settings.json
-.vscode/launch.json
-.vscode/c_cpp_properties.json
+.vscode
 __pycache__
 srctools/__pycache__
 .pytest_cache
@@ -15,3 +13,4 @@ assets/database.json
 assets/about.html
 BEEManipulator.7z
 activityManager/.vs
+activityManager/Debug

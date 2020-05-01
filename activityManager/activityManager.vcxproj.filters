@@ -15,19 +15,103 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
+    <ClCompile Include="discordManager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\achievement_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\activity_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\application_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\core.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\image_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\lobby_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\network_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\overlay_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\relationship_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\storage_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\store_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\types.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\user_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="discordsdk\voice_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
+    <ClInclude Include="discordsdk\achievement_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\activity_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\application_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\core.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\discord.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\event.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\ffi.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\image_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\lobby_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\network_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\overlay_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\relationship_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\storage_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\store_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\types.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\user_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="discordsdk\voice_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

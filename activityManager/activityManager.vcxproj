@@ -72,6 +72,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Flavia\Documents\GitHub\BEE-manipulator\activityManager\discordsdk;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Flavia\Documents\GitHub\BEE-manipulator\activityManager\binaries\win32;$(LibraryPath)</LibraryPath>
+    <ReferencePath>C:\Users\Flavia\Documents\GitHub\BEE-manipulator\activityManager\binaries\win32;$(ReferencePath)</ReferencePath>
+    <OutDir>$(SolutionDir)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -84,17 +88,20 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;ACTIVITYMANAGER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>C:\Users\Flavia\Documents\GitHub\BEE-manipulator\activityManager\binaries\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"C:\Users\Flavia\Documents\GitHub\BEE-manipulator\activityManager\binaries\win32\discord_game_sdk.dll.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -151,17 +158,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="pch.h" />
+    <ClCompile Include="discordManager.cpp" />
+    <ClCompile Include="discordsdk\achievement_manager.cpp" />
+    <ClCompile Include="discordsdk\activity_manager.cpp" />
+    <ClCompile Include="discordsdk\application_manager.cpp" />
+    <ClCompile Include="discordsdk\core.cpp" />
+    <ClCompile Include="discordsdk\image_manager.cpp" />
+    <ClCompile Include="discordsdk\lobby_manager.cpp" />
+    <ClCompile Include="discordsdk\network_manager.cpp" />
+    <ClCompile Include="discordsdk\overlay_manager.cpp" />
+    <ClCompile Include="discordsdk\relationship_manager.cpp" />
+    <ClCompile Include="discordsdk\storage_manager.cpp" />
+    <ClCompile Include="discordsdk\store_manager.cpp" />
+    <ClCompile Include="discordsdk\types.cpp" />
+    <ClCompile Include="discordsdk\user_manager.cpp" />
+    <ClCompile Include="discordsdk\voice_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClInclude Include="discordsdk\achievement_manager.h" />
+    <ClInclude Include="discordsdk\activity_manager.h" />
+    <ClInclude Include="discordsdk\application_manager.h" />
+    <ClInclude Include="discordsdk\core.h" />
+    <ClInclude Include="discordsdk\discord.h" />
+    <ClInclude Include="discordsdk\event.h" />
+    <ClInclude Include="discordsdk\ffi.h" />
+    <ClInclude Include="discordsdk\image_manager.h" />
+    <ClInclude Include="discordsdk\lobby_manager.h" />
+    <ClInclude Include="discordsdk\network_manager.h" />
+    <ClInclude Include="discordsdk\overlay_manager.h" />
+    <ClInclude Include="discordsdk\relationship_manager.h" />
+    <ClInclude Include="discordsdk\storage_manager.h" />
+    <ClInclude Include="discordsdk\store_manager.h" />
+    <ClInclude Include="discordsdk\types.h" />
+    <ClInclude Include="discordsdk\user_manager.h" />
+    <ClInclude Include="discordsdk\voice_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
