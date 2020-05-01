@@ -1,7 +1,10 @@
-#include "discord.h"
 #include <iostream>
+#include "discordsdk/discord.h"
+#include <ctype.h>
 
-class discordManager {
+#define DLL_EXPORT_API __declspec(dllexport)
+
+DLL_EXPORT_API class discordManager {
 public:
     //declare variables and objects
     discord::Core* core{};
