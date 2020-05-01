@@ -7,7 +7,7 @@ a BEE2.4 manager!
 [![Latest Release](https://img.shields.io/github/v/release/ENDERZOMBI102/BEE-manipulator?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/latest)
 [![Discord](https://img.shields.io/discord/546987939314532362?logo=discord&style=for-the-badge)](https://discord.gg/hnGFJrz)
 [![Commits](https://img.shields.io/github/commits-since/ENDERZOMBI102/BEE-manipulator/latest?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/commits/master)
-[![PyVersion](https://img.shields.io/github/pipenv/locked/python-version/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://www.python.org/downloads/release/python-374/)
+[![PyVersion](https://img.shields.io/github/pipenv/locked/python-version/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://www.python.org/downloads/release/python-375/)
 [![License](https://img.shields.io/github/license/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/blob/master/LICENSE)
 
 BEE Manipulator is a "manager" for BEE2.4, with BM (short for BEE Manipulator) you can browse user-created packages
