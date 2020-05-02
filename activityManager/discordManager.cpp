@@ -16,8 +16,9 @@ public:
     ~discordManager();
     
     void initDiscord(const char* client_id, const char* exe_path);
-    void update();
+    void tick();
     void close();
+   
     
 };
 
@@ -35,7 +36,7 @@ void discordManager::initDiscord(const char* client_it, const char* exe_path) {
     //core->ActivityManager().RegisterCommand( exe_path );
 }
 
-void discordManager::update() {
+void discordManager::tick() {
     core->RunCallbacks();
     core->ActivityManager().OnActivitySpectate.Connect([](const char* secret) { std::cout << "Spectate " << secret << "\n"; });
 }
