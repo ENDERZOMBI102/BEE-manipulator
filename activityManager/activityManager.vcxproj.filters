@@ -113,5 +113,11 @@
     <ClInclude Include="discordsdk\voice_manager.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="discordManager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
