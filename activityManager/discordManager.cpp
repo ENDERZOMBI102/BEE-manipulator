@@ -26,11 +26,13 @@ void discordManager::close() {
     delete[] core;
 }
 
-void discordManager::updatePresence(presenceStruct presence) {
+const bool discordManager::updatePresence(presenceStruct presence) {
     /*
     * if any of those are in the struct, apply them to the lastData, so we don't have to rewrite everything
     * twice twice in the parameter
     */
+    //save last data struct
+    presenceStruct tmpData = lastData;
     if (!presence.state.empty()) { lastData.state == presence.state; }
     if (!presence.details.empty()) { lastData.details == presence.details; }
     if (!presence.startTimestamp == NULL) { lastData.startTimestamp == presence.startTimestamp; }
@@ -39,37 +41,22 @@ void discordManager::updatePresence(presenceStruct presence) {
     if (!presence.smallImage.empty()) { lastData.smallImage == presence.smallImage; }
     if (!presence.smallText.empty()) { lastData.smallText == presence.smallText; }
     if (!presence.spectateSecret.empty()) { lastData.spectateSecret == presence.spectateSecret; }
-    
-    DiscordActivity activity = presenceToActivity();
+    //create the activity struct object
+    discord::Activity activity{};
+    //the function names says everything you need to know
+    activity.SetDetails(lastData.details.c_str());
+    activity.SetState(lastData.state.c_str());
+    activity.GetTimestamps().SetStart(discord::Timestamp(lastData.startTimestamp));//get can use set
+    activity.GetAssets().SetSmallImage(lastData.smallImage.c_str());
+    activity.GetAssets().SetSmallText(lastData.smallText.c_str());
+    activity.GetAssets().SetLargeImage(lastData.largeImage.c_str());
+    activity.GetAssets().SetLargeText(lastData.largeText.c_str());
+    activity.SetType(discord::ActivityType::Playing);
+    //and FINALLY update the activity (aka RPC) with callback
+    core->ActivityManager().UpdateActivity(activity, this->activityCallback);
 }
 
-DiscordActivity discordManager::presenceToActivity() {
-    /*
-    * this function convert from a custom
-    *
-    */
-
-
-    // discord activity assets, part of discord activity struct
-    DiscordActivityAssets assets;
-    strcpy(assets.large_image, lastData.largeImage.c_str());
-    strcpy(assets.large_text, lastData.largeText.c_str());
-    strcpy(assets.small_image, lastData.smallImage.c_str());
-    strcpy(assets.small_text, lastData.smallText.c_str());
-    // discord activity timestamps, part of discord activity
-    DiscordActivityTimestamps timestamps;
-    timestamps.start = lastData.startTimestamp;
-    // discord activity secrets, part of discord activity
-    DiscordActivitySecrets secrets;
-    strcpy(secrets.spectate, lastData.spectateSecret.c_str());
-    // main part of the discord activity
-    DiscordActivity activity;
-    activity.application_id = client_id;
-    strcpy(activity.name, appName.c_str());
-    strcpy(activity.state, lastData.state.c_str());
-    strcpy(activity.details, lastData.details.c_str());
-    activity.timestamps = timestamps;
-    activity.assets = assets;
-    activity.secrets = secrets;
-    return activity;
+void discordManager::activityCallback(discord::Result result) {
+    //this make you know if the last update succeded
+    this->lastUpdateSucceded = result == discord::Result::Ok ? true : false;
 }

@@ -9,7 +9,8 @@ public:
     discord::Core* core{};
     discord::Activity activity{};
     discord::ActivitySecrets secret{};
-    lastUpdate lastData;
+    presenceStruct lastData;
+    bool lastUpdateSucceded;
     int64_t client_id;
     std::string appName;
 
@@ -21,25 +22,11 @@ public:
     void initDiscord(int64_t client_id, std::string appName_par, const char* exe_path);
     void tick();
     void close();
-    void updatePresence(presenceStruct presence);
-    DiscordActivity presenceToActivity();
+    const bool updatePresence(presenceStruct presence);
+    void activityCallback(discord::Result result);
 
 };
 
-typedef struct lastUpdate {
-    //activity
-    std::string state;
-    std::string details;
-    //activity timestamps
-    int64_t startTimestamp = NULL;
-    //activity assets
-    std::string largeImage;
-    std::string largeText;
-    std::string smallImage;
-    std::string smallText;
-    //activity secrets
-    std::string spectateSecret;
-};
 typedef struct presenceStruct {
     //activity
     std::string state;
@@ -53,6 +40,19 @@ typedef struct presenceStruct {
     std::string smallText;
     //activity secrets
     std::string spectateSecret;
+
+    bool operator== (const presenceStruct& other) const {
+        // a compact way of adding the == operator
+        return (
+            state == other.state &&
+            details == other.details&&
+            startTimestamp == other.startTimestamp &&
+            largeImage == other.largeImage &&
+            largeText == other.largeText &&
+            smallImage == other.smallText &&
+            spectateSecret == other.spectateSecret
+            );
+    }
 };
 
 typedef struct userStruct {
