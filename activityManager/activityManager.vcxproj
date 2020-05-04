@@ -178,7 +178,7 @@
     <ClCompile Include="discordsdk\voice_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="discordManager.h" />
+    <ClInclude Include="discordManager.hpp" />
     <ClInclude Include="discordsdk\achievement_manager.h" />
     <ClInclude Include="discordsdk\activity_manager.h" />
     <ClInclude Include="discordsdk\application_manager.h" />
