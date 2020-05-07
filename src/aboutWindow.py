@@ -22,8 +22,9 @@ class aboutWindow(wx.Frame):
         self.box = wx.html.HtmlWindow(self)
         try:
             self.logger.debug('trying to load about.html..')
-            open('./assets/about.html').close()
-            self.box.LoadFile('./assets/about.html')
+            data = open('./assets/about.html', 'r')
+            self.box.SetPage(data.replace('{0}', config.version()))
+            data.close()
         except:
             self.logger.warning('failed to open about.html! falling back to about.md')
             self.logger.debug('opening about.md..')
@@ -31,10 +32,10 @@ class aboutWindow(wx.Frame):
             with open('./assets/about.md', 'r') as file:
                 self.logger.debug('converting markdown to html..')
                 data = markdown(file.read())
-            data = data.replace(r'{0}', config.version())
-            self.box.SetPage(data)
             with open('./assets/about.html', 'w') as file:
                 file.write(data)
+            data = data.replace(r'{0}', config.version())
+            self.box.SetPage(data)
         self.CenterOnParent()
         self.Raise()
         self.Show()
