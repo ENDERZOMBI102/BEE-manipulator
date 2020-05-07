@@ -7,7 +7,6 @@ import logWindow
 import asyncio
 import browser
 import aboutWindow
-#import richPresence
 from srctools.logger import get_logger, init_logging
 
 LOGGER = get_logger()
@@ -20,7 +19,6 @@ class root (wx.Frame):
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
         asyncio.run(logWindow.init(self))
-        #richPresence.init()
         #set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
@@ -111,10 +109,7 @@ class root (wx.Frame):
             pos = list(self.GetPosition().Get())
             LOGGER.debug(f'saved main window position: {pos}')
             config.save(pos, 'mainWindowPos')
-        except:
-            pass
-        #close the discord RPC
-        #richPresence.getRpc().close()
+        except: pass
         self.Destroy()
 
     # file menu items actions
