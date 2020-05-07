@@ -55,11 +55,11 @@ class logWindow(wx.Frame):
         window = self
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         self.SetSize(0, 0, 500, 350)
-        self.AlwaysShowScrollbars(vflag=True)
+        #self.AlwaysShowScrollbars(vflag=True)
         try: self.SetPosition(wx.Point(config.load("logWindowPos")))
         except: pass
         self.text = wx.TextCtrl(
-            self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.TE_RICH)# make the textbox
+            self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.VSCROLL | wx.TE_RICH)# make the textbox
         self.logHandler = logHandler()
         # set the log message format
         self.logHandler.setFormatter(logging.Formatter(
