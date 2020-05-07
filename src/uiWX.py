@@ -4,6 +4,7 @@ import config
 import os
 import utilities
 import logWindow
+import asyncio
 import browser
 import aboutWindow
 #import richPresence
@@ -18,7 +19,7 @@ class root (wx.Frame):
         # sets the app icon
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
-        logWindow.init(self)
+        asyncio.run(logWindow.init(self))
         #richPresence.init()
         #set the utilities.root pointer to the object of this class
         utilities.root = self
