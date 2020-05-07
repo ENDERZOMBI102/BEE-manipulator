@@ -8,11 +8,11 @@ build
 *.pyc
 docs/~$BM_ui.pptx
 config.cfg
-logs
-assets/database.json
-assets/about.html
 BEEManipulator.7z
 activityManager/.vs
 activityManager/Debug
 activityManager/x64
 src/assets/database.json
+src/assets/about.html
+src/config.cfg
+src/logs
