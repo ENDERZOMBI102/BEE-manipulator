@@ -55,6 +55,7 @@ class logWindow(wx.Frame):
         window = self
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         self.SetSize(0, 0, 500, 350)
+        self.SetSizer(wx.BoxSizer(wx.VERTICAL))
         #self.AlwaysShowScrollbars(vflag=True)
         try: self.SetPosition(wx.Point(config.load("logWindowPos")))
         except: pass
@@ -71,6 +72,7 @@ class logWindow(wx.Frame):
         logging.getLogger().addHandler(self.logHandler)
         self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         self.Bind(wx.EVT_MOVE_END, self.OnMove, self)
+        updateVisibility()
 
     def OnClose(self, event):
         logger.debug(f'hided log window')
@@ -82,10 +84,10 @@ class logWindow(wx.Frame):
         logger.debug(f'saved logwindow position: {pos}')
         config.save(pos, 'logWindowPos')
 
-def init(master) -> None:
+async def init(master) -> None:
     """init the logwindow"""
     logWindow(master)
-    updateVisibility()
+    
 
 
 def toggleVisibility(placeHolder=None):
