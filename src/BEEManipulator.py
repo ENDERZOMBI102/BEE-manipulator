@@ -37,7 +37,7 @@ else:
     config.createConfig()
     LOGGER.info('Config file created!')
 LOGGER.info(f'Starting BEE Manipulator v{config.version()}!')
-LOGGER.info('started ui!') 
+LOGGER.info('starting ui!') 
 # start the ui + main loop
 root = root()
 root.Show()
