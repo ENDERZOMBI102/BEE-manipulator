@@ -61,7 +61,7 @@ def checkDatabase() -> None:
 		logger.debug('the package database is valid')
 	except:
 		logger.error('ERROR! the database isn\' valid json! the database will be downloaded again.')
-		if not utilities.isonline():
+		if utilities.isonline() == False:
 			logger.warning('can\'t download database while offline, aborting')
 			return
 		downloadDatabase()
@@ -72,7 +72,7 @@ def downloadDatabase() -> None:
 		download the database
 	"""
 	global logger
-	if not utilities.isonline():
+	if utilities.isonline() == False:
 		logger.warning('can\'t download database while offline, aborting')
 		return
 	try:
@@ -83,7 +83,7 @@ def downloadDatabase() -> None:
 			json.dump(database, file, indent=3)
 			logger.info(f'database saved to {databasePath}')
 	except:
-		logger.fatal('FATAL ERROR, can\' download database while offline, why the checks doesn\'t have worked?')
+		logger.fatal('FATAL ERROR, can\' download database while offline, why the checks didn\'t worked?')
 		raise Exception("how did you get here?")
 
 def loadObj() -> list:
