@@ -7,6 +7,7 @@ import logWindow
 import asyncio
 import browser
 import aboutWindow
+import beeManager
 from srctools.logger import get_logger, init_logging
 
 LOGGER = get_logger()
@@ -33,31 +34,31 @@ class root (wx.Frame):
         """
         # file menu bar
         self.fileMenu = wx.Menu()
-        openPortalDirItem = self.fileMenu.Append(0, "Open Portal 2 Directory\tCtrl-P"," ")
-        openBeeDirItem = self.fileMenu.Append(1, "Open BEEmod Directory\tCtrl-B", " ")
+        openPortalDirItem = self.fileMenu.Append(0, "Open Portal 2 Directory\tCtrl-P","opens the portal 2 directory")
+        openBeeDirItem = self.fileMenu.Append(1, "Open BEEmod Directory\tCtrl-B", "opens the BEEmod directory")
         syncGamesItem = self.fileMenu.Append(2, "Sync Games", " ")
         exitItem = self.fileMenu.Append(3, "Exit", " ")
 
         # options menu bar
         self.optionsMenu = wx.Menu()
-        settingsItem = self.optionsMenu.Append(4, "Settings\tCtrl-S", " ")
-        toggleLogWindowItem = self.optionsMenu.Append(5, "Toggle Log Window\tCtrl-L", " ")
-        reloadConfigItem = self.optionsMenu.Append(6, "Reload Configs (Restart)", " ")
-        reloadPackagesItem  = self.optionsMenu.Append(7, "Reload Packages", " ")
+        settingsItem = self.optionsMenu.Append(4, "Settings\tCtrl-S", "opens the settings window")
+        toggleLogWindowItem = self.optionsMenu.Append(5, "Toggle Log Window\tCtrl-L", "toggle the log window visibility")
+        reloadConfigItem = self.optionsMenu.Append(6, "Reload Configs (Restart)", "reload some configs")
+        reloadPackagesItem  = self.optionsMenu.Append(7, "Reload Packages", "reload packages")
 
         # portal 2 menu bar
         self.portalMenu = wx.Menu()
         verifyGameCacheItem = self.portalMenu.Append(8, "Verify Game Cache", " ")
-        uninstallBeeItem = self.portalMenu.Append(9, "Uninstall BEE 2.4", " ")
-        installBeeItem = self.portalMenu.Append(10, "Install BEE 2.4", " ")
+        uninstallBeeItem = self.portalMenu.Append(9, "Uninstall BEE 2.4", "remove BEE2 from disk")
+        installBeeItem = self.portalMenu.Append(10, "Install BEE 2.4", "")
 
         # help menu bar
         self.helpMenu = wx.Menu()
-        aboutItem = self.helpMenu.Append(11, "About BEE Manipulator", "Opens the about window")
-        checkUpdatesItem = self.helpMenu.Append(12, "Check Updates", "Check for app updates")
-        wikiItem = self.helpMenu.Append(13, "Wiki", "Opens the online wiki")
-        githubItem = self.helpMenu.Append(14, "Github", "Opens the github page")
-        discordItem = self.helpMenu.Append(15, "Discord", "Invite to the BEEmod server")
+        aboutItem = self.helpMenu.Append(11, "About BEE Manipulator", "opens the about window")
+        checkUpdatesItem = self.helpMenu.Append(12, "Check Updates", "check for app updates")
+        wikiItem = self.helpMenu.Append(13, "Wiki", "opens the online wiki")
+        githubItem = self.helpMenu.Append(14, "Github", "opens the github page")
+        discordItem = self.helpMenu.Append(15, "Discord", "invite to the BEEmod server")
 
         # makes the menu bar
         self.menuBar = wx.MenuBar()
@@ -93,6 +94,11 @@ class root (wx.Frame):
         self.Bind(wx.EVT_MENU, self.openDiscord, discordItem)
         # other events
         self.Bind(wx.EVT_CLOSE, self.OnClose, self)
+        if config.load('beePath') is None:
+            self.portalMenu.Enable(9, False)
+            self.fileMenu.Enable(1, False)
+        else:
+            self.portalMenu.Enable(10, False)
         
         """
         A notebook is a controller which manages multiple windows with associated tabs.
@@ -101,7 +107,6 @@ class root (wx.Frame):
         self.book = wx.Notebook(self, name="Main Menu")
         browserTab = browser.browser(self.book)
         self.book.AddPage(browserTab, "Package Browser")
-        #richPresence.presence.rpc.update(state='Idle', start=utilities.startTime)
 
     def OnClose(self, event: wx.CloseEvent):
         # get the window posistion as wx.Point and convert it to list
@@ -140,13 +145,22 @@ class root (wx.Frame):
 
     # portal 2 items actions
     def verifyGameCache(self, event):
-        pass
+        if not config.load("noVerifyDialog"):
+            data = wx.GenericMessageDialog(
+                self,
+                "This will remove EVERYTHING beemod-related from portal 2!\nclick yes ONLY if you are sure! X equals yes\n\n(if you don't want this dialog to show,\n check the no verify dialog in settings)",
+                "WARNING!",
+                wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
+            )
+            if data.ShowModal() ==  wx.ID_NO:
+                return
+        print("yes")
 
     def uninstallBee(self, event):
-        pass
+        print("uninstall")
 
     def installBee(self, event):
-        pass
+        print("install")
 
     # help menu items actions
     def openAboutWindow(self, event):
