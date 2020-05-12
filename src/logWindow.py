@@ -89,32 +89,17 @@ class logWindow(wx.Frame):
             self.clearBtn,
             wx.GBPosition(0, 1)
         )
-        self.copyBtn = wx.Button(# makes the copy button
-            self.bottomBar,
-            label='Copy',
-            size=wx.Size(50, 20)
-        )
-        BBsizer.Add( # add the cpoy button to the sizer
-            self.copyBtn,
-            wx.GBPosition(0, 3)
-        )
-        self.levelMenu = wx.Menu( 'Info' )
-        info = self.levelMenu.Append(wx.ID_ANY, 'Info')
-        warn = self.levelMenu.Append(wx.ID_ANY, 'Warning')
-        debug = self.levelMenu.Append(wx.ID_ANY, 'Debug')
-        levelMenuButton = wx.Button(self.bottomBar, label= '', size=wx.Size(20, 20))
-        BBsizer.Add( # add the cpoy button to the sizer
-            levelMenuButton,
-            wx.GBPosition(0, 40)
-        )
         self.bottomBar.SetSizer(BBsizer)
         sizer.Add(self.text, border=wx.Bottom)
         sizer.Add(self.bottomBar)
         self.SetSizer(sizer)
         self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         self.Bind(wx.EVT_MOVE_END, self.OnMoveEnd, self)
-        self.Bind(wx.EVT_MENU, self.changeLevel, self)
+        self.Bind(wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn)
         updateVisibility()
+
+    def OnClearButtonPressed(self, event):
+        self.text.Clear()
 
     def OnClose(self, event):
         logger.debug(f'hided log window')
@@ -126,9 +111,6 @@ class logWindow(wx.Frame):
         logger.debug(f'saved logwindow position: {pos}')
         config.save(pos, 'logWindowPos')
 
-    def changeLevel(self, event: wx.EVT_MENU):
-        print(event)
-        
 
 async def init(master) -> None:
     """init the logwindow"""
