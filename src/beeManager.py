@@ -23,11 +23,11 @@ def checkBeeUpdates():#return true if an update is available, false if there isn
     onlineVersion = "".join(onlineVersion)# the list is converted to a string
     if int(onlineVersion) > version():# is the online version more updated? if not, return False
         if boolcmp(data["draft"]):# is the online version a draft? if yes return False
-            save("None", "beeUpdateUrl")
+            save(None, "beeUpdateUrl")
             return False
         # check if a prerelease is avaiable, return false if it is
         elif boolcmp(data["prerelease"]):
-            save("None", "beeUpdateUrl")
+            save(None, "beeUpdateUrl")
             return False
         else:# else return true and save the download url
             save(getUrl(data), "beeUpdateUrl")
