@@ -25,7 +25,7 @@ def isonline():
 	except:
 		return False
 
-def keyExist(data: dict, key: str) -> bool:
+def keyExist(data: dict, key: str):
 	try:
 		x = data[key]
 		return True

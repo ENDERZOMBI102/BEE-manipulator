@@ -20,7 +20,7 @@ class root (wx.Frame):
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
         asyncio.run(logWindow.init(self))
-        asyncio.run(appDateCheck)
+        asyncio.run(appDateCheck())
         #set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
@@ -168,7 +168,7 @@ class root (wx.Frame):
         aboutWindow.init(self)
 
     def checkUpdates(self, event):
-        asyncio.run(appDateCheck)
+        asyncio.run(appDateCheck())
 
     def openWiki(self, event):
         LOGGER.info(

@@ -78,7 +78,7 @@ class logWindow(wx.Frame):
         self.logHandler.setLevel(getLevel())
         logging.getLogger().addHandler(self.logHandler)
         # create bottom bar
-        self.bottomBar = wx.Panel(self, size=wx.Size(self.GetSize()[0], 25))# makes the bottom "menu" bar
+        self.bottomBar = wx.Panel(self, size=wx.Size(500, 25))# makes the bottom "menu" bar
         BBsizer = wx.GridBagSizer()
         self.clearBtn = wx.Button(# makes the clear button
             self.bottomBar,

@@ -232,7 +232,11 @@ def checkUpdates() -> bool:
 	if not isonline():
 		return False
 	# get the latest release resources
-	data=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
+	data: dict = get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
+	try:
+		x = data['documentation_url']
+		return False
+	except: pass
 	url = data["assets"][0]["browser_download_url"]
 	# loads and format the online version
 	onlineVersion = toNumbers(data['tag_name'])

@@ -5,6 +5,8 @@ import utilities
 from requests import get
 from base64 import b64encode as encode
 from packages import *
+import urllib
+import pathlib
 from srctools.logger import get_logger
 import os
 
@@ -37,10 +39,13 @@ class browser(wx.ScrolledWindow):
 			database = loadPlaceHolder()
 		else:
 			database = loadObj()
-		databaseFrames = []
+		self.sizer =wx.GridBagSizer(vgap=2, hgap=0)
+		null = wx.LogNull()
+		yy=0
 		for pkg in database:
-			databaseFrames.append(packageFrame(master=self, package=pkg))
-
+			package = packageFrame(master=self, package=pkg, y=yy)
+			yy += 100
+		del null
 
 	def loadPlaceHolder(self):
 		return
@@ -63,9 +68,15 @@ def checkDatabase() -> None:
 		logger.error('ERROR! the database isn\' valid json! the database will be downloaded again.')
 		if utilities.isonline() == False:
 			logger.warning('can\'t download database while offline, aborting')
-			return
+			exit(2)
 		downloadDatabase()
 		checkDatabase()
+	logger.debug('checking packages assets dir..')
+	if not pathlib.Path('./assets/packages/').exists():
+		logger.warning('the packages folder doesn\'t exist! creating one..')
+		pathlib.Path('assets/packages').mkdir()
+		logger.info('packages folder created!')
+
 
 def downloadDatabase() -> None:
 	r"""
@@ -136,19 +147,31 @@ def loadObj() -> list:
 		# obtain the icon url
 		logger.debug('GETting package icon..')
 		if package.service() == "github" and not utilities.keyExist(pkg, 'icon_url'):
-			iconurl = package.repo() + "raw\\master\\icon.png"
+			iconurl = package.repo() + "raw/master/icon.png"
 		elif utilities.keyExist(pkg, "icon_url"):
 			iconurl = pkg["icon_url"]
-		# obtain the icon
-		icon = get(iconurl)
-		# convert it to base64
-		package.icon64 = encode(icon.content)
+		else: iconurl = None
+		# save the icon
+		iconPath = f'./assets/packages/{package.ID}/icon.png'
+		if not pathlib.Path(f'./assets/packages/{package.ID}').exists():
+			pathlib.Path(f'assets/packages/{package.ID}').mkdir()
+		if ( not pathlib.Path(iconPath).exists() and ( not iconurl is None) ):
+			open(iconPath, 'x').close()
+			urllib.request.urlretrieve(
+				iconurl,
+				iconPath
+			)
+		if iconurl is None:
+			package.icon = None
+		package.icon = iconPath
 		# check the validity of coAuthors
 		if package.coAuthors in [None, ""]:
 			package.coAuthors = []
 		# and finally append the package to the database list
 		database.append(package)
 		logger.debug(f'package {package.name} added to database')
+		iconPath = None
+		iconurl = None
 	logger.info('finished loading database from database.json!')
 	# return the list we made
 	return database

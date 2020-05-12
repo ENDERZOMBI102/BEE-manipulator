@@ -3,7 +3,9 @@ import wx
 import random
 from typing import Union
 from utilities import root
-from base64 import b64decode as decode
+import pathlib
+import io
+import PIL.Image
 
 class beePackage:
 	r"""
@@ -11,10 +13,10 @@ class beePackage:
 		stored here, with the others.
 		the icon is stored as base64 string and then returned as image object when icon() is called
 	"""
-	def __init__(self, ID = None, icon64 = None, version = 0, author = [], description = None, url = "None", filename = None, name =  None):
+	def __init__(self, ID = None, icon = None, version = 0, author = [], description = None, url = "None", filename = None, name =  None):
 		self.ID: str = ID
 		self.author: str = author
-		self.icon64: str = icon64
+		self.icon: str = icon
 		self.version = version
 		self.description: str = description
 		self.url: str = url
@@ -46,23 +48,22 @@ class beePackage:
 			return None
 	
 	
-	def icon(self):
+	def icons(self):
 		r"""
 			return the package icon as image object
 		"""
-		return decode(self.icon64)
+		return 
 	
 	def __getitem__( self, index: str):
 		if index in ['ID', 'id'] : return self.ID
 		elif index == 'author' : return self.author
-		elif index == 'icon64' : return self.icon64
 		elif index in ['version', 'ver'] : return self.version
 		elif index == 'name' : return self.name
 		elif index in ['desc', 'description'] : return self.description
 		elif index == 'url' : return self.url
 		elif index in ['filename', 'file'] : return self.filename
 		elif index in ['coAuhors', 'coauthors'] : return self.coAuthors
-		elif index == 'icon' : return self.icon()
+		elif index == 'icon' : return self.icon
 		elif index == 'service' : return self.service()
 		elif index in ['repo', 'repository'] : return self.repo()
 
@@ -73,10 +74,10 @@ class bmPackage:
 		the icon is stored as base64 string and then returned as image object when icon() is called
 	"""
 
-	def __init__(self, ID=None, author=[], icon64=None, version=0, name = None, desc = None, url = None, content=[], config={}):
+	def __init__(self, ID=None, author=[], icon=None, version=0, name = None, desc = None, url = None, content=[], config={}):
 		self.ID = ID
 		self.author = author
-		self.icon64 = icon64
+		self.icon = icon
 		self.version = version
 		self.name = name
 		self.desc = desc
@@ -84,13 +85,6 @@ class bmPackage:
 		self.contents = content
 		self.config = config
 		self.coAuthors = []
-	
-	
-	def icon(self):
-		r"""
-			return the package icon as image object
-		"""
-		return decode(self.icon64)
 
 	
 	def service(self):
@@ -132,7 +126,6 @@ class bmPackage:
 	def __getitem__( self, index: str):
 		if index in ['ID', 'id'] : return self.ID
 		elif index == 'author' : return self.author
-		elif index == 'icon64' : return self.icon64
 		elif index in ['version', 'ver'] : return self.version
 		elif index == 'name' : return self.name
 		elif index in ['desc', 'description'] : return self.desc
@@ -140,7 +133,7 @@ class bmPackage:
 		elif index in ['contents', 'content'] : return self.contents
 		elif index == 'config' : return self.config
 		elif index in ['coAuhors', 'coauthors'] : return self.coAuthors
-		elif index == 'icon' : return self.icon()
+		elif index == 'icon' : return self.icon
 		elif index == 'service' : return self.service()
 		elif index in ['repo', 'repository'] : return self.repo()
 
@@ -150,17 +143,29 @@ class packageFrame(wx.Panel):
 	this is a frame in the package browser
 	"""
 
-	def __init__(self, master: wx.Window, package: Union[beePackage, bmPackage]):
-		super().__init__(parent=master, size=wx.Size(500, 100), name=f'BROWSERFRAME_{package.ID}')
+	def __init__(self, master: wx.Window, package: Union[beePackage, bmPackage], y):
+		super().__init__(
+			parent=master,
+			size=wx.Size(500, 100),
+			pos = [0, y],
+			name=f'BROWSERFRAME_{package.ID}'
+		)
 		sizer = wx.BoxSizer(wx.VERTICAL)
-		titleBar = wx.Panel(self, -1, size=wx.Size(50,100))
+		titleBar = wx.Panel(self, -1, size=wx.Size(500,20))
 		titleText = wx.StaticText(titleBar, -1, label=package.name)
 		sizer.Add(titleBar)
-
+		if ( not package.icon in [None, ''] ) and pathlib.Path(package.icon).exists():
+			bmp = wx.Bitmap()
+			bmp.LoadFile(package.icon)
+			image = wx.StaticBitmap(
+				self,
+				bitmap=bmp
+			)
+			#sizer.Add(image)
 		self.Show()
 
 
-		
+
 
 
 	
