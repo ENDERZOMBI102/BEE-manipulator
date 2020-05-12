@@ -40,5 +40,9 @@ def toNumbers(arg=None):
 	        nums.append(i)
 	return int("".join(nums))
 
+def update():
+	pass
+
+
 argv = []
 root: wx.Frame = None
