@@ -231,22 +231,26 @@ def steamUsername():
 def checkUpdates() -> bool:
 	if not isonline():
 		return False
-	ov=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
-	url = ov["assets"][0]["browser_download_url"]
-	ov = ov['tag_name']
+	# get the latest release resources
+	data=get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
+	url = data["assets"][0]["browser_download_url"]
 	# loads and format the online version
-	onlineVersion = toNumbers(ov)
+	onlineVersion = toNumbers(data['tag_name'])
 	# loads and format the app version config
 	appVersion = toNumbers(load('appVersion'))
 	# here's the actual check
-	if  appVersion < onlineVersion:
-		save("true", "lastVersion")
-		return True
+	if not appVersion < onlineVersion:
+		# update NOT avaiable
+		save(True, "lastVersion")
+		save(None, "onlineAppVersion")
+		save(None, "newVersionUrl")
+		return False
 	else:
-		save("false", "lastVersion")
+		# update avaiable
+		save(False, "lastVersion")
 		save(onlineVersion, "onlineAppVersion")
 		save(url, "newVersionUrl")
-		return False
+		return True
 
 def version():
 	return load("appVersion")
