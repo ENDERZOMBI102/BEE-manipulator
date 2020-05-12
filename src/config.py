@@ -21,6 +21,7 @@ cfg = {
 	"logWindowVisibility": False,
 	"logLevel": "info",
 	"databasePath": "./assets/database.json",
+	"noVerifyDialog": False,
 	"plugins": {}
 
 }
