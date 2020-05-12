@@ -20,6 +20,7 @@ class root (wx.Frame):
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
         asyncio.run(logWindow.init(self))
+        asyncio.run(appDateCheck)
         #set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
@@ -166,9 +167,8 @@ class root (wx.Frame):
     def openAboutWindow(self, event):
         aboutWindow.init(self)
 
-    def checkUpdates(self, event, window=True):
-        # if there's an update open a popup, if not open another popup (if window = true)
-        pass
+    def checkUpdates(self, event):
+        asyncio.run(appDateCheck)
 
     def openWiki(self, event):
         LOGGER.info(
@@ -184,7 +184,18 @@ class root (wx.Frame):
         LOGGER.info(f'opening https://discord.gg/hnGFJrz with default browser')
         wb.open("https://discord.gg/hnGFJrz")
 
-
+async def appDateCheck():
+    if not config.checkUpdates():# update check
+        return# no updates, return to sender
+    data = wx.GenericMessageDialog(
+        message = "An update for the app is avaiable, do you want to update now?)",
+        caption = f'Update Avaiable - new version: {config.load("onlineVersion")}',
+        style = wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
+    )
+    if data.ShowModal() ==  wx.ID_NO:
+        return# user don't want to update
+    utilities.update()
+        
 
 if __name__ == "__main__":
     init_logging("./logs/latest.log")
