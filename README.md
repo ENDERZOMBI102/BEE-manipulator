@@ -40,7 +40,10 @@ Libraries that i'm making for this project
   a config manager (load, save, and check json-formatted config.cfg) with some handy capabilities as retrive steam's games folders and username
 
 - activityManager<br>
-  a discord rich presence enhancer to be used with pypresence, still w0rking on it (c++, uses discord game sdk)
+  a discord rich presence enhancer to be used with pypresence, still working on it (c++, uses discord game sdk) (deprecated?)
+  
+- [chained](https://github.com/ENDERZOMBI102/chained)<br>
+  a library with varius wrappers to use chained functions
 
 The Future
 
