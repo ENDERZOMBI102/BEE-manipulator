@@ -110,11 +110,12 @@ class logWindow(wx.Frame):
         pos = list(self.GetPosition().Get())
         logger.debug(f'saved logwindow position: {pos}')
         config.save(pos, 'logWindowPos')
+            
 
 
 async def init(master) -> None:
     """init the logwindow"""
-    logWindow(master)    
+    logWindow(master)
 
 
 def toggleVisibility(placeHolder=None):
