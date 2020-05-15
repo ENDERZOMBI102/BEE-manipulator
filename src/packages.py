@@ -6,6 +6,7 @@ from utilities import root
 import pathlib
 import io
 import PIL.Image
+import beeManager
 
 class beePackage:
 	r"""
@@ -161,7 +162,10 @@ class packageFrame(wx.Panel):
 				self,
 				bitmap=bmp
 			)
-			#sizer.Add(image)
+		else:
+			pass
+		infoButton = wx.Button(self, label="More Info")
+		modifyButton = wx.Button(self, label="Install")
 		self.Show()
 
 
