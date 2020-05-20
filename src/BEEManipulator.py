@@ -3,9 +3,6 @@ import srctools.logger
 import config
 import utilities
 import wx
-import logging
-import time
-import pymitter
 from sys import argv
 
 # to start without entering the venv shell
@@ -15,8 +12,11 @@ from sys import argv
 # to start with venv shell
 # py BEEManipulator.py
 
-#some data initialization
-utilities.argv = argv
+# some data initialization
+try:
+    if '--dev' in argv:
+        config.overwrite('logLevel', 'DEBUG')
+except: pass
 app = wx.App()
 
 srctools.logger.init_logging("./logs/latest.log")
@@ -37,7 +37,7 @@ else:
     config.createConfig()
     LOGGER.info('Config file created!')
 LOGGER.info(f'Starting BEE Manipulator v{config.version()}!')
-LOGGER.info('starting ui!') 
+LOGGER.info('starting ui!')
 # start the ui + main loop
 root = root()
 root.Show()
