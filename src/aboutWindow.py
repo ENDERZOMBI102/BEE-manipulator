@@ -1,17 +1,18 @@
+import webbrowser as wb
+
 import wx
 import wx.html
 import wx.richtext
 from markdown2 import markdown
-import webbrowser as wb
+
 import config
-from requests import get
 from srctools.logger import get_logger
 
 
-
 def init(master):
-    window=aboutWindow(master)
-    
+    window = aboutWindow(master)
+
+
 class aboutWindow(wx.Frame):
     #
     logger = get_logger()
