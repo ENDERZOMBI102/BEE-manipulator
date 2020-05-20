@@ -1,16 +1,18 @@
-import wx
-import webbrowser as wb
-import config
-import os
-import utilities
-import logWindow
 import asyncio
-import browser
+import os
+import webbrowser as wb
+
+import wx
+
 import aboutWindow
-import beeManager
+import browser
+import config
+import logWindow
+import utilities
 from srctools.logger import get_logger, init_logging
 
 LOGGER = get_logger()
+
 
 class root (wx.Frame):
     
