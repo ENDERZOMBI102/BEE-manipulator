@@ -1,29 +1,23 @@
-import json  # for manipulating json files
-from os import path  # for open files
-from sys import platform  # for knowing where the file is executed on
-from requests import get  # for the the connection
-from srctools.property_parser import Property  # for parse vdfs files
-from srctools.logger import get_logger
-from utilities import *
 from winreg import *
 
-logger = get_logger("config")
+from utilities import *
+
+logger = get_logger()
 overwriteDict: dict = {}
 # the plugins dict HAS to be the last
 cfg = {
-    "config_type": "BEE2.4 Manipulator Config File",
-    "appVersion": "0.0.1",
-    "lastVersion": False,
-    "beePrereleases": False,
-    "beeUpdateUrl": None,
-    "steamDir": None,
-    "portal2Dir": None,
-    "beePath": None,
-    "logWindowVisibility": False,
-    "logLevel": "info",
-    "databasePath": "./assets/database.json",
-    "noVerifyDialog": False,
-    "plugins": {}
+    'config_type': 'BEE2.4 Manipulator Config File',
+    'appVersion': '0.0.1',
+    'lastVersion': False,
+    'beeUpdateUrl': None,
+    'steamDir': None,
+    'portal2Dir': None,
+    'beePath': None,
+    'logWindowVisibility': False,
+    'logLevel': 'info',
+    'databasePath': './assets/database.json',
+    'noVerifyDialog': False,
+    'plugins': {}
 
 }
 
@@ -33,7 +27,7 @@ def createConfig():
         a simple function that make the config file
     """
     global cfg
-    with open('config.cfg', 'w', encoding="utf-8") as file:
+    with open('config.cfg', 'w', encoding='utf-8') as file:
         json.dump(cfg, file, indent=3)
 
 
@@ -44,14 +38,14 @@ def load(section):  # load a config
     example::
 
         >>> import config
-        >>> print(config.load("version"))
+        >>> print(config.load('version'))
         2.6
     """
     if section in overwriteDict.keys():
-        logger.debug(f'Overwritten config {section}!')
+        logger.debug('using overwrited data!')
         return overwriteDict[section]
     try:
-        with open('config.cfg', 'r', encoding="utf-8") as file:
+        with open('config.cfg', 'r', encoding='utf-8') as file:
             config = json.load(file)  # load the config
             readeData = config[section]  # take the requested field
         return readeData  # return the readed data
@@ -59,11 +53,11 @@ def load(section):  # load a config
         global cfg
         try:
             x = cfg[section]
-            logger.warning(f'can\'t load {section} from config file, using default')
+            logger.warning(f"can't load {section} from config file, using default")
             return cfg[section]
         except:
-            logger.error(f'can\'t load {section} from config file')
-            raise configError(f'can\'t load {section} from config file')
+            logger.error(f"can't load {section} from config file")
+            raise configError(f"can't load {section} from config file")
 
 
 def save(data, section):  # save a config
@@ -71,45 +65,58 @@ def save(data, section):  # save a config
     save the data on the config (json-formatted), re-create the config if no one is found.
     example::
         >>> import config
-        >>> print(config.load("version"))
+        >>> print(config.load('version'))
         '2.6'
-        >>> config.save("2.5","version")
-        >>> print(config.load("version"))
+        >>> config.save('2.5','version')
+        >>> print(config.load('version'))
         '2.5'
     """
     if not check(): createConfig()
     try:
-        with open('config.cfg', 'r', encoding="utf-8") as file:
+        with open('config.cfg', 'r', encoding='utf-8') as file:
             cfg = json.load(file)  # load the config file
             cfg[section] = data
-        with open('config.cfg', 'w', encoding="utf-8") as file:
+        with open('config.cfg', 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
     except:
-        raise configError("error while saving the config")
+        raise configError('error while saving the config')
 
 
-def loadAll() -> dict:
+def loadAll(overwrite: bool = False) -> dict:
+    """
+    A function that returns all the configs
+    :param overwrite: if true, act like load() and enable config overwrite
+    :return: the config dict
+    """
     try:
-        logger.debug("loading config file")
-        with open('config.cfg', 'r', encoding="utf-8") as file:
+        logger.debug('loading config file')
+        with open('config.cfg', 'r', encoding='utf-8') as file:
             cfg = json.load(file)  # load the config file
-            logger.debug("config file loaded, returning it as dict")
+            if overwrite:  # only if overwrite is true
+                LOGGER.debug(f'overwriting configs..')
+                for key in overwriteDict:  # cycle in the keys
+                    if key in cfg:  # overwrite, not create a key
+                        cfg[key] = overwriteDict[key]  # finally, overwrite the value
+        logger.debug('finished config file operations, returning configs as dict')
         return cfg
     except:
-        logger.error("no config file found! creating & loading new one")
+        logger.error('no config file found! creating & loading new one')
         createConfig()  # create new config file and call the function again
         return loadAll()
 
 
-def saveAll(cfg: dict):
+def saveAll(cfg: dict = None):
     """
-    this saves the config file object returned from loadAll()
+    A function that saves (and overwrites) the config file
+    :param cfg: the config dict
     """
+    if ( cfg is None ) or ( "config_type" is not "BEE2.4 Manipulator Config File" ):
+        raise ValueError("parameter cfg can't be an invalid config!")
     try:
-        with open('config.cfg', 'w', encoding="utf-8") as file:
+        with open('config.cfg', 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
     except:
-        logger.error("An error happened while saving config file, please open the console and")
+        logger.error("An error happened while saving config file, probably is now corrupted")
 
 
 def check(arg: str = None) -> bool:
@@ -120,7 +127,6 @@ def check(arg: str = None) -> bool:
     try:
         with open('config.cfg', 'r') as file:
             cfgj = json.load(file)
-            return True
     except:
         return False
     if arg is None:  # check the aurgment is present
@@ -155,6 +161,7 @@ def overwrite(section: str, data: any) -> None:
     :return: None
     """
     overwriteDict[section] = data
+    logger.debug(f'Overwritten config {section}!')
 
 
 # dynamic/static configs
