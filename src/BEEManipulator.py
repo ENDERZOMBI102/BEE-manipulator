@@ -1,9 +1,10 @@
-from uiWX import root
-import srctools.logger
-import config
-import utilities
-import wx
 from sys import argv
+
+import wx
+
+import config
+import srctools.logger
+from uiWX import root
 
 # to start without entering the venv shell
 # pipenv run py BEEManipulator.py
@@ -13,14 +14,16 @@ from sys import argv
 # py BEEManipulator.py
 
 # some data initialization
-try:
-    if '--dev' in argv:
-        config.overwrite('logLevel', 'DEBUG')
-except: pass
 app = wx.App()
 
 srctools.logger.init_logging("./logs/latest.log")
 LOGGER = srctools.logger.get_logger('BEE Manipulator')
+# if we started with --dev parameter, set loglevel to debug
+try:
+    if '--dev' in argv:
+        config.overwrite('logLevel', 'DEBUG')
+except: pass
+# app init
 try:
     LOGGER.debug("setting application name..")
     app.SetAppName("BEE Manipulator")
