@@ -1,5 +1,3 @@
-from winreg import *
-
 from utilities import *
 
 logger = get_logger()
@@ -166,11 +164,6 @@ def overwrite(section: str, data: any) -> None:
 
 # dynamic/static configs
 
-
-def osType() -> str:
-    return platform
-
-
 def steamDir(cmde=False) -> str:
     r"""
         this function return the steam installation folder
@@ -260,31 +253,14 @@ def steamUsername():
 def checkUpdates() -> bool:
     if not isonline():
         return False
-    # get the latest release resources
-    data: dict = get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/releases/latest').json()
-    try:
-        x = data['documentation_url']
-        return False
-    except:
-        pass
-    url = data["assets"][0]["browser_download_url"]
-    # loads and format the online version
-    onlineVersion = toNumbers(data['tag_name'])
-    # loads and format the app version config
-    appVersion = toNumbers(load('appVersion'))
-    # here's the actual check
-    if not appVersion < onlineVersion:
-        # update NOT avaiable
-        save(True, "lastVersion")
-        save(None, "onlineAppVersion")
-        save(None, "newVersionUrl")
-        return False
-    else:
-        # update avaiable
-        save(False, "lastVersion")
-        save(onlineVersion, "onlineAppVersion")
-        save(url, "newVersionUrl")
+    if not load('lastVersion'):
         return True
+    available, url, ver = checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion") )
+    if available:
+        save(url, 'lastVersionUrl')
+        save(False, 'lastRelease')
+        save(ver, 'onlineAppVersion')
+    return available
 
 
 def version():
