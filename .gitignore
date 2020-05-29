@@ -1,6 +1,5 @@
 .vscode
 __pycache__
-srctools/__pycache__
 .pytest_cache
 .venv
 dist
