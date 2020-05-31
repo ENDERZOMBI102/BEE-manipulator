@@ -2,13 +2,12 @@ import configparser
 import io
 import os
 from pathlib import Path
-from sys import platform as os
+from sys import platform
 from zipfile import *
-
 from requests import *
 
 import config
-from utilities import boolcmp
+from utilities import boolcmp, checkUpdate
 
 
 def checkBeeUpdates():  # return true if an update is available, false if there isn't or the pc is offline
@@ -28,22 +27,18 @@ def checkBeeUpdates():  # return true if an update is available, false if there 
         if boolcmp(data["draft"]):  # is the online version a draft? if yes return False
             config.save(None, "beeUpdateUrl")
             return False
-        # check if a prerelease is available, return false if it is
-        elif boolcmp(data["prerelease"]):
-            config.save(None, "beeUpdateUrl")
-            return False
-        else:  # else return true and save the download url
-            config.save(getUrl(data), "beeUpdateUrl")
-            return True
+        # else return true and save the download url
+        config.save(getUrl(data), "beeUpdateUrl")
+        return True2
 
 
 def getUrl(data):
     # cycle in the assets
     for asset in data["assets"]:
         # get the correct url for the OS we're on
-        if "mac" in asset["name"] and "darwin" in os:
+        if "mac" in asset["name"] and "darwin" in platform:
             return asset["browser_download_url"]
-        elif "win" in asset["name"] and "win" in os:
+        elif "win" in asset["name"] and "win" in platform:
             return asset["browser_download_url"]
     raise Exception("how this happened?, you're on linux?")
 
@@ -73,21 +68,7 @@ def updateBee():
 
 def verifyGameCache():
     # try to delete the bee2 folder ine p2 root dir
-    return
-    try:
-        os.rmdir(config.portalDir() + "/bee2")
-    except:
-        pass
-    # try to remove the bee2 dir inside the bin folder
-    try:
-        os.rmdir(config.portalDir() + "/bin/bee2")
-    except:
-        pass
-    # try to remove the bee2 compilers
-    try:
-        os.remove()
-    except:
-        pass
+    pass
 
 
 class configManager:
@@ -100,11 +81,11 @@ class configManager:
     @staticmethod
     def addGame(path='', name='Portal 2', overwrite=False):
         # the games.cfg file path (its where the games data is stored)
-        gamescfgPath = os.getenv('APPDATA').replace("\\", "/") + "/BEEMOD2/config/games.cfg"
+        gamescfgPath = os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg'
         # the cfg is a ini formatted file so import a std lib that can handle them
         data = configparser.ConfigParser()
         # open the cfg for reading
-        file = open(gamescfgPath, "r")
+        file = open(gamescfgPath, 'r')
         # read the cfg
         data.read_file(file)
         # close the cfg
@@ -117,7 +98,7 @@ class configManager:
             # apply the new game
             data[name] = {'steamid': '620', 'dir': path}
         else:
-            raise GameAlreadyExistError(f'key name {name} already exist! use another name or the overwrite!')
+            raise GameAlreadyExistError(f'key name {name} already exist! use another name or overwrite!')
         # reopen the cfg for writing
         file = open(gamescfgPath, 'w')
         # write it
@@ -126,11 +107,11 @@ class configManager:
         file.close()
 
     @staticmethod
-    def createAndAddGame(name='Portal 2', loc='', steamid=0):
+    def createAndAddGame(name='Portal 2', loc='', steamid=620):
         # the games.cfg file path (its where the games data is stored)
-        gamescfgPath = os.getenv('APPDATA').replace("\\", "/") + "/BEEMOD2/config/games.cfg"
+        gamescfgPath = os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg'
         if Path(gamescfgPath).exists():
-            raise Exception('can\' create the file, they already exist!')
+            raise FileExistsError("can' create the file, they already exist!")
         # create the necessary folders
         Path(gamescfgPath + '/../..').resolve().mkdir()
         Path(gamescfgPath + '/..').resolve().mkdir()
@@ -138,7 +119,7 @@ class configManager:
         # create and open the file for writing
         file = open(gamescfgPath, 'x')
         # the data
-        data[name] = {'steamid': '620', 'dir': loc}
+        data[name] = {'steamid': steamid, 'dir': loc}
         # write it
         data.write(file)
         # close it

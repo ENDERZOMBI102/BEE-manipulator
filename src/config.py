@@ -272,7 +272,7 @@ def onlineVersion():
 
 
 def devMode() -> bool:
-    return load("devMode")
+    return boolcmp( load("devMode") )
 
 
 class configError(BaseException):
