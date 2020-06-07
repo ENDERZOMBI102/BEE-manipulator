@@ -70,11 +70,11 @@ def checkUpdate(url: str = None, curVer: str = None) -> Tuple[bool, str, int]:
 	url: str = None
 	# first we convert the tag name to an int
 	# then we compare it with the given current version
-	if toNumbers( data['tag_name'] ) > curVer:
+	if versioncmp( data['tag_name'], curVer ):
 		if not boolcmp(data["draft"]):  # check if the release is not a draft
 			available = True
 			url = getReleaseUrl(data)
-	return available, url, toNumbers(data['tag_name'])
+	return available, url, data['tag_name']
 
 
 def genApiUrl(url: str = None) -> str:
@@ -105,9 +105,15 @@ def getReleaseUrl(data) -> str:
 			return asset['browser_download_url']
 	raise Exception("how this happened?, you're on linux?")
 
-def versioncmp( ver0: str = None, ver1: str = None, operation: str = None ):
-
-
+def versioncmp( ver0: str, ver1: str, operation: str = '>' ):
+	"""
+	do a ver0 > ver1 comparation
+	"""
+	ver0 = ver0.replace('.', '')
+	ver1 = ver1.replace('.', '')
+	if ( int(ver0[0]) > int(ver1[0]) ) or ( int(ver0[1]) > int(ver1[1]) ) or ( int(ver0[2]) > int(ver1[2]) ):
+		return True
+	return False
 
 argv = []
 root: wx.Frame = None

@@ -18,6 +18,7 @@ pillow = "*"
 wxpython = "*"
 markdown2 = "*"
 discord-py = "*"
+version-utils = "*"
 
 [requires]
 python_version = "3.7"
