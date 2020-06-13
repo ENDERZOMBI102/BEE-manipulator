@@ -1,6 +1,7 @@
-from utilities import *
 import json
 from winreg import *
+
+from utilities import *
 
 logger = get_logger()
 overwriteDict: dict = {}
@@ -8,7 +9,7 @@ overwriteDict: dict = {}
 cfg = {
     'config_type': 'BEE2.4 Manipulator Config File',
     'appVersion': '0.0.1',
-    'lastVersion': False,
+    'lastVersion': True,
     'beeUpdateUrl': None,
     'steamDir': None,
     'portal2Dir': None,
@@ -253,9 +254,9 @@ def steamUsername():
 
 
 def checkUpdates() -> bool:
-    if not isonline():
+    if not isonline():  # if we're not online return false
         return False
-    if not load('lastVersion'):
+    if not load('lastVersion'):  # if we're not on latest version return true
         return True
     available, url, ver = checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion") )
     if available:

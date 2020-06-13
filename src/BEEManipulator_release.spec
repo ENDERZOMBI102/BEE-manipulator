@@ -34,6 +34,7 @@ exe = EXE(pyz,
           strip=True,
           upx=True,
           console=False,
+          windowed=True,
 		  icon='assets/icon.ico')
 coll = COLLECT(exe,
                a.binaries,

@@ -1,9 +1,10 @@
-from srctools.logger import get_logger
-from typing import Union, Tuple
-from requests import get
 from sys import platform
-import config
+from typing import Union, Tuple
+
 import wx
+from requests import get
+
+from srctools.logger import get_logger
 
 LOGGER = get_logger("utils")
 
@@ -66,6 +67,8 @@ def checkUpdate(url: str = None, curVer: str = None) -> Tuple[bool, str, int]:
 	LOGGER.debug(f'url valid!')
 	LOGGER.debug(f'checking updates on url: {url}')
 	data = get(url).json()  # get the latest release data
+	if 'documentation_url' in data.keys():
+		return False, None, None
 	available: bool = True
 	url: str = None
 	# first we convert the tag name to an int
@@ -84,7 +87,7 @@ def genApiUrl(url: str = None) -> str:
 	:return: the github api url
 	"""
 	splitUrl = url.split('/')  # slit the url in varius segments
-	return f'https://api.github.com/repos/{splitUrl[4]}/{splitUrl[5]}/releases/latest/'  # return the formed url
+	return f'https://api.github.com/repos/{splitUrl[3]}/{splitUrl[4]}/releases/latest/'  # return the formed url
 
 
 def getReleaseUrl(data) -> str:
@@ -105,9 +108,12 @@ def getReleaseUrl(data) -> str:
 			return asset['browser_download_url']
 	raise Exception("how this happened?, you're on linux?")
 
-def versioncmp( ver0: str, ver1: str, operation: str = '>' ):
+def versioncmp( ver0: str, ver1: str):
 	"""
-	do a ver0 > ver1 comparation
+	do a ver0 > ver1 comparation, three . separated values
+	:param ver0: version base
+	:param ver1: version to compare
+	:return: ver0 > ver1
 	"""
 	ver0 = ver0.replace('.', '')
 	ver1 = ver1.replace('.', '')

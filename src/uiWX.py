@@ -187,15 +187,15 @@ class root (wx.Frame):
         wb.open("https://discord.gg/hnGFJrz")
 
 async def appDateCheck():
-    if not config.checkUpdates():# update check
-        return# no updates, return to sender
+    if not ( config.checkUpdates() is True):  # update check
+        return  # no updates, return
     data = wx.GenericMessageDialog(
         message = "An update for the app is avaiable, do you want to update now?)",
         caption = f'Update Avaiable - new version: {config.load("onlineVersion")}',
         style = wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
     )
-    if data.ShowModal() ==  wx.ID_NO:
-        return# user don't want to update
+    if data.ShowModal() == wx.ID_NO:
+        return  # user don't want to update
     utilities.update()
         
 
