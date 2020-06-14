@@ -2,6 +2,10 @@
   <dictionary name="Flavia">
     <words>
       <w>boolcmp</w>
+      <w>filebytes</w>
+      <w>filepath</w>
+      <w>fileurl</w>
+      <w>gdrive</w>
       <w>isonline</w>
       <w>prerelease</w>
     </words>
