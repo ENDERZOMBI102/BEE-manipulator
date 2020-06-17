@@ -378,7 +378,7 @@ def load_dxt5(pixels, data, width, height):
     if mod:
         block_wid += 1
 
-    # TODO: These alpha values aren't quite right.
+    # TO DO: These alpha values aren't quite right.
 
     for block_y in range(0, height, 4):
         block_y //= 4

@@ -1,14 +1,14 @@
 """Test the Vector object."""
-import math
-import pickle
 import copy
+import math
+import operator as op
+import pickle
+from typing import Type
 
 import pytest
-import operator as op
+
 import srctools
 from srctools import Vec_tuple
-
-from typing import Type
 
 try:
     from importlib.resources import path as import_file_path
@@ -792,7 +792,7 @@ def test_copy_pickle(py_c_vec):
     assert orig is not pick
     assert orig == pick
 
-    # TODO: Check both c/python version produce the same data.
+    # TO DO: Check both c/python version produce the same data.
 
 
 def test_bbox(py_c_vec):
