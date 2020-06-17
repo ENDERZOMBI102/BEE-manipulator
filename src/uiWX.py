@@ -108,8 +108,8 @@ class root (wx.Frame):
         This section makes the notebook
         """
         self.book = wx.Notebook(self, name="Main Menu")
-        browserTab = browser.browser(self.book)
-        self.book.AddPage(browserTab, "Package Browser")
+        self.browserTab = browser.browser(self.book)
+        self.book.AddPage(self.browserTab, "Package Browser")
 
     def OnClose(self, event: wx.CloseEvent):
         # get the window posistion as wx.Point and convert it to list
@@ -125,7 +125,7 @@ class root (wx.Frame):
         os.startfile(config.portalDir())
 
     def openBEEdir(self, event):
-        if(config.load("beePath") is None):
+        if config.load("beePath") is None:
             pass
         else:
             pass
@@ -134,7 +134,7 @@ class root (wx.Frame):
         pass
 
     def exit(self, event):
-        self.OnClose(wx.CloseEvent)#there's already an handler, so use that
+        self.OnClose(wx.CloseEvent)  # there's already an handler, so use that
     
     # options menu items actions
     def openSettingsWindow(self, event):
@@ -144,7 +144,12 @@ class root (wx.Frame):
         pass
 
     def reloadPackages(self, event):
-        pass
+        self.book.RemovePage(0)
+        self.browserTab = browser.browser(self.book)
+        self.book.AddPage(self.browserTab, "Package Browser")
+        self.book.Refresh()
+        self.Update()
+        self.Refresh()
 
     # portal 2 items actions
     def verifyGameCache(self, event):
@@ -155,7 +160,7 @@ class root (wx.Frame):
                 "WARNING!",
                 wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
             )
-            if data.ShowModal() ==  wx.ID_NO:
+            if data.ShowModal() == wx.ID_NO:
                 return
         print("yes")
 
@@ -185,6 +190,7 @@ class root (wx.Frame):
     def openDiscord(self, event):
         LOGGER.info(f'opening https://discord.gg/hnGFJrz with default browser')
         wb.open("https://discord.gg/hnGFJrz")
+
 
 async def appDateCheck():
     if not ( config.checkUpdates() is True):  # update check
