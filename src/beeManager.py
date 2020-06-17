@@ -4,10 +4,11 @@ import os
 from pathlib import Path
 from sys import platform
 from zipfile import *
+
 from requests import *
 
 import config
-from utilities import boolcmp, checkUpdate
+from utilities import boolcmp
 
 
 def checkBeeUpdates():  # return true if an update is available, false if there isn't or the pc is offline
@@ -29,7 +30,7 @@ def checkBeeUpdates():  # return true if an update is available, false if there 
             return False
         # else return true and save the download url
         config.save(getUrl(data), "beeUpdateUrl")
-        return True2
+        return True
 
 
 def getUrl(data):
@@ -69,6 +70,11 @@ def updateBee():
 def verifyGameCache():
     # try to delete the bee2 folder ine p2 root dir
     pass
+
+@property
+def packageFolder():
+    return './../packages/'
+
 
 
 class configManager:
