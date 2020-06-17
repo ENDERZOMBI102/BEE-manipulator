@@ -6,7 +6,7 @@ import requests
 import wx
 import wx.lib
 
-import config
+import beeManager
 from srctools import logger
 
 
@@ -171,15 +171,16 @@ class packageFrame(wx.Panel):
 			pass
 		infoButton = wx.Button(self, label="More Info")
 		modifyButton = wx.Button(self, label="Install")
-		self.Bind(wx.MOUSE_BTN_LEFT, self.OnClickHandler, self)
+		self.Bind(wx.EVT_BUTTON, self.OnModifyButtonHandler, modifyButton)
+		self.Bind(wx.EVT_BUTTON, self.OnInfoButtonHandler, infoButton)
+		self.Bind(wx.EVT_MOUSE_AUX1_DCLICK, self.OnClickHandler, self)
 		self.Show()
 
-	def OnClickHandler(self, event: wx.MOUSE_BTN_LEFT):
+	def OnClickHandler(self, event: wx.EVT_MOUSE_AUX1_DCLICK):
 		self.install()
 
-	def install(self):
-
-		packagesPath: str = config.packageFolder()
+	def install(self, update: bool = False):
+		packagesPath: str = beeManager.packageFolder()
 		service: str = self.package.service()  # package host service
 		filebytes: bytes  # the file content in bytes
 		fileurl: str  # the file download url
@@ -209,9 +210,10 @@ class packageFrame(wx.Panel):
 			return
 		self.logger.debug('success!')
 		self.logger.debug('writing file to disk..')
+		mode = 'x+b' if update is False else 'wb'
 		try:
 			# write file to disk
-			with open(filepath, 'x+b') as file:
+			with open(filepath, mode) as file:
 				file.write(filebytes)
 		except Exception as e:
 			self.logger.error(f'FAILED TO SAVE FILE! error: {e}')
@@ -219,10 +221,11 @@ class packageFrame(wx.Panel):
 		self.logger.info('successufully installed package!')
 		# done
 
+	def OnModifyButtonHandler(self, event: wx.EVT_BUTTON):
+		pass
 
-
-
-
+	def OnInfoButtonHandler(self, event: wx.EVT_BUTTON):
+		pass
 
 
 if __name__ == "__main__":
