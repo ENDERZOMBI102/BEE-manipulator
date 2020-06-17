@@ -3,6 +3,7 @@ BEE2.4 Manipulator
 
 a BEE2.4 manager!
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3cd982db8ee640cda0e1dc21d2b9c36c)](https://app.codacy.com/manual/enderzombi102.end/BEE-manipulator?utm_source=github.com&utm_medium=referral&utm_content=ENDERZOMBI102/BEE-manipulator&utm_campaign=Badge_Grade_Dashboard)
 [![BEE Manipulator Releases](https://img.shields.io/github/downloads/ENDERZOMBI102/BEE-manipulator/total.svg?style=for-the-badge&label=Downloads)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/)
 [![Latest Release](https://img.shields.io/github/v/release/ENDERZOMBI102/BEE-manipulator?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/latest)
 [![Discord](https://img.shields.io/discord/546987939314532362?logo=discord&style=for-the-badge)](https://discord.gg/hnGFJrz)
