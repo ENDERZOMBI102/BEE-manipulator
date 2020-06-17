@@ -32,7 +32,7 @@ def createConfig():
         json.dump(default_config, file, indent=3)
 
 
-def load(section):  # load a config
+def load(section) -> Union[str, int, None, dict, list]:  # load a config
     """
     loads a section of the config (json-formatted) and return the data.
     raise an exception if the config or the requested section doesn't exist
@@ -41,6 +41,8 @@ def load(section):  # load a config
         >>> import config
         >>> print(config.load('version'))
         2.6
+    :param section: section of the config to read
+    :returns: the readed data
     """
     if section in overwriteDict.keys():
         logger.debug('using overwrited data!')
@@ -68,8 +70,10 @@ def save(data, section):  # save a config
         >>> config.save('2.5','version')
         >>> print(config.load('version'))
         '2.5'
+    :param data: the data to save
+    :param section: the section of the config to save the data to
     """
-    if not check(): createConfig()
+
     try:
         with open('config.cfg', 'r', encoding='utf-8') as file:
             cfg = json.load(file)  # load the config file
@@ -119,36 +123,26 @@ def saveAll(cfg: dict = None):
         logger.error("An error happened while saving config file, probably is now corrupted")
 
 
-def check(arg: str = None) -> bool:
+def check(cfg: dict = None) -> bool:
     """
-    if no aurgment is present check if the config file exist and if is a BM config file, else will
-    check if the given section exists.
+    check if the config file exist and if is a BM config file
+    :param cfg: optional string to use instead of reopening from the file system
+    :return: True if is a valid config
     """
-    try:
+    if cfg is None:
         with open('config.cfg', 'r') as file:
-            cfgj = json.load(file)
-    except:
+            cfg = json.load(file)  # load the file
+    # check if EVERY config exists
+    for i in default_config.keys():
+        if i in cfg.keys():
+            continue
         return False
-    if arg is None:  # check the aurgment is present
-        # check if EVERY config exists
-        for i in default_config.keys():
-            if cfgj[i]: continue
-            return False
-        # final check
-        if cfgj['config_type'] == "BEE2.4 Manipulator Config File":
-            # the check is made successfully
-            return True
-        else:
-            # the config file is not a BM config file
-            return False
-    try:
-        with open("config.cfg", 'r') as file:  # try to open the config file
-            cfgj = json.load(file)  # load the config file
-            if cfgj[arg]:
-                return True
-            else:
-                return False
-    except:
+    # final check
+    if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+        # the check is made successfully
+        return True
+    else:
+        # the config file is not a BM config file
         return False
 
 

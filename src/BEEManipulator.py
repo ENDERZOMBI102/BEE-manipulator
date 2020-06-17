@@ -22,6 +22,8 @@ LOGGER = srctools.logger.get_logger('BEE Manipulator')
 try:
     if '--dev' in argv:
         config.overwrite('logLevel', 'DEBUG')
+        config.overwrite('logWindowVisibility', True)
+        env = 'dev'
 except: pass
 # app init
 try:

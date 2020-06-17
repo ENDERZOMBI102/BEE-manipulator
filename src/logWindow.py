@@ -1,10 +1,13 @@
-import utilities
 import config
 import logging
 import wx
-import webbrowser as wb
 import srctools.logger
+import logging
 
+import wx
+
+import config
+import srctools.logger
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 visible: bool = config.load("logWindowVisibility")
@@ -52,17 +55,21 @@ class logWindow(wx.Frame):
     """
     def __init__(self, master):
         super().__init__(
-                            master, # parent
-                            title="Logs", #window title
-                            style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER # to meake the window unresizaeble
+                            master,  # parent
+                            title="Logs",  # window title
+                            style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER  # to make the window not resizeable
                         )  # init the window
         global window
         window = self
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         self.SetSize(0, 0, 500, 365)
         sizer = wx.FlexGridSizer(rows=2, cols=1, gap=wx.Size(0, 0))
-        try: self.SetPosition(wx.Point(config.load("logWindowPos")))
-        except: pass# not a problem if it fails
+        try:
+            pos = config.load('logWindowPos')
+            if pos is not None:
+                self.SetPosition(wx.Point(pos))
+        except Exception as e:
+            logger.warning(e)  # not a problem if it fails
         self.text = wx.TextCtrl(
             self,
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.VSCROLL | wx.TE_RICH,
@@ -155,10 +162,7 @@ def changeLevel(level: str) -> None:
     window.logHandler.setLevel(data)
 
 
-
 def getLevel() -> int:
-    if "-logDebug" in utilities.argv:
-        return logging.DEBUG
     # check for the level
     savedLevel = str(config.load("logLevel")).upper()
     logger.info(f'loaded log level {savedLevel} from config!')

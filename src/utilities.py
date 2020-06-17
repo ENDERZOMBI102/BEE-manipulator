@@ -108,6 +108,7 @@ def getReleaseUrl(data) -> str:
 			return asset['browser_download_url']
 	raise Exception("how this happened?, you're on linux?")
 
+
 def versioncmp( ver0: str, ver1: str):
 	"""
 	do a ver0 > ver1 comparation, three . separated values
@@ -121,5 +122,6 @@ def versioncmp( ver0: str, ver1: str):
 		return True
 	return False
 
-argv = []
+
+env = 'dist'
 root: wx.Frame = None
