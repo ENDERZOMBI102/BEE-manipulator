@@ -6,7 +6,7 @@ from utilities import *
 logger = get_logger()
 overwriteDict: dict = {}
 # the plugins dict HAS to be the last
-cfg = {
+default_config = {
     'config_type': 'BEE2.4 Manipulator Config File',
     'appVersion': '0.0.1',
     'lastVersion': True,
@@ -27,9 +27,9 @@ def createConfig():
     r"""
         a simple function that make the config file
     """
-    global cfg
+    global default_config
     with open('config.cfg', 'w', encoding='utf-8') as file:
-        json.dump(cfg, file, indent=3)
+        json.dump(default_config, file, indent=3)
 
 
 def load(section):  # load a config
@@ -51,14 +51,11 @@ def load(section):  # load a config
             readeData = config[section]  # take the requested field
         return readeData  # return the readed data
     except:
-        global cfg
-        try:
-            x = cfg[section]
+        if section in default_config:
             logger.warning(f"can't load {section} from config file, using default")
-            return cfg[section]
-        except:
+            return default_config[section]
+        else:
             logger.error(f"can't load {section} from config file")
-            raise configError(f"can't load {section} from config file")
 
 
 def save(data, section):  # save a config
@@ -79,7 +76,9 @@ def save(data, section):  # save a config
             cfg[section] = data
         with open('config.cfg', 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
+        logger.debug(f'saved {section}')
     except:
+        logger.error(f'failed to save {data} to {section}!')
         raise configError('error while saving the config')
 
 
@@ -131,9 +130,8 @@ def check(arg: str = None) -> bool:
     except:
         return False
     if arg is None:  # check the aurgment is present
-        global cfg
         # check if EVERY config exists
-        for i in cfg.keys():
+        for i in default_config.keys():
             if cfgj[i]: continue
             return False
         # final check
