@@ -1,12 +1,9 @@
-import config
 import logging
+
 import wx
+
+import config
 import srctools.logger
-import logging
-
-import wx
-
-import config
 import srctools.logger
 
 # the visibility of the log window, is initially setted to the value saved in the config file
@@ -174,4 +171,4 @@ def getLevel() -> int:
         level = logging.ERROR
     else:
         level = logging.DEBUG
-    return logging.DEBUG#level
+    return level
