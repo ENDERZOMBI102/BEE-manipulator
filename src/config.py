@@ -1,6 +1,7 @@
 import json
 from winreg import *
 
+from srctools import Property
 from utilities import *
 
 logger = get_logger()
@@ -130,8 +131,11 @@ def check(cfg: dict = None) -> bool:
     :return: True if is a valid config
     """
     if cfg is None:
-        with open('config.cfg', 'r') as file:
-            cfg = json.load(file)  # load the file
+        try:
+            with open('config.cfg', 'r') as file:
+                cfg = json.load(file)  # load the file
+        except FileNotFoundError:
+            return False
     # check if EVERY config exists
     for i in default_config.keys():
         if i in cfg.keys():
@@ -163,8 +167,8 @@ def steamDir(cmde=False) -> str:
     r"""
         this function return the steam installation folder
     """
-    if not check("steamDir"):
-        save(None, "steamDir")  # create the condif value in case it doesn't exist
+    if 'steamDir' not in loadAll().keys():
+        save(None, "steamDir")  # create the config without value in case it doesn't exist
 
     if not load("steamDir") is None:
         return load("steamDir")  # return the folder
@@ -211,8 +215,7 @@ discordToken: str = "655075172767760384"
 
 
 def libraryFolders() -> list:
-    paths = []  # create a list for library paths
-    paths.append(steamDir() + "/steamapps/")  # add the default
+    paths = [steamDir() + "/steamapps/"]  # create a list for library paths
     try:
         # open the file that contains the library paths
         with open(steamDir() + "/steamapps/libraryfolders.vdf", "r") as file:
