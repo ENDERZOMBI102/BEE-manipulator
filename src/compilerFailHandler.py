@@ -1,5 +1,4 @@
-from config import *
-from sys import platform
+import wx
 
 class compilerFailHandler(wx.Panel):
 	r"""
@@ -8,7 +7,7 @@ class compilerFailHandler(wx.Panel):
 		to parse it is done, if done correctly, another line is appended to
 		the file, "[compilerFailHandler] File parsed successufully"
 	"""
-	def __init__(self,baseClass):
+	def __init__(self, baseClass):
 		pass
 		
 	def fail(arg = None):

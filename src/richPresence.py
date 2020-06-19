@@ -1,10 +1,8 @@
-import pypresence
-import config
 import time
-import wx
-import asyncio
-import servepy
-import requests
+
+import pypresence
+
+import config
 from srctools.logger import get_logger
 
 logger = get_logger()
@@ -48,10 +46,7 @@ class richPresence:
 		self.rpc.close()
 
 
-
-
-if __name__=='__main__':
-	import asyncio
+if __name__ == '__main__':
 	r = richPresence(config.discordToken)
 	r.update()
 

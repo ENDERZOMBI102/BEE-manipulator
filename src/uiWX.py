@@ -23,7 +23,7 @@ class root (wx.Frame):
         # init the logging window
         asyncio.run(logWindow.init(self))
         asyncio.run(appDateCheck())
-        #set the utilities.root pointer to the object of this class
+        # set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
             self.SetPosition(wx.Point(config.load('mainWindowPos')))
@@ -138,7 +138,7 @@ class root (wx.Frame):
     
     # options menu items actions
     def openSettingsWindow(self, event):
-        pass
+        notimplementedyet()
 
     def reloadConfig(self, event):
         notimplementedyet()

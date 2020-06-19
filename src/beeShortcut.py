@@ -1,9 +1,3 @@
-from requests import get
-from PIL import Image
-from beeManager import *
-import config
-import subprocess
-
 """
 this script is responsible for the bee2 shortcut, if the online repo has updates,
 launching from this will cause the updater to be launched, and install the update.
@@ -12,7 +6,7 @@ have some updated packages.
 
 this will be a 'standalone' executable
 """
-class bee2UpdaterShortcut(tk.Tk):
+class bee2UpdaterShortcut():
     def __init__(self):
         pass
         

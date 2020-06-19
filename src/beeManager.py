@@ -3,9 +3,9 @@ import io
 import os
 from pathlib import Path
 from sys import platform
-from zipfile import *
+from zipfile import ZipFile
 
-from requests import *
+from requests import get
 
 import config
 from utilities import boolcmp
@@ -45,7 +45,7 @@ def getUrl(data):
 
 
 def updateBee():
-    r"""
+    """
     this will update BEE, when called, the function
     will download the latest version based on the
     os is running on and unzip it
@@ -71,14 +71,14 @@ def verifyGameCache():
     # try to delete the bee2 folder ine p2 root dir
     pass
 
+
 @property
 def packageFolder():
     return './../packages/'
 
 
-
 class configManager:
-    r"""
+    """
     BEE2.4 config manager
     this definition contains some userful commands to
     manipulate the config files

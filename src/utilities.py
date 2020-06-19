@@ -10,19 +10,32 @@ LOGGER = get_logger("utils")
 
 
 def boolcmp(value: Union[bool, int, str] ) -> bool:
-	r"""
-	a small function to compare bool values
+
+	"""
+	function to evaluate string or numbers to bool values
+	:param value: the value to compare
+	:return: if the value may rappresents a false return False, else true
 	"""
 	LOGGER.debug(f'converting "{value}" to boolean!')
 	if value in [True, 'true', 'yes', 1]:
 		return True
 	elif value in [False, 'false', 'no', 0]:
 		return False
+	elif isinstance(value, int):
+		if value > 0:
+			return True
+		else:
+			return False
 	else:
 		raise ValueError('invalid input!')
 
 
 def isonline():
+
+	"""
+	simple function that checks if the pc is online or not
+	:return: True if it is else False
+	"""
 	try:
 		LOGGER.debug('checking connection..')
 		get('https://www.google.com/')
@@ -33,6 +46,13 @@ def isonline():
 
 
 def keyExist(data: dict, key: str):
+
+	"""
+	check if a dictionary has a key
+	:param data: dictionary to check
+	:param key: the key to check
+	:return:
+	"""
 	LOGGER.debug(f'checking key "{key}"')
 	try:
 		x = data[key]
@@ -50,6 +70,7 @@ def toNumbers(arg=None):
 
 
 def checkUpdate(url: str = None, curVer: str = None) -> Tuple[bool, str, int]:
+
 	"""
 	A function that check for updates, this doesn't include prereleases
 	:param url: the api/repo github url

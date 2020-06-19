@@ -10,13 +10,13 @@ from srctools.logger import get_logger
 
 
 def init(master):
-    window = aboutWindow(master)
+    aboutWindow(master)
 
 
 class aboutWindow(wx.Frame):
-    #
+
     logger = get_logger()
-    #
+
     def __init__(self, master):
         super().__init__(master,title='About BEE Manipulator', style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER)
         self.SetIcon(wx.Icon('./assets/icon.ico'))

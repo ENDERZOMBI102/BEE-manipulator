@@ -1,5 +1,5 @@
 import json
-from winreg import *
+from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
 from srctools import Property
 from utilities import *
@@ -25,7 +25,8 @@ default_config = {
 
 
 def createConfig():
-    r"""
+
+    """
         a simple function that make the config file
     """
     global default_config
@@ -34,6 +35,7 @@ def createConfig():
 
 
 def load(section) -> Union[str, int, None, dict, list]:  # load a config
+
     """
     loads a section of the config (json-formatted) and return the data.
     raise an exception if the config or the requested section doesn't exist
@@ -62,6 +64,7 @@ def load(section) -> Union[str, int, None, dict, list]:  # load a config
 
 
 def save(data, section):  # save a config
+
     """
     save the data on the config (json-formatted), re-create the config if no one is found.
     example::
@@ -88,6 +91,7 @@ def save(data, section):  # save a config
 
 
 def loadAll(overwrite: bool = False) -> dict:
+
     """
     A function that returns all the configs
     :param overwrite: if true, act like load() and enable config overwrite
@@ -98,7 +102,7 @@ def loadAll(overwrite: bool = False) -> dict:
         with open('config.cfg', 'r', encoding='utf-8') as file:
             cfg = json.load(file)  # load the config file
             if overwrite:  # only if overwrite is true
-                LOGGER.debug(f'overwriting configs..')
+                logger.debug(f'overwriting configs..')
                 for key in overwriteDict:  # cycle in the keys
                     if key in cfg:  # overwrite, not create a key
                         cfg[key] = overwriteDict[key]  # finally, overwrite the value
@@ -111,20 +115,22 @@ def loadAll(overwrite: bool = False) -> dict:
 
 
 def saveAll(cfg: dict = None):
+
     """
     A function that saves (and overwrites) the config file
     :param cfg: the config dict
     """
-    if ( cfg is None ) or ( "config_type" is not "BEE2.4 Manipulator Config File" ):
+    if ( cfg is None ) or ( 'config_type' is not 'BEE2.4 Manipulator Config File' ):
         raise ValueError("parameter cfg can't be an invalid config!")
     try:
         with open('config.cfg', 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
     except:
-        logger.error("An error happened while saving config file, probably is now corrupted")
+        logger.error('An error happened while saving config file, probably is now corrupted')
 
 
 def check(cfg: dict = None) -> bool:
+
     """
     check if the config file exist and if is a BM config file
     :param cfg: optional string to use instead of reopening from the file system
@@ -142,7 +148,7 @@ def check(cfg: dict = None) -> bool:
             continue
         return False
     # final check
-    if cfg['config_type'] == "BEE2.4 Manipulator Config File":
+    if cfg['config_type'] == 'BEE2.4 Manipulator Config File':
         # the check is made successfully
         return True
     else:
@@ -151,6 +157,7 @@ def check(cfg: dict = None) -> bool:
 
 
 def overwrite(section: str, data: any) -> None:
+
     """
     overwrite in run time a config
     :param section: the section that has to be overwritten
@@ -163,86 +170,103 @@ def overwrite(section: str, data: any) -> None:
 
 # dynamic/static configs
 
-def steamDir(cmde=False) -> str:
-    r"""
-        this function return the steam installation folder
+def steamDir() -> str:
+
+    """
+    a function that retrives the steam installation folder by reading the win registry
+    :return: path to steam folder
     """
     if 'steamDir' not in loadAll().keys():
-        save(None, "steamDir")  # create the config without value in case it doesn't exist
+        save(None, 'steamDir')  # create the config without value in case it doesn't exist
 
-    if not load("steamDir") is None:
-        return load("steamDir")  # return the folder
-    elif platform == "win32":
+    if not load('steamDir') is None:
+        return load('steamDir')  # return the folder
+    elif platform == 'win32':
         # get the steam directory from the windows registry
         # HKEY_CURRENT_USER\Software\Valve\Steam
         try:
-            logger.debug("Opening windows registry...")
+            logger.debug('Opening windows registry...')
             with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
-                aKey = OpenKey(reg, "Software\\Valve\\Steam")  # open the steam folder in the windows registry
+                aKey = OpenKey(reg, r'Software\Valve\Steam')  # open the steam folder in the windows registry
         except Exception as e:
             logger.critical("Can't open windows registry! this is *VERY* bad!", exc_info=1)
             raise Exception(e)
         try:
-            keyValue = QueryValueEx(aKey, "SteamPath")  # find the steam path
-            save(keyValue[0], "steamDir")  # save the path, so we don't have to redo all this
+            keyValue = QueryValueEx(aKey, 'SteamPath')  # find the steam path
+            save(keyValue[0], 'steamDir')  # save the path, so we don't have to redo all this
             return keyValue[0]
         except:
             raise KeyError("Can't open/find the steam registry keys")
 
 
 def portalDir() -> str:
-    if not load("portal2Dir") is None:
-        return load("portal2Dir")  # check if we already saved the path, in case, return it
+
+    """
+    a function that retrives the portal 2 folder by searching in all possible libraries
+    :return: path to p2 folder
+    """
+    if not load('portal2Dir') is None:
+        return load('portal2Dir')  # check if we already saved the path, in case, return it
     else:
         # check every library if has p2 installed in it
         library = libraryFolders()
         for path in library:
             try:
-                LOGGER.info(f'searching in {path}..')
-                with open(path + "appmanifest_620.acf", "r") as file:
+                logger.info(f'searching in {path}..')
+                with open(path + 'appmanifest_620.acf', 'r') as file:
                     pass
                 # if yes save it
-                path += "common/Portal 2/"
-                LOGGER.info(f'portal 2 found! path: {path}')
-                save(path, "portal2Dir")
+                path += 'common/Portal 2/'
+                logger.info(f'portal 2 found! path: {path}')
+                save(path, 'portal2Dir')
                 return path
-            except:
+            except FileNotFoundError:
                 # if no, just continue
                 continue
 
 
-discordToken: str = "655075172767760384"
+discordToken: str = '655075172767760384'
 
 
 def libraryFolders() -> list:
-    paths = [steamDir() + "/steamapps/"]  # create a list for library paths
+
+    """
+    retrives the steam library folders by parsing the libraryfolders.vdf file
+    :return: a list with all library paths
+    """
+    paths = [steamDir() + '/steamapps/']  # create a list for library paths
     try:
         # open the file that contains the library paths
-        with open(steamDir() + "/steamapps/libraryfolders.vdf", "r") as file:
-            library = Property.parse(file, "libraryfolders.vdf").as_dict()
+        with open(steamDir() + '/steamapps/libraryfolders.vdf', 'r') as file:
+            library = Property.parse(file, 'libraryfolders.vdf').as_dict()
             # remove useless stuff
-            library['libraryfolders'].pop("timenextstatsreport")
-            library['libraryfolders'].pop("contentstatsid")
+            library['libraryfolders'].pop('timenextstatsreport')
+            library['libraryfolders'].pop('contentstatsid')
     except Exception as e:
         raise Exception(f'Error while reading steam library file: {e}')
 
     # check for other library paths, if the dict is empty, there's no one
     if not len(library['libraryfolders']) is 0:
         for i in len(library['libraryfolders']):
-            paths.append(library['libraryfolders'][str(i)] + "/steamapps/")  # append the path
+            paths.append(library['libraryfolders'][str(i)] + '/steamapps/')  # append the path
 
     # return the "compiled" list of libraries
     return paths
 
 
 def steamUsername():
+
+    """
+    retrives the steam username
+    :return: steam username
+    """
     try:
         with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
-            aKey = OpenKey(reg, "Software\\Valve\\Steam")
+            aKey = OpenKey(reg, r'Software\Valve\Steam')
     except Exception as e:
         raise Exception(e)
     try:
-        keyValue = QueryValueEx(aKey, "LastGameNameUsed")
+        keyValue = QueryValueEx(aKey, 'LastGameNameUsed')
         return keyValue[0]
     except:
         return None
@@ -262,15 +286,15 @@ def checkUpdates() -> bool:
 
 
 def version():
-    return load("appVersion")
+    return load('appVersion')
 
 
 def onlineVersion():
-    return load("onlineAppVersion")
+    return load('onlineAppVersion')
 
 
 def devMode() -> bool:
-    return boolcmp( load("devMode") )
+    return boolcmp( load('devMode') )
 
 
 class configError(BaseException):
@@ -279,5 +303,5 @@ class configError(BaseException):
     """
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     print(portalDir())

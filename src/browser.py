@@ -1,18 +1,20 @@
-import wx
-import config
 import json
-import utilities
-from requests import get
-from base64 import b64encode as encode
-from packages import *
-import urllib
-import pathlib
-from srctools.logger import get_logger
 import os
+import pathlib
+import urllib
+
+import wx
+from requests import get
+
+import config
+import utilities
+from packages import beePackage, bmPackage, packageFrame
+from srctools.logger import get_logger
 
 database: list = None
-databasePath: str = None
+databasePath: str = config.load('databasePath')
 logger = get_logger()
+
 
 class browser(wx.ScrolledWindow):
 	r"""
@@ -22,7 +24,6 @@ class browser(wx.ScrolledWindow):
 		global database, databasePath
 		super().__init__(master)
 		logger.debug('loading database path..')
-		databasePath = config.load('databasePath')
 		logger.debug('loaded database path from config!')
 		logger.info(f'Loading database! (path: {databasePath})')
 		checkDatabase()

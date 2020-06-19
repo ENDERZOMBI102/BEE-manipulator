@@ -26,26 +26,23 @@ This project is in a experimental pre-alpha state, use at your own risk!
 
 Planned & realized features!
 
-- GUI (45% done)
-- BEE & App Updater With A Togglable Auto Updater (10% done)
-- BEE 2.4 Installer (40% done)
-- App (Auto)Updater (100% done)
-- Package Browser & Manager (working on it)
-- Custom Type of Package: BM Package (90% done)
-- Custom Application For BEE2.4 Shortcuts (for the auto update feature) (1% done) 
-- Discord Rich Presence (0% done)
-- Add Functionality to BM Using BM Packages (aka plugins) (15% done)
+ - GUI (40% done)
+ - BEE & App Updater With A Togglable Auto Updater (1% done)
+ - BEE 2.4 Installer (40% done)
+ - App (Auto)Updater (90% done)
+ - Package Browser & Manager (working on it)
+ - Custom Type of Package: BM Package (90% done)
+ - Custom Application For BEE2.4 Shortcuts (for the auto update feature) (1% done) 
+ - Discord Rich Presence (0% done)
+ - Add Functionality to BM Using BM Packages (aka plugins) (15% done)
 
 Libraries that i'm making for this project
 
-- config.py:<br>
-  a config manager (load, save, and check json-formatted config.cfg) with some handy capabilities as retrive steam's games folders and username
-
-- activityManager<br>
-  a discord rich presence enhancer to be used with pypresence (c++, uses discord game sdk) (deprecated?)
+ - config.py:<br>
+  a config manager (load, save, and check json-formatted config.cfg) with some handy capabilities as retrieve steam's games folders and username
   
-- [chained](https://github.com/ENDERZOMBI102/chained)<br>
-  a library with varius wrappers to use chained functions
+ - [chained]( https://github.com/ENDERZOMBI102/chained )<br>
+  a library with various wrappers to use chained functions
 
 The Future
 
@@ -54,10 +51,10 @@ yes, i'm already thinking of the future of this application ;)
  - Portal 2 Data Manager (manage the folders and faster file verify)
  - Custom Installer 
  - Package Creator:
-    - Skybox Maker
-    - Style Maker
-    - Item Importer
-- Key Binder (bind commands to keys without file edits)
-- Rating system for the package browser
+   - Skybox Maker
+   - Style Maker
+   - Item Importer
+ - Key Binder (bind commands to keys without file edits)
+ - Rating system for the package browser
 
 You can find plugins docs in the wiki

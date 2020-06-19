@@ -11,9 +11,9 @@ from srctools import logger
 
 
 class beePackage:
-	r"""
-		rappresents a BEE2.4 package, with all its data; icon, author, file name and a description are
-		stored here, with the others.
+	"""
+	represents a BEE2.4 package, with all its data; icon, author, file name and a description are
+	stored here, with the others.
 	"""
 	def __init__(self, ID = None, icon = None, version = 0, author = [], description = None, url = "None", filename = None, name =  None):
 		self.ID: str = ID
@@ -26,9 +26,8 @@ class beePackage:
 		self.name: str = name
 		self.coAuthors = []
 
-
 	def service(self):
-		r"""
+		"""
 			this will return the used service, for now only github, dropbox and google drive
 		"""
 		if "github" in self.url:
@@ -38,9 +37,8 @@ class beePackage:
 		elif "drive.google" in self.url:
 			return "gdrive"
 
-
 	def repo(self):
-		r"""
+		"""
 			this will return the repo link if the package is on github, if the package isn't on github will return None
 		"""
 		if self.service() == "github":
@@ -49,9 +47,8 @@ class beePackage:
 		else:
 			return None
 
-
 	def icons(self):
-		r"""
+		"""
 			return the package icon as image object
 		"""
 		return
@@ -71,8 +68,8 @@ class beePackage:
 
 
 class bmPackage:
-	r"""
-		rappresents a BeeManipulator package, with all it's data and co.
+	"""
+		represents a BeeManipulator package, with all it's data and co.
 	"""
 
 	def __init__(self, ID=None, author=[], icon=None, version=0, name = None, desc = None, url = None, content=[], config={}):
@@ -87,9 +84,8 @@ class bmPackage:
 		self.config = config
 		self.coAuthors = []
 
-
 	def service(self):
-		r"""
+		"""
 			this will return the used service, for now only github, dropbox and google drive
 		"""
 		if "github" in self.url:
@@ -99,9 +95,8 @@ class bmPackage:
 		elif "drive.google" in self.url:
 			return "gdrive"
 
-
 	def repo(self):
-		r"""
+		"""
 			this will return the repo link if the package is on github, if the package isn't on github will return None
 		"""
 		if self.service() == "github":
@@ -111,9 +106,9 @@ class bmPackage:
 			return None
 
 	def cfgOP(self, type = None, data = None, operation = "r"):
-		r"""
+		"""
 			for ConFiG OPerations, you can access the config dict directly, but this is the better method, i hope.
-			if no operation aurgment is given, use the default operation, r (read).
+			if no operation augment is given, use the default operation, r (read).
 			on read, if the requested "type" doesn't exist, a None is returned.
 		"""
 		if operation == "w":
@@ -140,9 +135,7 @@ class bmPackage:
 
 
 class packageFrame(wx.Panel):
-	"""
-	this is a frame in the package browser
-	"""
+	"""	this is a frame in the package browser """
 
 	package: Union[beePackage, bmPackage]
 	logger: logging.Logger

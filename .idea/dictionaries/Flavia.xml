@@ -1,14 +1,32 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Flavia">
     <words>
+      <w>appmanifest</w>
       <w>boolcmp</w>
+      <w>browserframe</w>
+      <w>bsizer</w>
+      <w>codacy</w>
+      <w>contentstatsid</w>
+      <w>dropbox</w>
       <w>filebytes</w>
       <w>filepath</w>
       <w>fileurl</w>
       <w>gdrive</w>
       <w>isonline</w>
+      <w>libraryfolders</w>
+      <w>logwindow</w>
+      <w>notimplementedyet</w>
+      <w>perations</w>
       <w>prerelease</w>
+      <w>prereleases</w>
       <w>pyinstaller</w>
+      <w>pypresence</w>
+      <w>setted</w>
+      <w>skybox</w>
+      <w>steamapps</w>
+      <w>timenextstatsreport</w>
+      <w>togglable</w>
+      <w>zipdata</w>
     </words>
   </dictionary>
 </component>

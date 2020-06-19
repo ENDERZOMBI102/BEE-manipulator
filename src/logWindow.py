@@ -4,11 +4,10 @@ import wx
 
 import config
 import srctools.logger
-import srctools.logger
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 visible: bool = config.load("logWindowVisibility")
-window = None # then converted to wx.Frame
+window = None  # then converted to wx.Frame
 logger = srctools.logger.get_logger()
 
 
@@ -29,20 +28,20 @@ class logHandler(logging.Handler):
         """
         global window
         if record.levelno == logging.INFO:
-            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(0, 80, 255)))# blue/cyan
+            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(0, 80, 255)))  # blue/cyan
         #
         elif record.levelno == logging.WARNING:
-            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 125, 0)))# orange
+            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 125, 0)))  # orange
         #
         elif record.levelno == logging.ERROR:
-            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 0, 0)))# red
+            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 0, 0)))  # red
         #
         elif record.levelno == logging.DEBUG:
-            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(128, 128, 128)))# grey
+            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(128, 128, 128)))  # grey
         #
         elif record.levelno == logging.CRITICAL:
-            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 255, 255)))# white
-        #display the log message
+            window.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 255, 255)))  # white
+        # display the log message
         window.text.AppendText(self.format(record))
 
 
@@ -82,14 +81,14 @@ class logWindow(wx.Frame):
         self.logHandler.setLevel(getLevel())
         logging.getLogger().addHandler(self.logHandler)
         # create bottom bar
-        self.bottomBar = wx.Panel(self, size=wx.Size(500, 25))# makes the bottom "menu" bar
+        self.bottomBar = wx.Panel(self, size=wx.Size(500, 25))  # makes the bottom "menu" bar
         BBsizer = wx.GridBagSizer()
-        self.clearBtn = wx.Button(# makes the clear button
+        self.clearBtn = wx.Button(  # makes the clear button
             self.bottomBar,
             label='Clear',
             size=wx.Size(50, 20)
         )
-        BBsizer.Add( # add the clear button to the sizer
+        BBsizer.Add(  # add the clear button to the sizer
             self.clearBtn,
             wx.GBPosition(0, 1)
         )
@@ -105,24 +104,35 @@ class logWindow(wx.Frame):
     def OnClearButtonPressed(self, event):
         self.text.Clear()
 
-    def OnClose(self, event):
+    @staticmethod
+    def OnClose(event):
         logger.debug(f'hided log window')
         toggleVisibility()
 
     def OnMoveEnd(self, event):
-        # get the window posistion as wx.Point and convert it to list
+        # get the window position as wx.Point and convert it to list
         pos = list(self.GetPosition().Get())
         logger.debug(f'saved logwindow position: {pos}')
         config.save(pos, 'logWindowPos')
             
 
-
 async def init(master) -> None:
-    """init the logwindow"""
+
+    """
+    a function that initiate the log window
+    :param master: master window
+    :return:
+    """
     logWindow(master)
 
 
 def toggleVisibility(placeHolder=None):
+
+    """
+    a function that toggles the visibility of the window
+    :param placeHolder:
+    :return:
+    """
     global visible, window
     if not visible:
         visible = True
@@ -133,7 +143,7 @@ def toggleVisibility(placeHolder=None):
 
 def updateVisibility():
     global visible
-    #save the visibility
+    # save the visibility
     config.save(visible, "logWindowVisibility")
     logger.debug(f'saved window visibility')
     if visible:
@@ -141,8 +151,14 @@ def updateVisibility():
     else:
         window.HideWithEffect(wx.SHOW_EFFECT_BLEND)
 
+
 def changeLevel(level: str) -> None:
-    """change and saves the log level"""
+
+    """
+    changes and saves the log level that shows on the window
+    :param level: level to set the window to
+    :return: none
+    """
     global window
     level = level.upper()
     if level == "INFO":
@@ -160,6 +176,11 @@ def changeLevel(level: str) -> None:
 
 
 def getLevel() -> int:
+
+    """
+    gets the level form the config file
+    :return: log level
+    """
     # check for the level
     savedLevel = str(config.load("logLevel")).upper()
     logger.info(f'loaded log level {savedLevel} from config!')
