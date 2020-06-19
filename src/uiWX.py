@@ -131,7 +131,7 @@ class root (wx.Frame):
             pass
 
     def syncGames(self, event):
-        pass
+        notimplementedyet()
 
     def exit(self, event):
         self.OnClose(wx.CloseEvent)  # there's already an handler, so use that
@@ -141,7 +141,7 @@ class root (wx.Frame):
         pass
 
     def reloadConfig(self, event):
-        pass
+        notimplementedyet()
 
     def reloadPackages(self, event):
         self.book.RemovePage(0)
@@ -178,18 +178,28 @@ class root (wx.Frame):
         asyncio.run(appDateCheck())
 
     def openWiki(self, event):
-        LOGGER.info(
-            f'opening https://github.com/ENDERZOMBI102/BEE-manipulator/wiki with default browser')
-        wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator/wiki")
+        openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator/wiki')
 
     def openGithub(self, event):
-        LOGGER.info(
-            f'opening https://github.com/ENDERZOMBI102/BEE-manipulator with default browser')
-        wb.open("https://github.com/ENDERZOMBI102/BEE-manipulator")
+        openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator')
 
     def openDiscord(self, event):
-        LOGGER.info(f'opening https://discord.gg/hnGFJrz with default browser')
-        wb.open("https://discord.gg/hnGFJrz")
+        openUrl('https://discord.gg/hnGFJrz')
+
+
+def openUrl(url: str):
+    LOGGER.info(f'opening "{url}" with default browser')
+    wb.open(url)
+
+
+def notimplementedyet():
+    msg = wx.GenericMessageDialog(
+        parent = wx.GetActiveWindow(),
+        message = 'This feature is not yet implemented, return later!',
+        caption = 'Not implemented',
+        style = wx.ICON_INFORMATION | wx.STAY_ON_TOP | wx.OK
+    )
+    msg.ShowModal()
 
 
 async def appDateCheck():
