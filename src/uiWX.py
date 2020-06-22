@@ -8,6 +8,7 @@ import aboutWindow
 import browser
 import config
 import logWindow
+import settingsUI
 import utilities
 from srctools.logger import get_logger, init_logging
 
@@ -15,13 +16,15 @@ LOGGER = get_logger()
 
 
 class root (wx.Frame):
+
+    settingsWindowInstance: settingsUI.window = None
     
     def __init__(self):
         super().__init__(None, title="BEE Manipulator "+str(config.version()))
         # sets the app icon
         self.SetIcon(wx.Icon('./assets/icon.ico'))
         # init the logging window
-        asyncio.run(logWindow.init(self))
+        asyncio.run(logWindow.init())
         asyncio.run(appDateCheck())
         # set the utilities.root pointer to the object of this class
         utilities.root = self
@@ -112,16 +115,18 @@ class root (wx.Frame):
         self.book.AddPage(self.browserTab, "Package Browser")
 
     def OnClose(self, event: wx.CloseEvent):
-        # get the window posistion as wx.Point and convert it to list
+        # get the window position as wx.Point and convert it to list
         try:
             pos = list(self.GetPosition().Get())
             LOGGER.debug(f'saved main window position: {pos}')
             config.save(pos, 'mainWindowPos')
-        except: pass
+        except:
+            pass
         self.Destroy()
 
     # file menu items actions
-    def openp2dir(self, event):
+    @staticmethod
+    def openp2dir(event):
         os.startfile(config.portalDir())
 
     def openBEEdir(self, event):
@@ -137,13 +142,22 @@ class root (wx.Frame):
         self.OnClose(wx.CloseEvent)  # there's already an handler, so use that
     
     # options menu items actions
-    def openSettingsWindow(self, event):
-        notimplementedyet()
+    def openSettingsWindow(self, event = None):
+        """
+        this function opens the settings window.
+        when this is called for the first time create an instance of the window, so when
+        called again it will be faster, because it don't have to create everything again
+        :param event: wx.EVT_something
+        """
+        if self.settingsWindowInstance is None:  # if the window was opened once, this isn't None
+            self.settingsWindowInstance = settingsUI.window()  # set it to the settings window instance
+        self.settingsWindowInstance.show()  # show the window
 
     def reloadConfig(self, event):
         notimplementedyet()
 
     def reloadPackages(self, event):
+        # remove the package browser window
         self.book.RemovePage(0)
         self.browserTab = browser.browser(self.book)
         self.book.AddPage(self.browserTab, "Package Browser")
@@ -154,35 +168,52 @@ class root (wx.Frame):
     # portal 2 items actions
     def verifyGameCache(self, event):
         if not config.load("noVerifyDialog"):
-            data = wx.GenericMessageDialog(
+            dialog = wx.RichMessageDialog(
                 self,
-                "This will remove EVERYTHING beemod-related from portal 2!\nclick yes ONLY if you are sure! X equals yes\n\n(if you don't want this dialog to show,\n check the no verify dialog in settings)",
+                """This will remove EVERYTHING beemod-related from portal 2!
+                click yes ONLY if you are sure!""",
                 "WARNING!",
                 wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
             )
-            if data.ShowModal() == wx.ID_NO:
-                return
-        print("yes")
+            dialog.ShowDetailedText(
+                "if you don't want this dialog to show check this checkbox, but beware, this is here to protect you"
+            )
+            dialog.ShowCheckBox("Don't show again")
+            choice = dialog.ShowModal()
+            if dialog.IsCheckBoxChecked():
+                config.save(True, 'noVerifyDialog')
+            if choice == wx.ID_YES:
+                print('yes')
+            else:
+                print('no')
 
     def uninstallBee(self, event):
         print("uninstall")
+        self.portalMenu.Enable(10, True)
+        self.portalMenu.Enable(9, False)
 
     def installBee(self, event):
         print("install")
+        self.portalMenu.Enable(9, True)
+        self.portalMenu.Enable(10, False)
 
     # help menu items actions
     def openAboutWindow(self, event):
         aboutWindow.init(self)
 
+    @staticmethod
     def checkUpdates(self, event):
         asyncio.run(appDateCheck())
 
+    @staticmethod
     def openWiki(self, event):
         openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator/wiki')
 
+    @staticmethod
     def openGithub(self, event):
         openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator')
 
+    @staticmethod
     def openDiscord(self, event):
         openUrl('https://discord.gg/hnGFJrz')
 
