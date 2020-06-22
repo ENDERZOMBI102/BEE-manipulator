@@ -49,9 +49,9 @@ class logWindow(wx.Frame):
     """
     this class make the log window and the log handler
     """
-    def __init__(self, master):
+    def __init__(self):
         super().__init__(
-                            master,  # parent
+                            wx.GetTopLevelWindows()[0],  # parent
                             title="Logs",  # window title
                             style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER  # to make the window not resizeable
                         )  # init the window
@@ -116,14 +116,13 @@ class logWindow(wx.Frame):
         config.save(pos, 'logWindowPos')
             
 
-async def init(master) -> None:
+async def init() -> None:
 
     """
     a function that initiate the log window
-    :param master: master window
     :return:
     """
-    logWindow(master)
+    logWindow()
 
 
 def toggleVisibility(placeHolder=None):

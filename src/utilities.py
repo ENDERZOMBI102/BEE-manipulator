@@ -144,5 +144,9 @@ def versioncmp( ver0: str, ver1: str):
 	return False
 
 
+def GetMainWindow() -> wx.Frame:
+	return wx.GetTopLevelWindows()[0]
+
+
 env = 'dist'
 root: wx.Frame = None
