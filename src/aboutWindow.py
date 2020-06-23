@@ -18,15 +18,16 @@ class aboutWindow(wx.Frame):
     logger = get_logger()
 
     def __init__(self, master):
-        super().__init__(master,title='About BEE Manipulator', style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER)
-        self.SetIcon(wx.Icon('./assets/icon.ico'))
-        self.box = wx.html.HtmlWindow(self)
+        super().__init__(master, title='About BEE Manipulator', style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER)
+        #self.SetSize( wx.Size(300, 260) )
+        self.SetIcon( wx.Icon('./assets/icon.ico') )
+        self.box = wx.html.HtmlWindow( self )
         try:
             self.logger.debug('trying to open about.html..')
             with open('./assets/about.html', 'r') as file:
                 self.logger.debug('opened about.html!')
                 data = file.read().replace(r'{0}', config.version())
-        except:
+        except FileNotFoundError:
             self.logger.warning('failed to load about.html! falling back to about.md')
             self.logger.debug('opening about.md..')
             # set the page to the converted markdown text
@@ -43,6 +44,7 @@ class aboutWindow(wx.Frame):
         self.Show()
         self.box.OnLinkClicked = self.linkHandler
 
-    def linkHandler(self, link):
+    @staticmethod
+    def linkHandler(link):
         wb.open(link.GetHref())
 
