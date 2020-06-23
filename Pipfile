@@ -19,6 +19,7 @@ wxpython = "*"
 markdown2 = "*"
 discord-py = "*"
 version-utils = "*"
+pywin32 = "*"
 
 [requires]
 python_version = "3.7"
