@@ -6,7 +6,7 @@ USER gitpod
 
 # Install wxPython dependencies
 RUN sudo apt-get -q update \
-    && sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+    && sudo DEBIAN_FRONTEND=noninteractive && apt-get install -yq \
     freeglut3-dev \
     python3.7-dev \
     libpython3.7-dev \
