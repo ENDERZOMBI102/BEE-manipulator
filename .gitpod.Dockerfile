@@ -8,8 +8,8 @@ USER gitpod
 RUN sudo apt-get -q update \
     && sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq \
     freeglut3-dev \
-    python3.7-dev \
-    libpython3.7-dev \
+    python3.8-dev \
+    libpython3.8-dev \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
     libgstreamer-plugins-base1.0-dev \
