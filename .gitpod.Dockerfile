@@ -19,8 +19,8 @@ RUN sudo apt-get install -yq \
     libsdl2-dev \
     libwebkit2gtk-4.0-dev \
     libxtst-dev \
-    libgtk2.0-dev \
-    && sudo rm -rf /var/lib/apt/lists/*
+    libgtk2.0-dev
+RUN sudo rm -rf /var/lib/apt/lists/*
 
 # Install wxPython
 RUN pip3 install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04/ wxPython
