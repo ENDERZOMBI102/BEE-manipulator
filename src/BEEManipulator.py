@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from sys import argv
 
 import wx
@@ -12,6 +14,10 @@ from uiWX import root
 # "C:\Users\Flavia\.virtualenvs\BEE-manipulator-xMPheCny\Scripts\activate.bat"
 # to start with venv shell
 # py BEEManipulator.py
+
+# use file dir as working dir
+print(f"exe path: {Path(f'__file__/..').resolve()}")
+os.chdir( Path(f'__file__/..').resolve() )
 
 # some data initialization
 app = wx.App()
