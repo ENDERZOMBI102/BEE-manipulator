@@ -8,14 +8,19 @@
       <w>bsizer</w>
       <w>codacy</w>
       <w>contentstatsid</w>
+      <w>delbuild</w>
+      <w>deldist</w>
       <w>dropbox</w>
+      <w>enderzombi</w>
       <w>filebytes</w>
       <w>filepath</w>
       <w>fileurl</w>
       <w>gdrive</w>
       <w>isonline</w>
       <w>libraryfolders</w>
+      <w>loglevel</w>
       <w>logwindow</w>
+      <w>noconfirm</w>
       <w>notimplementedyet</w>
       <w>perations</w>
       <w>prerelease</w>
@@ -24,6 +29,7 @@
       <w>pypresence</w>
       <w>setted</w>
       <w>skybox</w>
+      <w>startexe</w>
       <w>steamapps</w>
       <w>timenextstatsreport</w>
       <w>togglable</w>

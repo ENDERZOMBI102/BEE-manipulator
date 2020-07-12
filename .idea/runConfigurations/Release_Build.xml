@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Clean" type="PythonConfigurationType" factoryName="Python" folderName="Actions">
+  <configuration default="false" name="Release Build" type="PythonConfigurationType" factoryName="Python" folderName="Actions">
     <module name="BEE-manipulator" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -22,7 +22,7 @@
       </ENTRIES>
     </EXTENSION>
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/devtool.py" />
-    <option name="PARAMETERS" value="--deldist" />
+    <option name="PARAMETERS" value="--build --release" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
