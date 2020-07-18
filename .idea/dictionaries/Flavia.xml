@@ -3,6 +3,8 @@
     <words>
       <w>appmanifest</w>
       <w>beemod</w>
+      <w>beepackage</w>
+      <w>bmpackage</w>
       <w>boolcmp</w>
       <w>browserframe</w>
       <w>bsizer</w>
@@ -10,18 +12,25 @@
       <w>contentstatsid</w>
       <w>delbuild</w>
       <w>deldist</w>
+      <w>diag</w>
+      <w>dltype</w>
+      <w>doesn</w>
       <w>dropbox</w>
+      <w>edir</w>
       <w>enderzombi</w>
       <w>filebytes</w>
       <w>filepath</w>
       <w>fileurl</w>
+      <w>gamescfg</w>
       <w>gdrive</w>
       <w>isonline</w>
       <w>libraryfolders</w>
       <w>loglevel</w>
       <w>logwindow</w>
+      <w>ltype</w>
       <w>noconfirm</w>
       <w>notimplementedyet</w>
+      <w>openp</w>
       <w>perations</w>
       <w>prerelease</w>
       <w>prereleases</w>
@@ -31,8 +40,10 @@
       <w>skybox</w>
       <w>startexe</w>
       <w>steamapps</w>
+      <w>steamid</w>
       <w>timenextstatsreport</w>
       <w>togglable</w>
+      <w>versioncmp</w>
       <w>zipdata</w>
     </words>
   </dictionary>

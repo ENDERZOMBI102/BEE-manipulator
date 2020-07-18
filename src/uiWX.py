@@ -1,10 +1,12 @@
 import asyncio
 import os
 import webbrowser as wb
+from pathlib import Path
 
 import wx
 
 import aboutWindow
+import beeManager
 import browser
 import config
 import logWindow
@@ -129,11 +131,12 @@ class root (wx.Frame):
     def openp2dir(event):
         os.startfile(config.portalDir())
 
+    @staticmethod
     def openBEEdir(self, event):
         if config.load("beePath") is None:
             pass
         else:
-            pass
+            os.startfile( config.load("beePath") )
 
     def syncGames(self, event):
         notimplementedyet()
@@ -170,9 +173,9 @@ class root (wx.Frame):
         if not config.load("noVerifyDialog"):
             dialog = wx.RichMessageDialog(
                 self,
-                """This will remove EVERYTHING beemod-related from portal 2!
-                click yes ONLY if you are sure!""",
-                "WARNING!",
+                '''This will remove EVERYTHING beemod-related from portal 2!
+                click yes ONLY if you are sure!''',
+                'WARNING!',
                 wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
             )
             dialog.ShowDetailedText(
@@ -188,14 +191,34 @@ class root (wx.Frame):
                 print('no')
 
     def uninstallBee(self, event):
+        return
         print("uninstall")
         self.portalMenu.Enable(10, True)
         self.portalMenu.Enable(9, False)
+        self.fileMenu.Enable(1, False)
 
     def installBee(self, event):
-        print("install")
+        print('install')
+        dial = wx.DirDialog(
+            self,
+            message='Select where to install BEE (a BEE2 folder will be created)',
+            # this gets the APPDATA path, go from Roaming to Local and then return the Programs folder full path
+            defaultPath=str( Path( str( Path( os.getenv('appdata') ).parent.resolve() )+'/Local/Programs/').resolve() )
+        )
+        # show the dialog and wait
+        if dial.ShowModal() == wx.ID_CANCEL:
+            return  # don't want to install anymore
+        path = Path( dial.GetPath() + '/BEE2/' )
+        # create the missing folders
+        if not path.exists():
+            path.mkdir()
+        # save the BEE path
+        config.save(str( path.resolve() ), 'beePath')
+        # install BEE without messages
+        beeManager.checkAndInstallUpdate(True)
         self.portalMenu.Enable(9, True)
         self.portalMenu.Enable(10, False)
+        self.fileMenu.Enable(1, True)
 
     # help menu items actions
     def openAboutWindow(self, event):

@@ -69,7 +69,7 @@ def toNumbers(arg=None):
 	return int(''.join(nums))
 
 
-def checkUpdate(url: str = None, curVer: str = None) -> Tuple[bool, str, int]:
+def checkUpdate(url: str, curVer: str) -> Tuple[bool, str, int]:
 
 	"""
 	A function that check for updates, this doesn't include prereleases
@@ -77,10 +77,6 @@ def checkUpdate(url: str = None, curVer: str = None) -> Tuple[bool, str, int]:
 	:param curVer: current version
 	:return: true or false
 	"""
-	LOGGER.debug(f'checking params..')
-	if ( url is None ) or ( curVer is None ):  # check if any of the parameters are None
-		raise ValueError('missing one or all of the parameters')
-	LOGGER.debug(f'params ok!')
 	LOGGER.debug(f'checking url..')
 	if 'api.github' not in url:
 		LOGGER.debug(f'converting url..')
@@ -90,15 +86,17 @@ def checkUpdate(url: str = None, curVer: str = None) -> Tuple[bool, str, int]:
 	data = get(url).json()  # get the latest release data
 	if 'documentation_url' in data.keys():
 		return False, None, None
+	# variables
 	available: bool = True
-	url: str = None
+	releaseUrl: str = None
 	# first we convert the tag name to an int
 	# then we compare it with the given current version
 	if versioncmp( data['tag_name'], curVer ):
 		if not boolcmp(data["draft"]):  # check if the release is not a draft
+			# not a draft
 			available = True
-			url = getReleaseUrl(data)
-	return available, url, data['tag_name']
+			releaseUrl = getReleaseUrl(data)
+	return available, releaseUrl, data['tag_name']
 
 
 def genApiUrl(url: str = None) -> str:
@@ -107,8 +105,8 @@ def genApiUrl(url: str = None) -> str:
 	:param url: repo url to be transformed
 	:return: the github api url
 	"""
-	splitUrl = url.split('/')  # slit the url in varius segments
-	return f'https://api.github.com/repos/{splitUrl[3]}/{splitUrl[4]}/releases/latest/'  # return the formed url
+	splitUrl = url.split('/')  # slit the url in various segments
+	return f'https://api.github.com/repos/{splitUrl[3]}/{splitUrl[4]}/releases/latest'  # return the formed url
 
 
 def getReleaseUrl(data) -> str:

@@ -1,8 +1,10 @@
 import json
+from typing import Dict, Union
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
+import utilities
 from srctools import Property
-from utilities import *
+from srctools.logger import get_logger
 
 logger = get_logger()
 overwriteDict: dict = {}
@@ -11,16 +13,15 @@ default_config = {
     'config_type': 'BEE2.4 Manipulator Config File',
     'appVersion': '0.0.1',
     'lastVersion': True,
-    'beeUpdateUrl': None,
     'steamDir': None,
     'portal2Dir': None,
     'beePath': None,
+    'beeVersion': None,
     'logWindowVisibility': False,
     'logLevel': 'info',
     'databasePath': './assets/database.json',
     'noVerifyDialog': False,
     'plugins': {}
-
 }
 
 
@@ -168,12 +169,34 @@ def overwrite(section: str, data: any) -> None:
     logger.debug(f'Overwritten config {section}!')
 
 
+class _dynConfig:
+    """
+    a class that contains run-time configs, that requires fast access.
+    THIS IS NEVER SAVED TO DISK
+    """
+
+    _configs: Dict[str, any] = {}
+
+    def __init__(self):
+        pass
+
+    def __getitem__(self, item):
+        return self._configs[item]
+
+    def __setitem__(self, key, value):
+        self._configs[key] = value
+
+
+dynConfig: _dynConfig = _dynConfig()
+"""contains fast-access, volatile data"""
+
 # dynamic/static configs
+
 
 def steamDir() -> str:
 
     """
-    a function that retrives the steam installation folder by reading the win registry
+    a function that retrieves the steam installation folder by reading the win registry
     :return: path to steam folder
     """
     if 'steamDir' not in loadAll().keys():
@@ -181,7 +204,7 @@ def steamDir() -> str:
 
     if not load('steamDir') is None:
         return load('steamDir')  # return the folder
-    elif platform == 'win32':
+    elif utilities.platform == 'win32':
         # get the steam directory from the windows registry
         # HKEY_CURRENT_USER\Software\Valve\Steam
         try:
@@ -273,11 +296,9 @@ def steamUsername():
 
 
 def checkUpdates() -> bool:
-    if not isonline():  # if we're not online return false
+    if not utilities.isonline():  # if we're not online return false
         return False
-    if not load('lastVersion'):  # if we're not on latest version return true
-        return True
-    available, url, ver = checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion") )
+    available, url, ver = utilities.checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion") )
     if available:
         save(url, 'lastVersionUrl')
         save(False, 'lastRelease')
@@ -289,12 +310,8 @@ def version():
     return load('appVersion')
 
 
-def onlineVersion():
-    return load('onlineAppVersion')
-
-
 def devMode() -> bool:
-    return boolcmp( load('devMode') )
+    return utilities.boolcmp( load('devMode') )
 
 
 class configError(BaseException):
@@ -304,4 +321,5 @@ class configError(BaseException):
 
 
 if __name__ == '__main__':
+    print(steamUsername())
     print(portalDir())
