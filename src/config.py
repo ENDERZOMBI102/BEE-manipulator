@@ -1,4 +1,6 @@
 import json
+import sys
+from pathlib import Path
 from typing import Dict, Union
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
@@ -8,6 +10,9 @@ from srctools.logger import get_logger
 
 logger = get_logger()
 overwriteDict: dict = {}
+configPath: str = './config.cfg' if utilities.frozen() else './../config.cfg'
+assetsPath: str = './assets/' if utilities.frozen() else './../assets/'
+"""the path to the assets folder (finishes with /)"""
 # the plugins dict HAS to be the last
 default_config = {
     'config_type': 'BEE2.4 Manipulator Config File',
@@ -19,7 +24,7 @@ default_config = {
     'beeVersion': None,
     'logWindowVisibility': False,
     'logLevel': 'info',
-    'databasePath': './assets/database.json',
+    'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
     'noVerifyDialog': False,
     'plugins': {}
 }
@@ -31,7 +36,7 @@ def createConfig():
         a simple function that make the config file
     """
     global default_config
-    with open('config.cfg', 'w', encoding='utf-8') as file:
+    with open(configPath, 'w', encoding='utf-8') as file:
         json.dump(default_config, file, indent=3)
 
 
@@ -52,11 +57,12 @@ def load(section) -> Union[str, int, None, dict, list]:  # load a config
         logger.debug('using overwrited data!')
         return overwriteDict[section]
     try:
-        with open('config.cfg', 'r', encoding='utf-8') as file:
+        with open(configPath, 'r', encoding='utf-8') as file:
             config = json.load(file)  # load the config
             readeData = config[section]  # take the requested field
         return readeData  # return the readed data
-    except:
+    except Exception as e:
+        print(e)
         if section in default_config:
             logger.warning(f"can't load {section} from config file, using default")
             return default_config[section]
@@ -80,10 +86,10 @@ def save(data, section):  # save a config
     """
 
     try:
-        with open('config.cfg', 'r', encoding='utf-8') as file:
+        with open(configPath, 'r', encoding='utf-8') as file:
             cfg = json.load(file)  # load the config file
             cfg[section] = data
-        with open('config.cfg', 'w', encoding='utf-8') as file:
+        with open(configPath, 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
         logger.debug(f'saved {section}')
     except:
@@ -100,7 +106,7 @@ def loadAll(overwrite: bool = False) -> dict:
     """
     try:
         logger.debug('loading config file')
-        with open('config.cfg', 'r', encoding='utf-8') as file:
+        with open(configPath, 'r', encoding='utf-8') as file:
             cfg = json.load(file)  # load the config file
             if overwrite:  # only if overwrite is true
                 logger.debug(f'overwriting configs..')
@@ -124,7 +130,7 @@ def saveAll(cfg: dict = None):
     if ( cfg is None ) or ( 'config_type' is not 'BEE2.4 Manipulator Config File' ):
         raise ValueError("parameter cfg can't be an invalid config!")
     try:
-        with open('config.cfg', 'w', encoding='utf-8') as file:
+        with open(configPath, 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
     except:
         logger.error('An error happened while saving config file, probably is now corrupted')
@@ -139,7 +145,7 @@ def check(cfg: dict = None) -> bool:
     """
     if cfg is None:
         try:
-            with open('config.cfg', 'r') as file:
+            with open(configPath, 'r') as file:
                 cfg = json.load(file)  # load the file
         except FileNotFoundError:
             return False
@@ -169,25 +175,28 @@ def overwrite(section: str, data: any) -> None:
     logger.debug(f'Overwritten config {section}!')
 
 
-class _dynConfig:
+class __dynConfig:
     """
     a class that contains run-time configs, that requires fast access.
     THIS IS NEVER SAVED TO DISK
     """
 
-    _configs: Dict[str, any] = {}
+    __configs: Dict[str, any] = {}
 
     def __init__(self):
         pass
 
     def __getitem__(self, item):
-        return self._configs[item]
+        if self.__configs[item]:
+            return self.__configs[item]
+        else:
+            return None
 
     def __setitem__(self, key, value):
-        self._configs[key] = value
+        self.__configs[key] = value
 
 
-dynConfig: _dynConfig = _dynConfig()
+dynConfig: __dynConfig = __dynConfig()
 """contains fast-access, volatile data"""
 
 # dynamic/static configs
@@ -249,6 +258,17 @@ def portalDir() -> str:
 
 
 discordToken: str = '655075172767760384'
+
+
+def temp() -> str:
+    if getattr(sys, 'frozen', False):
+        path = './../temp/'  # frozen
+    else:
+        path = './temp/'  # not frozen
+    fdr = Path(path)
+    if not fdr.exists():
+        fdr.mkdir()
+    return
 
 
 def libraryFolders() -> list:

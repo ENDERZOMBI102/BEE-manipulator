@@ -11,10 +11,10 @@ BEEManipulator.7z
 activityManager/.vs
 activityManager/Debug
 activityManager/x64
-src/assets/database.json
-src/assets/about.html
+assets/database.json
+assets/about.html
 src/config.cfg
 src/logs
-src/assets/packages
+assets/packages
 /src/.env
 /zip.bat

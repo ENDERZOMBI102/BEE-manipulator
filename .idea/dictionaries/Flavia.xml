@@ -8,6 +8,7 @@
       <w>boolcmp</w>
       <w>browserframe</w>
       <w>bsizer</w>
+      <w>bytesdata</w>
       <w>codacy</w>
       <w>contentstatsid</w>
       <w>delbuild</w>
@@ -23,6 +24,7 @@
       <w>fileurl</w>
       <w>gamescfg</w>
       <w>gdrive</w>
+      <w>isnegative</w>
       <w>isonline</w>
       <w>libraryfolders</w>
       <w>loglevel</w>
@@ -31,11 +33,13 @@
       <w>noconfirm</w>
       <w>notimplementedyet</w>
       <w>openp</w>
+      <w>overwrited</w>
       <w>perations</w>
       <w>prerelease</w>
       <w>prereleases</w>
       <w>pyinstaller</w>
       <w>pypresence</w>
+      <w>readed</w>
       <w>setted</w>
       <w>skybox</w>
       <w>startexe</w>
@@ -44,6 +48,7 @@
       <w>timenextstatsreport</w>
       <w>togglable</w>
       <w>versioncmp</w>
+      <w>wdots</w>
       <w>zipdata</w>
     </words>
   </dictionary>

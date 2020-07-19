@@ -1,7 +1,7 @@
 import json
 import os
-import pathlib
 import urllib
+from pathlib import Path
 
 import wx
 from requests import get
@@ -17,8 +17,8 @@ logger = get_logger()
 
 
 class browser(wx.ScrolledWindow):
-	r"""
-		the package browser, this will display all the avaiable packages
+	"""
+		the package browser, this will display all the available packages
 	"""
 	def __init__(self, master: wx.Notebook):
 		global database, databasePath
@@ -28,21 +28,21 @@ class browser(wx.ScrolledWindow):
 		logger.info(f'Loading database! (path: {databasePath})')
 		checkDatabase()
 		self.loadDatabase()
-	
-	
+
 	def reload(self):
+		global databasePath
 		downloadDatabase()
 		databasePath = config.load('databasePath')
 		self.loadDatabase()
 	
 	def loadDatabase(self):
-		if not os.path.exists('./assets/database.json'):
+		if not os.path.exists(databasePath):
 			database = loadPlaceHolder()
 		else:
 			database = loadObj()
-		self.sizer =wx.GridBagSizer(vgap=2, hgap=0)
+		self.sizer = wx.GridBagSizer(vgap=2, hgap=0)
 		null = wx.LogNull()
-		yy=0
+		yy = 0
 		for pkg in database:
 			package = packageFrame(master=self, package=pkg, y=yy)
 			yy += 100
@@ -52,11 +52,13 @@ class browser(wx.ScrolledWindow):
 		return
 
 
-r"""
+"""
 	check, download, upload, and load the database
 """
+
+
 def checkDatabase() -> None:
-	r"""
+	"""
 		check the database, if it doesn't exist or is invalid, redownload it
 	"""
 	global logger
@@ -66,42 +68,44 @@ def checkDatabase() -> None:
 			json.load(file)
 		logger.debug('the package database is valid')
 	except:
-		logger.error('ERROR! the database isn\' valid json! the database will be downloaded again.')
-		if utilities.isonline() == False:
-			logger.warning('can\'t download database while offline, aborting')
+		logger.error("ERROR! the database isn't valid json! the database will be downloaded again.")
+		if not utilities.isonline():
+			logger.warning("can't download database while offline, aborting")
 			exit(2)
 		downloadDatabase()
 		checkDatabase()
 	logger.debug('checking packages assets dir..')
-	if not pathlib.Path('./assets/packages/').exists():
-		logger.warning('the packages folder doesn\'t exist! creating one..')
-		pathlib.Path('assets/packages').mkdir()
+	if not Path( config.assetsPath + '/packages' ).exists():
+		logger.warning("the packages folder doesn't exist! creating one..")
+		Path( config.assetsPath + '/packages' ).mkdir()
 		logger.info('packages folder created!')
 
 
 def downloadDatabase() -> None:
-	r"""
+	"""
 		download the database
 	"""
 	global logger
-	if utilities.isonline() == False:
-		logger.warning('can\'t download database while offline, aborting')
+	if not utilities.isonline():
+		logger.warning("can't download database while offline, aborting")
 		return
 	try:
-		logger.debug('creating/opening file "./assets/database.json" for writing')
+		logger.debug(f'creating/opening file "{databasePath}" for writing')
 		with open(databasePath, "w") as file:
 			logger.debug('downloading database from github..')
-			database = get("https://raw.githubusercontent.com/ENDERZOMBI102/ucpDatabase/master/Database.json").json()
+			database = get('https://raw.githubusercontent.com/ENDERZOMBI102/ucpDatabase/master/Database.json').json()
 			json.dump(database, file, indent=3)
 			logger.info(f'database saved to {databasePath}')
 	except:
-		logger.fatal('FATAL ERROR, can\' download database while offline, why the checks didn\'t worked?')
+		logger.fatal("FATAL ERROR, can' download database while offline, why the checks didn't worked?")
 		raise Exception("how did you get here?")
+
 
 def loadObj() -> list:
 	r"""
 		create the correct package object for each one of the packages in the json
 	"""
+	packageFolderPath = config.assetsPath + 'packages'
 	logger.debug('opening database..')
 	with open(databasePath, 'r') as file:
 		logger.debug('loading database..')
@@ -148,16 +152,16 @@ def loadObj() -> list:
 		# obtain the icon url
 		logger.debug('GETting package icon..')
 		if package.service() == "github" and not utilities.keyExist(pkg, 'icon_url'):
-			iconurl = package.repo() + "raw/master/icon.png"
-		elif utilities.keyExist(pkg, "icon_url"):
-			iconurl = pkg["icon_url"]
+			iconurl = package.repo() + 'raw/master/icon.png'
+		elif utilities.keyExist(pkg, 'icon_url'):
+			iconurl = pkg['icon_url']
 		else: iconurl = None
 		# save the icon
-		iconPath = f'./assets/packages/{package.ID}/icon.png'
-		if not pathlib.Path(f'./assets/packages/{package.ID}').exists():
-			pathlib.Path(f'assets/packages/{package.ID}').mkdir()
-		if ( not pathlib.Path(iconPath).exists() and ( not iconurl is None) ):
-			open(iconPath, 'x').close()
+		iconPath = f'{packageFolderPath}/{package.ID}/icon.png'
+		if not Path(f'{packageFolderPath}/{package.ID}').exists():
+			Path(f'{packageFolderPath}/{package.ID}').mkdir()
+		if ( not Path(iconPath).exists() ) and ( not iconurl is None):
+			open( iconPath, 'x').close()
 			urllib.request.urlretrieve(
 				iconurl,
 				iconPath
@@ -176,6 +180,7 @@ def loadObj() -> list:
 	logger.info('finished loading database from database.json!')
 	# return the list we made
 	return database
+
 
 def loadPlaceHolder():
 	return []

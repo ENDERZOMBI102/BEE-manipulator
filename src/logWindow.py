@@ -6,6 +6,7 @@ import config
 import srctools.logger
 
 # the visibility of the log window, is initially setted to the value saved in the config file
+
 visible: bool = config.load("logWindowVisibility")
 window = None  # then converted to wx.Frame
 logger = srctools.logger.get_logger()
@@ -57,7 +58,7 @@ class logWindow(wx.Frame):
                         )  # init the window
         global window
         window = self
-        self.SetIcon(wx.Icon('./assets/icon.ico'))
+        self.SetIcon( wx.Icon(f'{config.assetsPath}icon.ico') )
         self.SetSize(0, 0, 500, 365)
         sizer = wx.FlexGridSizer(rows=2, cols=1, gap=wx.Size(0, 0))
         try:

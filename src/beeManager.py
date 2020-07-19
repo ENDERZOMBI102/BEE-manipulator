@@ -1,7 +1,6 @@
 import configparser
 import io
 import os
-from enum import Enum
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -18,18 +17,11 @@ beeApiUrl: str = 'https://api.github.com/repos/BEEmod/BEE2.4/releases/latest'
 beePackagesApiUrl: str = 'https://api.github.com/repos/BEEmod/BEE2-items/releases/latest'
 
 
-class dltype(Enum):
-	beepackage = 0
-	bmpackage = 1
-	bee24_app = 2
-	bee24_items = 3
-
-
 def checkAndInstallUpdate(install: bool = False) -> None:
 	"""
-    this function checks if BEE has an update, if so, ask the user if he wants to update it
-    :return: None
-    """
+	this function checks if BEE has an update, if so, ask the user if he wants to update it
+	:return: None
+	"""
 	# load current bee version
 	beeVersion = config.load('beeVersion')
 	logger.info(f'installed BEE version: {beeVersion}')
@@ -63,19 +55,16 @@ def checkAndInstallUpdate(install: bool = False) -> None:
 	installBee()
 
 
-def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
+def beeIsPresent():
 	"""
-    install software from url
-    :param DLtype: the type of the download, defaults to BEE package
-    :param url: direct download link to the package/application zip
-    :return:
-    """
-	path = Path(config.load('beePath'))
-	if not path.exists():
-		logger.error(f"BEE install path doesn't exist!")
-		path.mkdir()
-		if not DLtype == dltype.bee24_app:
-			logger.info('the folder has been created, please install BEE')
+	returns true if bee2.exe is found in the beePath
+	:returns: bool
+	"""
+	path = config.load('beePath')
+	if path is None:
+		return False
+	elif Path(path+'/BEE2.exe').exists():
+		return True
 
 
 def installBee():
@@ -83,14 +72,32 @@ def installBee():
 	this will install/update BEE, when called, the function
 	will download the latest version based on the os is running on and unzip it
 	"""
-	# get the zip binary data
-	if False:
+	# create the progress dialog
+	dialog = wx.ProgressDialog(
+		parent=wx.GetTopLevelWindows()[0],
+		title='Installing BEE2..',
+		message='Downloading packages..',
+		maximum=100
+	)
+	if not beeIsPresent():
 		logger.info('downloading BEE2...')
-		zipdata = get(config.dynConfig['beeUpdateUrl']).content  # download BEE
+		# get the zip binary data
+		request = get(config.dynConfig['beeUpdateUrl'], stream=True)  # download BEE
+		# working variables
+		zipdata = io.BytesIO()
+		dialog.Update(0)
+		dl = 0
+		total_length = int( request.headers.get('content-length') )
+		# download!
+		for data in request.iter_content(chunk_size=1024):
+			dl += len(data)
+			zipdata.write(data)
+			done = int(100 * dl / total_length)
+			print(f'total: {total_length}, dl: {dl}, done: {done}')
+			dialog.Update(done)
 		logger.info('extracting...')
 		# read the data as bytes and then create the zipfile object from it
-		zipdata = ZipFile(io.BytesIO(zipdata))
-		zipdata.extractall(config.load('beePath'))  # extract BEE
+		ZipFile(zipdata).extractall(config.load('beePath'))  # extract BEE
 		logger.info('BEE2.4 application installed!')
 	# install default package pack
 	# get the url
@@ -98,17 +105,11 @@ def installBee():
 	# get the zip as bytes
 	logger.info('downloading default package pack...')
 	request = get(dl_url, stream=True)
-	dialog = wx.ProgressDialog(
-		parent=wx.GetTopLevelWindows()[0],
-		title='Installing BEE2..',
-		message='Downloading packages..',
-		maximum=100
-	)
 	# working variables
 	zipdata = io.BytesIO()
 	dialog.Update(0)
 	dl = 0
-	total_length = int( request.headers.get('content-length') )
+	total_length = int(request.headers.get('content-length'))
 	# download!
 	for data in request.iter_content(chunk_size=1024):
 		dl += len(data)
@@ -120,7 +121,7 @@ def installBee():
 	logger.info('extracting...')
 	dialog.Pulse('Extracting..')
 	# convert to a byte stream, to a zipfile object and then extract
-	ZipFile(zipdata).extractall( config.load('beePath') )
+	ZipFile(zipdata).extractall(config.load('beePath'))
 	dialog.Close()
 	logger.info('finished!')
 
@@ -132,15 +133,19 @@ def verifyGameCache():
 
 @property
 def packageFolder():
-	return './../packages/'
+	beePath = config.load('beePath')
+	if beePath is None:
+		raise BeeNotInstalledException("can't access beePath!")
+	else:
+		return f'{beePath}/packages/'
 
 
 class configManager:
 	"""
-    BEE2.4 config manager
-    this definition contains some userful commands to
-    manipulate the BEE2.4 config files
-    """
+	BEE2.4 config manager
+	this definition contains some userful commands to
+	manipulate the BEE2.4 config files
+	"""
 
 	@staticmethod
 	def addGame(path='', name='Portal 2', overwrite=False):
@@ -195,6 +200,10 @@ class downloadError(Exception):
 
 
 class GameAlreadyExistError(Exception):
+	pass
+
+
+class BeeNotInstalledException(Exception):
 	pass
 
 

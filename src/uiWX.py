@@ -22,12 +22,12 @@ class root (wx.Frame):
     settingsWindowInstance: settingsUI.window = None
     
     def __init__(self):
-        super().__init__(None, title="BEE Manipulator "+str(config.version()))
+        super().__init__( None, title="BEE Manipulator "+str( config.version() ) )
         # sets the app icon
-        self.SetIcon(wx.Icon('./assets/icon.ico'))
+        self.SetIcon( wx.Icon(f'{config.assetsPath}icon.ico') )
         # init the logging window
-        asyncio.run(logWindow.init())
-        asyncio.run(appDateCheck())
+        asyncio.run( logWindow.init() )
+        asyncio.run( appDateCheck() )
         # set the utilities.root pointer to the object of this class
         utilities.root = self
         try:
@@ -142,7 +142,7 @@ class root (wx.Frame):
         notimplementedyet()
 
     def exit(self, event):
-        self.OnClose(wx.CloseEvent)  # there's already an handler, so use that
+        self.OnClose( wx.CloseEvent )  # there's already an handler, so use that
     
     # options menu items actions
     def openSettingsWindow(self, event = None):
@@ -157,7 +157,11 @@ class root (wx.Frame):
         self.settingsWindowInstance.show()  # show the window
 
     def reloadConfig(self, event):
-        notimplementedyet()
+        if utilities.frozen():
+            os.system('ping 127.0.0.1 100 && BEEManipulator.exe')  # can start the exe
+        else:
+            os.system('cmd /C "ping 127.0.0.1 100 && cd src && pipenv run py BEEManipulator.py"')  # can start the py
+        self.OnClose( wx.CloseEvent )
 
     def reloadPackages(self, event):
         # remove the package browser window
@@ -213,7 +217,7 @@ class root (wx.Frame):
         if not path.exists():
             path.mkdir()
         # save the BEE path
-        config.save(str( path.resolve() ), 'beePath')
+        config.save(str( path.resolve() ).replace(r'\\', '/'), 'beePath')
         # install BEE without messages
         beeManager.checkAndInstallUpdate(True)
         self.portalMenu.Enable(9, True)
@@ -225,19 +229,19 @@ class root (wx.Frame):
         aboutWindow.init(self)
 
     @staticmethod
-    def checkUpdates(self, event):
+    def checkUpdates(event):
         asyncio.run(appDateCheck())
 
     @staticmethod
-    def openWiki(self, event):
+    def openWiki(event):
         openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator/wiki')
 
     @staticmethod
-    def openGithub(self, event):
+    def openGithub(event):
         openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator')
 
     @staticmethod
-    def openDiscord(self, event):
+    def openDiscord(event):
         openUrl('https://discord.gg/hnGFJrz')
 
 

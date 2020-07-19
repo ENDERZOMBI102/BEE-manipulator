@@ -1,12 +1,15 @@
+import io
+import sys
 from sys import platform
 from typing import Union, Tuple
 
 import wx
 from requests import get
 
+import config
 from srctools.logger import get_logger
 
-LOGGER = get_logger("utils")
+logger = get_logger("utils")
 
 
 def boolcmp(value: Union[bool, int, str] ) -> bool:
@@ -16,7 +19,7 @@ def boolcmp(value: Union[bool, int, str] ) -> bool:
 	:param value: the value to compare
 	:return: if the value may rappresents a false return False, else true
 	"""
-	LOGGER.debug(f'converting "{value}" to boolean!')
+	logger.debug(f'converting "{value}" to boolean!')
 	if value in [True, 'true', 'yes', 1]:
 		return True
 	elif value in [False, 'false', 'no', 0]:
@@ -37,7 +40,7 @@ def isonline():
 	:return: True if it is else False
 	"""
 	try:
-		LOGGER.debug('checking connection..')
+		logger.debug('checking connection..')
 		get('https://www.google.com/')
 		get('https://github.com/')
 		return True
@@ -53,7 +56,7 @@ def keyExist(data: dict, key: str):
 	:param key: the key to check
 	:return:
 	"""
-	LOGGER.debug(f'checking key "{key}"')
+	logger.debug(f'checking key "{key}"')
 	try:
 		x = data[key]
 		return True
@@ -77,12 +80,12 @@ def checkUpdate(url: str, curVer: str) -> Tuple[bool, str, int]:
 	:param curVer: current version
 	:return: true or false
 	"""
-	LOGGER.debug(f'checking url..')
+	logger.debug(f'checking url..')
 	if 'api.github' not in url:
-		LOGGER.debug(f'converting url..')
+		logger.debug(f'converting url..')
 		url = genApiUrl(url)  # convert normal github repo url to github api url
-	LOGGER.debug(f'url valid!')
-	LOGGER.debug(f'checking updates on url: {url}')
+	logger.debug(f'url valid!')
+	logger.debug(f'checking updates on url: {url}')
 	data = get(url).json()  # get the latest release data
 	if 'documentation_url' in data.keys():
 		return False, None, None
@@ -144,6 +147,75 @@ def versioncmp( ver0: str, ver1: str):
 
 def GetMainWindow() -> wx.Frame:
 	return wx.GetTopLevelWindows()[0]
+
+
+def isnegative(value: Union[None, bool]) -> bool:
+	"""
+	a function that checks if a value is negative (None, False, 0)
+	:param value:
+	:return:
+	"""
+	if value is None:
+		return True
+	else:
+		return not value
+
+
+
+def Downloader(url: str, title: str, message: str) -> bytes:
+	"""
+
+	:param url:
+	:param title:
+	:param message:
+	:return:
+	"""
+	dots = 1
+	showProgress = config.dynConfig['logDownloadProgress']
+	# create progress dialog
+	dialog = wx.ProgressDialog(
+		parent=wx.GetTopLevelWindows()[0],
+		title='Installing BEE2..',
+		message='Downloading packages..',
+		maximum=100
+	)
+	dialog.Update(0)  # update to 0 so it doesn't glitch
+	# working variables
+	request = get(url, stream=True)  # the request
+	bytesdata = io.BytesIO()  # downloaded bytes
+	dl = 0  # how much has been downloaded
+	total_length = int( request.headers.get('content-length') )  # total length of the download (bytes)
+	# download!
+	for data in request.iter_content(chunk_size=1024):
+		dl += len(data)
+		bytesdata.write(data)
+		done = int(100 * dl / total_length)
+		# set the message with dots for the animation
+		if dots == 1:
+			dots = 2
+			messageWdots = message + '.'
+		elif dots == 2:
+			dots = 2
+			messageWdots = message + '..'
+		elif dots == 3:
+			dots = 1
+			messageWdots = message + '...'
+		# if showProgress is true, show the progress on the log
+		if ( showProgress is True ) and ( showProgress is not None ):
+			logger.log(f'total: {total_length}, dl: {dl}, done: {done}%')
+		# update with total % done and the message
+		dialog.Update(done, message=messageWdots )
+
+
+def frozen() -> bool:
+	"""
+	if BM is in a frozen state (exe), returns True
+	:return: bool
+	"""
+	if getattr(sys, 'frozen', False):
+		return True
+	else:
+		return False
 
 
 env = 'dist'

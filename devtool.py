@@ -3,7 +3,7 @@ from pathlib import Path
 from sys import argv
 
 if '--help' in argv:
-    print('BEE Manipulator development tool v2.1')
+    print('BEE Manipulator development tool v2.2')
     print('Made By ENDERZOMBI102')
     print('Possible parameters:')
     print('--install    installs BM dependencies from pipfile')
@@ -13,8 +13,9 @@ if '--help' in argv:
     print('--zip        compress the compiled exe+resources to a 7z file')
     print('--startexe   start the exe compiled by pyinstaller')
     print('--deldist    delete the dist folder')
-    print('--delbuild   delete the build folder [new in 2.1]')
-    print('--clean      clean up the folder (includes --deldist and --delbuild) [new in 2.1]')
+    print('--delbuild   delete the build folder')
+    print('--clean      clean up the folder (includes --deldist and --delbuild)')
+    print('--pass "ARG" passes the "ARG" string to the exe [new in v2.2]')
 
 if '--install' in argv:
     system('pip install pipenv')
@@ -40,29 +41,54 @@ if '--zip' in argv:
     except FileNotFoundError:
         pass
     system(r'C:\"Program Files"\7-Zip\7z a -r BEEManipulator ./dist/"BEE Manipulator"/*')
+    print('finished step: zip')
 
 if '--startexe' in argv:
-    chdir('./dist/BEE Manipulator')
-    if Path('./BEE Manipulator.exe').exists():
-        system('"BEE Manipulator.exe --dev"')
+    try:
+        chdir('./dist/BEE Manipulator')
+    except FileNotFoundError:
+        print('No dist folder found! BM was not compiled first?')
     else:
-        print('No exe found! BM was not compiled first or the compile failed.')
+        if Path('./BEE Manipulator.exe').exists():
+            if '--pass' in argv:
+                args = argv[ argv.index('--pass')+1 ]
+                system('"BEE Manipulator.exe"' + args )
+            else:
+                system('"BEE Manipulator.exe"')
+        else:
+            print('No exe found! BM was not compiled first or the compile failed?')
 
 if '--deldist' in argv:
     system('rmdir dist /S /Q')
+    print('finished step: deldist')
 
 if '--delbuild' in argv:
     system('rmdir build /S /Q')
+    print('finished step: delbuild')
 
 if '--clean' in argv:
+    print('removing "dist"')
     if Path('./dist').exists():
         system('rmdir dist /S /Q')
+    print('removing "build"')
     if Path('./build').exists():
         system('rmdir build /S /Q')
+    print('removing "logs"')
     if Path('./logs').exists():
         system('rmdir logs /S /Q')
+    print('removing "assets/packages"')
+    if Path('./assets/packages').exists():
+        system('rmdir assets/packages /S /Q')
+    print('removing "assets/about.html"')
+    if Path('./assets/about.html').exists():
+        remove('assets/about.html')
+    print('removing "assets/database.json"')
+    if Path('./assets/database.json').exists():
+        remove('assets/database.json')
+    print('removing "config.cfg"')
     if Path('./config.cfg').exists():
         remove('config.cfg')
+    print('finished step: clean')
 
 if len(argv) < 2:
     print('No parameter given! use --help to get help')
