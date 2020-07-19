@@ -157,6 +157,8 @@ class root (wx.Frame):
         self.settingsWindowInstance.show()  # show the window
 
     def reloadConfig(self, event):
+        notimplementedyet()
+        return
         if utilities.frozen():
             os.system('ping 127.0.0.1 100 && BEEManipulator.exe')  # can start the exe
         else:

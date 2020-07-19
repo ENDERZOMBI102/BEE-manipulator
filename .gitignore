@@ -13,8 +13,8 @@ activityManager/Debug
 activityManager/x64
 assets/database.json
 assets/about.html
-src/config.cfg
-src/logs
 assets/packages
+config.cfg
+src/logs
+logs
 /src/.env
-/zip.bat
