@@ -2,10 +2,8 @@ import json
 import os
 import urllib
 from pathlib import Path
-
 import wx
 from requests import get
-
 import config
 import utilities
 from packages import beePackage, bmPackage, packageFrame
@@ -20,6 +18,8 @@ class browser(wx.ScrolledWindow):
 	"""
 		the package browser, this will display all the available packages
 	"""
+	sizer: wx.GridBagSizer
+
 	def __init__(self, master: wx.Notebook):
 		global database, databasePath
 		super().__init__(master)

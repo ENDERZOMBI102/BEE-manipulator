@@ -1,8 +1,9 @@
+import json
 from enum import Enum
 from pathlib import Path
+from typing import List
 
 import requests
-
 import beeManager
 import config
 from srctools.logger import get_logger
@@ -30,7 +31,7 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 		path.mkdir()
 		logger.info('the folder has been created, please install BEE')
 		return
-	tempFolder = config.temp
+	#tempFolder = config.temp
 	if DLtype == dltype.beepackage:
 		pass
 	elif DLtype == dltype.bmpackage:
@@ -39,6 +40,23 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 		logger.error(f'unknown dl type "{DLtype}"!')
 
 
+class PackageDatabase:
+
+	database: List[dict] = []
+	apiUrl: str
+	databasePath = Path( config.load('databasePath') )
+
+	def __init__(self):
+		logger.info(f'checking package database.. ({self.databasePath})')
+		if not self.databasePath.exists():
+			with self.databasePath.open('x' as file:
+				json.dump(self.database, file, indent=4)
+
+
+
+
+
+# TODO: replace with a more general implementation of "install"
 def install(update: bool = False):
 	packagesPath: str = beeManager.packageFolder()
 	service: str = self.package.service()  # package host service

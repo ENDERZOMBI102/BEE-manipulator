@@ -1,27 +1,27 @@
 import logging
 import pathlib
 from typing import Union
-
 import wx
 import wx.lib
-
 from srctools import logger
 
 
-class beePackage:
+class package:
 	"""
-	represents a BEE2.4 package, with all its data; icon, author, file name and a description are
-	stored here, with the others.
+	represents a package, with shared data
 	"""
+	ID: str  # package identifier
+	author: str # package main author
+
 	def __init__(self, ID = None, icon = None, version = 0, author = [], description = None, url = "None", filename = None, name =  None):
 		self.ID: str = ID
 		self.author: str = author
 		self.icon: str = icon
 		self.version = version
+		self.name: str = name
 		self.description: str = description
 		self.url: str = url
-		self.filename: str = filename
-		self.name: str = name
+		self.filename: str = filename # only bee package
 		self.coAuthors = []
 
 	def service(self):
@@ -78,8 +78,8 @@ class bmPackage:
 		self.name = name
 		self.desc = desc
 		self.url = url
-		self.contents = content
-		self.config = config
+		self.contents = content # only BMp
+		self.config = config # only BMp
 		self.coAuthors = []
 
 	def service(self):

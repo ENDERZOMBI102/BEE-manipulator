@@ -3,10 +3,8 @@ import io
 import os
 from pathlib import Path
 from zipfile import ZipFile
-
 import wx
 from requests import get
-
 import config
 import utilities
 from srctools.logger import get_logger
