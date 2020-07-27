@@ -216,5 +216,9 @@ def frozen() -> bool:
 		return False
 
 
+def getAsset(name) -> Union[str, bytes]:
+    pass
+
+
 env = 'dist'
 root: wx.Frame = None
