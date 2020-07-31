@@ -3,8 +3,10 @@ import io
 import os
 from pathlib import Path
 from zipfile import ZipFile
+
 import wx
 from requests import get
+
 import config
 import utilities
 from srctools.logger import get_logger
@@ -15,7 +17,7 @@ beeApiUrl: str = 'https://api.github.com/repos/BEEmod/BEE2.4/releases/latest'
 beePackagesApiUrl: str = 'https://api.github.com/repos/BEEmod/BEE2-items/releases/latest'
 
 
-def checkAndInstallUpdate(install: bool = False) -> None:
+def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 	"""
 	this function checks if BEE has an update, if so, ask the user if he wants to update it
 	:return: None
@@ -23,18 +25,18 @@ def checkAndInstallUpdate(install: bool = False) -> None:
 	# load current bee version
 	beeVersion = config.load('beeVersion')
 	logger.info(f'installed BEE version: {beeVersion}')
-	if install is False:
+	if firstInstall is False:
 		# bee isn't installed, can't update
 		if beeVersion is None:
 			return
 	# check updates
-	data = utilities.checkUpdate(beeRepoUrl, beeVersion if install is False else '0')
+	data = utilities.checkUpdate(beeRepoUrl, beeVersion if firstInstall is False else '0')
 	logger.info(f'latest BEE version: {data[2]}')
 	if not data[0]:
 		# no update available, can't update
 		logger.info('no update available')
 		return
-	if not install:
+	if not firstInstall:
 		# show bee update available dialog
 		dialog = wx.RichMessageDialog(
 			parent=wx.GetTopLevelWindows()[0],
@@ -94,6 +96,7 @@ def installBee():
 			print(f'total: {total_length}, dl: {dl}, done: {done}')
 			dialog.Update(done)
 		logger.info('extracting...')
+		dialog.Pulse('Extracting..')
 		# read the data as bytes and then create the zipfile object from it
 		ZipFile(zipdata).extractall(config.load('beePath'))  # extract BEE
 		logger.info('BEE2.4 application installed!')
@@ -105,7 +108,7 @@ def installBee():
 	request = get(dl_url, stream=True)
 	# working variables
 	zipdata = io.BytesIO()
-	dialog.Update(0)
+	dialog.Update(0, message='Downloading default pack..')
 	dl = 0
 	total_length = int(request.headers.get('content-length'))
 	# download!

@@ -2,11 +2,13 @@ import json
 import os
 import urllib
 from pathlib import Path
+
 import wx
 from requests import get
+
 import config
 import utilities
-from packages import beePackage, bmPackage, packageFrame
+from packages import PackageFrame
 from srctools.logger import get_logger
 
 database: list = None
@@ -44,7 +46,7 @@ class browser(wx.ScrolledWindow):
 		null = wx.LogNull()
 		yy = 0
 		for pkg in database:
-			package = packageFrame(master=self, package=pkg, y=yy)
+			package = PackageFrame(master=self, package=pkg, y=yy)
 			yy += 100
 		del null
 

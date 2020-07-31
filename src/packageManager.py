@@ -1,11 +1,13 @@
-import json
+from enum import Enum
 from enum import Enum
 from pathlib import Path
-from typing import List
+from typing import Dict
 
 import requests
+
 import beeManager
 import config
+from packages import PackageFrame, PackageLargeView
 from srctools.logger import get_logger
 
 logger = get_logger()
@@ -31,7 +33,7 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 		path.mkdir()
 		logger.info('the folder has been created, please install BEE')
 		return
-	#tempFolder = config.temp
+	# tempFolder = config.temp
 	if DLtype == dltype.beepackage:
 		pass
 	elif DLtype == dltype.bmpackage:
@@ -40,39 +42,53 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 		logger.error(f'unknown dl type "{DLtype}"!')
 
 
-class PackageDatabase:
+class PackageManager:
 
-	database: List[dict] = []
+	database: Dict[str, PackageFrame]
 	apiUrl: str
 	databasePath = Path( config.load('databasePath') )
+	packagesWindows: Dict[str, PackageLargeView]
 
 	def __init__(self):
 		logger.info(f'checking package database.. ({self.databasePath})')
 		if not self.databasePath.exists():
-			with self.databasePath.open('x' as file:
-				json.dump(self.database, file, indent=4)
+			# download database
+			pass
+
+	def getPackage(self, identifier: str) -> PackageFrame:
+		return self.database[identifier]
+
+	def getPackageLargeView(self, identifier: str) -> PackageLargeView:
+		return self.database[identifier].getLargeView()
 
 
+def getDatabase():
+	pass
 
 
-
-# TODO: replace with a more general implementation of "install"
-def install(update: bool = False):
+def installBeePackage(identifier: str, url: str, service: str, filename: str):
+	"""
+	install a BEE package
+	:param identifier: package identifier
+	:param url: file direct download url
+	:param service: file's service (github, gdrive, dropbox)
+	:param filename: downloaded file name
+	:return: none
+	"""
 	packagesPath: str = beeManager.packageFolder()
-	service: str = self.package.service()  # package host service
 	filebytes: bytes  # the file content in bytes
 	fileurl: str  # the file download url
 	filename: str  # the file name
 	filepath: str  # file path in the disk
-	logger.info(f'installing package {self.package.ID}')
+	logger.info(f'installing package {identifier}')
 	logger.debug('getting file url and name')
 	if service == 'github':
-		data = requests.get(self.package.url).json()  # get the release data
+		data = requests.get(url).json()  # get the release data
 		fileurl = data['assets'][0]['browser_download_url']  # take the file url
 		filename = data['assets'][0]['name']  # take the file name
 	elif service == 'gdrive':
-		fileurl = self.package.url  # take the file url
-		filename = self.package.filename  # take the file name
+		fileurl = url  # take the file url
+		filename = filename  # take the file name
 	else:
 		logger.warning(f'unexpected service found, expected "gdrive" or "github" got "{service}", aborting')
 		return  # unsupported service
@@ -88,13 +104,12 @@ def install(update: bool = False):
 		return
 	logger.debug('success!')
 	logger.debug('writing file to disk..')
-	mode = 'x+b' if update is False else 'wb'
 	try:
 		# write file to disk
-		with open(filepath, mode) as file:
+		with open(filepath, 'x+b') as file:
 			file.write(filebytes)
 	except Exception as e:
 		logger.error(f'FAILED TO SAVE FILE! error: {e}')
 		return
-	logger.info('successufully installed package!')
-	# done
+	logger.info(f'successfully installed package {identifier}!')
+
