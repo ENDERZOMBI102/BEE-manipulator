@@ -2,10 +2,8 @@ import io
 import sys
 from sys import platform
 from typing import Union, Tuple
-
 import wx
 from requests import get
-
 import config
 from srctools.logger import get_logger
 
@@ -195,7 +193,7 @@ def Downloader(url: str, title: str, message: str) -> bytes:
 			dots = 2
 			messageWdots = message + '.'
 		elif dots == 2:
-			dots = 2
+			dots = 3
 			messageWdots = message + '..'
 		elif dots == 3:
 			dots = 1
@@ -216,6 +214,10 @@ def frozen() -> bool:
 		return True
 	else:
 		return False
+
+
+def getAsset(name) -> Union[str, bytes]:
+    pass
 
 
 env = 'dist'
