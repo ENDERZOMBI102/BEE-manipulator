@@ -1,4 +1,6 @@
 import os
+import sys
+import traceback
 from pathlib import Path
 from sys import argv
 
@@ -16,21 +18,29 @@ from uiWX import root
 # py BEEManipulator.py
 
 # use file dir as working dir
-print(f"exe path: {Path(f'__file__/..').resolve()}")
-os.chdir( Path(f'__file__/..').resolve() )
+path = Path(__file__).resolve()
+if path.name.endswith('.exe'):
+    print(f"BM exe path: {path.parent}")
+    os.chdir( path.parent )
+else:
+    print(f"BM source path: {path.parent}")
+    os.chdir( path.parent )
 
-# some data initialization
+# create the wx app obj
 app = wx.App()
+
+
+# custom unhandled exception handler for the "cool" error window
+sys.excepthook = lambda etype, value, tb: \
+    wx.SafeShowMessage( title='BM Fatal Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
 
 srctools.logger.init_logging("./logs/latest.log")
 LOGGER = srctools.logger.get_logger('BEE Manipulator')
 # if we started with --dev parameter, set loglevel to debug
-try:
-    if '--dev' in argv:
-        config.overwrite('logLevel', 'DEBUG')
-        config.overwrite('logWindowVisibility', True)
-        env = 'dev'
-except: pass
+if '--dev' in argv:
+    config.overwrite('logLevel', 'DEBUG')
+    config.overwrite('logWindowVisibility', True)
+    env = 'dev'
 # app init
 try:
     LOGGER.debug("setting application name..")
