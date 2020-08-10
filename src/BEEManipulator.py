@@ -10,16 +10,9 @@ import config
 import srctools.logger
 from uiWX import root
 
-# to start without entering the venv shell
-# pipenv run py BEEManipulator.py
-# to enter the venv shell
-# "C:\Users\Flavia\.virtualenvs\BEE-manipulator-xMPheCny\Scripts\activate.bat"
-# to start with venv shell
-# py BEEManipulator.py
-
 # use file dir as working dir
 path = Path(__file__).resolve()
-if path.name.endswith('.exe'):
+if getattr(sys, 'frozen', False):
     print(f"BM exe path: {path.parent}")
     os.chdir( path.parent )
 else:
@@ -32,7 +25,7 @@ app = wx.App()
 
 # custom unhandled exception handler for the "cool" error window
 sys.excepthook = lambda etype, value, tb: \
-    wx.SafeShowMessage( title='BM Fatal Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
+    wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
 
 srctools.logger.init_logging("./logs/latest.log")
 LOGGER = srctools.logger.get_logger('BEE Manipulator')
