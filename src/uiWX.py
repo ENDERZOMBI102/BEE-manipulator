@@ -132,17 +132,15 @@ class root (wx.Frame):
         os.startfile(config.portalDir())
 
     @staticmethod
-    def openBEEdir(self, event):
-        if config.load("beePath") is None:
-            pass
-        else:
-            os.startfile( config.load("beePath") )
+    def openBEEdir(event):
+        os.startfile( config.load("beePath") )
 
-    def syncGames(self, event):
+    @staticmethod
+    def syncGames(event):
         notimplementedyet()
 
     def exit(self, event):
-        self.OnClose( wx.CloseEvent )  # there's already an handler, so use that
+        self.OnClose( wx.CloseEvent() )  # there's already an handler, so use that
     
     # options menu items actions
     def openSettingsWindow(self, event = None):
@@ -156,14 +154,9 @@ class root (wx.Frame):
             self.settingsWindowInstance = settingsUI.window()  # set it to the settings window instance
         self.settingsWindowInstance.show()  # show the window
 
-    def reloadConfig(self, event):
+    @staticmethod
+    def reloadConfig(event):
         notimplementedyet()
-        return
-        if utilities.frozen():
-            os.system('ping 127.0.0.1 100 && BEEManipulator.exe')  # can start the exe
-        else:
-            os.system('cmd /C "ping 127.0.0.1 100 && cd src && pipenv run py BEEManipulator.py"')  # can start the py
-        self.OnClose( wx.CloseEvent )
 
     def reloadPackages(self, event):
         # remove the package browser window
@@ -197,31 +190,47 @@ class root (wx.Frame):
                 print('no')
 
     def uninstallBee(self, event):
-        return
-        print("uninstall")
+        diag = wx.MessageDialog(
+            parent=self,
+            message="You're sure to want to uninstall BEE?",
+            caption='Warning!',
+            style=wx.YES_NO | wx.STAY_ON_TOP | wx.CENTRE | wx.ICON_WARNING
+        )
+        if diag.ShowModal() == wx.ID_NO:
+            return
+        beeManager.uninstall()
         self.portalMenu.Enable(10, True)
         self.portalMenu.Enable(9, False)
         self.fileMenu.Enable(1, False)
 
     def installBee(self, event):
-        print('install')
-        dial = wx.DirDialog(
-            self,
-            message='Select where to install BEE (a BEE2 folder will be created)',
-            # this gets the APPDATA path, go from Roaming to Local and then return the Programs folder full path
-            defaultPath=str( Path( str( Path( os.getenv('appdata') ).parent.resolve() )+'/Local/Programs/').resolve() )
-        )
-        # show the dialog and wait
-        if dial.ShowModal() == wx.ID_CANCEL:
-            return  # don't want to install anymore
-        path = Path( dial.GetPath() + '/BEE2/' )
-        # create the missing folders
-        if not path.exists():
-            path.mkdir()
-        # save the BEE path
-        config.save(str( path.resolve() ).replace(r'\\', '/'), 'beePath')
-        # install BEE without messages
-        beeManager.checkAndInstallUpdate(True)
+        # check if is installed
+        if beeManager.beeIsPresent():
+            wx.GenericMessageDialog(
+                self,
+                message='BEE2.4 has been found on default install path!\nNo need to install again :D',
+                caption='Notice!',
+                style= wx.OK | wx.STAY_ON_TOP | wx.CENTRE
+            ).ShowModal()
+            config.save(f'{utilities.defBeePath}/BEE2/', 'beePath')
+        else:  # not installed
+            dial = wx.DirDialog(
+                self,
+                message='Select where to install BEE (a BEE2 folder will be created)',
+                # this gets the APPDATA path, go from Roaming to Local and then return the Programs folder full path
+                defaultPath=utilities.defBeePath
+            )
+            # show the dialog and wait
+            if dial.ShowModal() == wx.ID_CANCEL:
+                return  # don't want to install anymore
+            path = Path( dial.GetPath() + '/BEE2/' )
+            # create the missing folders
+            if not path.exists():
+                path.mkdir()
+            # save the BEE path
+            config.save(str( path.resolve() ).replace(r'\\', '/'), 'beePath')
+            # install BEE without messages
+            beeManager.checkAndInstallUpdate(True)
         self.portalMenu.Enable(9, True)
         self.portalMenu.Enable(10, False)
         self.fileMenu.Enable(1, True)
@@ -266,6 +275,7 @@ async def appDateCheck():
     if not ( config.checkUpdates() is True):  # update check
         return  # no updates, return
     data = wx.GenericMessageDialog(
+        parent=wx.GetTopLevelWindows()[0],
         message = "An update for the app is avaiable, do you want to update now?)",
         caption = f'Update Avaiable - new version: {config.load("onlineVersion")}',
         style = wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
