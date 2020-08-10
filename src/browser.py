@@ -38,6 +38,7 @@ class browser(wx.ScrolledWindow):
 		self.loadDatabase()
 	
 	def loadDatabase(self):
+		return
 		if not os.path.exists(databasePath):
 			database = loadPlaceHolder()
 		else:
