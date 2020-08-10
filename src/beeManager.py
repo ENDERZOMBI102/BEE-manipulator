@@ -153,35 +153,9 @@ def uninstall():
 	path = config.load('beePath')
 	logger.info('removing BEE2.4!')
 	logger.info('deleting app files..')
-	removeDir( path )
+	utilities.removeDir( path )
 	config.save(None, 'beePath')
 	logger.info('app files deleted!')
-
-
-def removeDir(path):
-	"""
-	remove a folder, including all the files/folders it contains
-	:param path:
-	:return:
-	"""
-	try:
-		config.dynConfig['logDeletions']
-	except:
-		config.dynConfig['logDeletions'] = True
-	for file in Path( path ).glob('*'):
-		if file.is_dir():
-			removeDir( file )
-		else:
-			os.remove( file )
-			if config.dynConfig['logDeletions']:
-				logger.debug(f'deleting {file.resolve()}')
-	for file in Path( path ).glob('*'):
-		os.rmdir( file )
-		if config.dynConfig['logDeletions']:
-			logger.debug(f'deleting {file.resolve()}')
-	os.rmdir( path )
-
-
 
 
 def verifyGameCache():
