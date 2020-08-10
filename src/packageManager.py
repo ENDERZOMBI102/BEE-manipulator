@@ -1,5 +1,4 @@
 from enum import Enum
-from enum import Enum
 from pathlib import Path
 from typing import Dict
 
@@ -112,4 +111,3 @@ def installBeePackage(identifier: str, url: str, service: str, filename: str):
 		logger.error(f'FAILED TO SAVE FILE! error: {e}')
 		return
 	logger.info(f'successfully installed package {identifier}!')
-
