@@ -1,6 +1,4 @@
 import json
-import sys
-from pathlib import Path
 from typing import Dict, Union
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
@@ -20,7 +18,7 @@ default_config = {
     'lastVersion': True,
     'steamDir': None,
     'portal2Dir': None,
-    'beePath': None,
+    'beePath': utilities.__getbee(),
     'beeVersion': None,
     'logWindowVisibility': False,
     'logLevel': 'info',
@@ -31,17 +29,14 @@ default_config = {
 
 
 def createConfig():
-
     """
         a simple function that make the config file
     """
-    global default_config
     with open(configPath, 'w', encoding='utf-8') as file:
         json.dump(default_config, file, indent=3)
 
 
 def load(section) -> Union[str, int, None, dict, list]:  # load a config
-
     """
     loads a section of the config (json-formatted) and return the data.
     raise an exception if the config or the requested section doesn't exist
@@ -61,8 +56,7 @@ def load(section) -> Union[str, int, None, dict, list]:  # load a config
             config = json.load(file)  # load the config
             readeData = config[section]  # take the requested field
         return readeData  # return the readed data
-    except Exception as e:
-        print(e)
+    except Exception:
         if section in default_config:
             logger.warning(f"can't load {section} from config file, using default")
             return default_config[section]
@@ -71,7 +65,6 @@ def load(section) -> Union[str, int, None, dict, list]:  # load a config
 
 
 def save(data, section):  # save a config
-
     """
     save the data on the config (json-formatted), re-create the config if no one is found.
     example::
@@ -98,7 +91,6 @@ def save(data, section):  # save a config
 
 
 def loadAll(overwrite: bool = False) -> dict:
-
     """
     A function that returns all the configs
     :param overwrite: if true, act like load() and enable config overwrite
@@ -221,7 +213,7 @@ def steamDir() -> str:
             with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
                 aKey = OpenKey(reg, r'Software\Valve\Steam')  # open the steam folder in the windows registry
         except Exception as e:
-            logger.critical("Can't open windows registry! this is *VERY* bad!", exc_info=1)
+            logger.critical("Can't open windows registry! this is *VERY* bad!", exc_info=True)
             raise Exception(e)
         try:
             keyValue = QueryValueEx(aKey, 'SteamPath')  # find the steam path
@@ -258,17 +250,6 @@ def portalDir() -> str:
 
 
 discordToken: str = '655075172767760384'
-
-
-def temp() -> str:
-    if getattr(sys, 'frozen', False):
-        path = './../temp/'  # frozen
-    else:
-        path = './temp/'  # not frozen
-    fdr = Path(path)
-    if not fdr.exists():
-        fdr.mkdir()
-    return
 
 
 def libraryFolders() -> list:
