@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Flavia">
     <words>
+      <w>animadots</w>
       <w>appmanifest</w>
       <w>beemod</w>
       <w>beepackage</w>
@@ -19,11 +20,14 @@
       <w>dropbox</w>
       <w>edir</w>
       <w>enderzombi</w>
+      <w>etype</w>
+      <w>excepthook</w>
       <w>filebytes</w>
       <w>filepath</w>
       <w>fileurl</w>
       <w>gamescfg</w>
       <w>gdrive</w>
+      <w>inesistent</w>
       <w>isnegative</w>
       <w>isonline</w>
       <w>libraryfolders</w>
@@ -40,6 +44,7 @@
       <w>pyinstaller</w>
       <w>pypresence</w>
       <w>readed</w>
+      <w>restarter</w>
       <w>setted</w>
       <w>skybox</w>
       <w>startexe</w>
