@@ -2,6 +2,7 @@ import configparser
 import io
 import os
 from pathlib import Path
+from typing import Union
 from zipfile import ZipFile
 
 import wx
@@ -55,16 +56,23 @@ def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 	installBee()
 
 
-def beeIsPresent():
+def beeIsPresent() -> Union[ bool ]:
 	"""
 	returns true if bee2.exe is found in the beePath
-	:returns: bool
+	:returns: bool, bee path
 	"""
 	path = config.load('beePath')
+	# path is none, bee isn't installed
 	if path is None:
+		# the exe file exists, bee has been installed, but the BM config was deleted
+		if Path(f'{utilities.defBeePath}/BEE2/BEE2.exe').exists():
+			return True
 		return False
+	# bee is installed
 	elif Path(path+'/BEE2.exe').exists():
 		return True
+	else:
+		return False
 
 
 def installBee():
@@ -108,7 +116,7 @@ def installBee():
 	request = get(dl_url, stream=True)
 	# working variables
 	zipdata = io.BytesIO()
-	dialog.Update(0, message='Downloading default pack..')
+	dialog.Update(0, newmsg='Downloading default pack..')
 	dl = 0
 	total_length = int(request.headers.get('content-length'))
 	# download!
@@ -125,6 +133,55 @@ def installBee():
 	ZipFile(zipdata).extractall(config.load('beePath'))
 	dialog.Close()
 	logger.info('finished!')
+	logger.info('checking games config file..')
+	if Path( os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg' ).exists():
+		logger.info("config file exist, checking if has P2..")
+		if not configManager.hasGameWithID(620):
+			logger.warning("config doesn't have P2!")
+			logger.info('adding portal 2 to config!')
+			configManager.addGame( path=config.portalDir() )
+	else:
+		logger.warning("config file doesn't exist!")
+		configManager.createAndAddGame( path=config.portalDir() )
+
+
+def uninstall():
+	"""
+	uninstall BEE2.4
+	:return: None
+	"""
+	path = config.load('beePath')
+	logger.info('removing BEE2.4!')
+	logger.info('deleting app files..')
+	removeDir( path )
+	config.save(None, 'beePath')
+	logger.info('app files deleted!')
+
+
+def removeDir(path):
+	"""
+	remove a folder, including all the files/folders it contains
+	:param path:
+	:return:
+	"""
+	try:
+		config.dynConfig['logDeletions']
+	except:
+		config.dynConfig['logDeletions'] = True
+	for file in Path( path ).glob('*'):
+		if file.is_dir():
+			removeDir( file )
+		else:
+			os.remove( file )
+			if config.dynConfig['logDeletions']:
+				logger.debug(f'deleting {file.resolve()}')
+	for file in Path( path ).glob('*'):
+		os.rmdir( file )
+		if config.dynConfig['logDeletions']:
+			logger.debug(f'deleting {file.resolve()}')
+	os.rmdir( path )
+
+
 
 
 def verifyGameCache():
@@ -144,18 +201,28 @@ def packageFolder():
 class configManager:
 	"""
 	BEE2.4 config manager
-	this definition contains some userful commands to
+	this definition contains some useful commands to
 	manipulate the BEE2.4 config files
 	"""
 
+	gamescfgPath = os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg'
+
 	@staticmethod
-	def addGame(path='', name='Portal 2', overwrite=False):
+	def addGame(path='', name='Portal 2', steamid=620, overwrite=False):
+		"""
+		adds a game to the games.cfg BEE config file
+		:param path: path to the game (absolute)
+		:param name: name of the game that will shows inside BEE game selection menu
+		:param steamid: the game steam id
+		:param overwrite: overwrite if there's a game with the same NAME
+		:return: None
+		"""
 		# the games.cfg file path (its where the games data is stored)
-		gamescfgPath = os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg'
+
 		# the cfg is a ini formatted file so import a std lib that can handle them
 		data = configparser.ConfigParser()
 		# open the cfg for reading
-		file = open(gamescfgPath, 'r')
+		file = open(configManager.gamescfgPath, 'r')
 		# read the cfg
 		data.read_file(file)
 		# close the cfg
@@ -163,37 +230,62 @@ class configManager:
 		# if the section that we want to write already exist raise an exception apart when overwrite is True
 		if data.has_section(name) and overwrite:
 			# apply the new game
-			data[name] = {'steamid': '620', 'dir': path}
+			data[name] = {'steamid': steamid, 'dir': path}
 		elif not data.has_section(name):
 			# apply the new game
-			data[name] = {'steamid': '620', 'dir': path}
+			data[name] = {'steamid': steamid, 'dir': path}
 		else:
 			raise GameAlreadyExistError(f'key name {name} already exist! use another name or overwrite!')
 		# reopen the cfg for writing
-		file = open(gamescfgPath, 'w')
+		file = open(configManager.gamescfgPath, 'w')
 		# write it
 		data.write(file)
 		# close it
 		file.close()
 
 	@staticmethod
-	def createAndAddGame(name='Portal 2', loc='', steamid=620):
-		# the games.cfg file path (its where the games data is stored)
-		gamescfgPath = os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg'
-		if Path(gamescfgPath).exists():
-			raise FileExistsError("can' create the file, they already exist!")
+	def createAndAddGame(name='Portal 2', path='', steamid=620):
+		"""
+		create the games.cfg config file and add a game
+		:param name: name of the game that will shows inside BEE game selection menu
+		:param path: path to the game (absolute)
+		:param steamid: the game steam id
+		:return:
+		"""
+		if Path(configManager.gamescfgPath).exists():
+			raise FileExistsError("can't create the config file, it already exist!")
 		# create the necessary folders
-		Path(gamescfgPath + '/../..').resolve().mkdir()
-		Path(gamescfgPath + '/..').resolve().mkdir()
+		Path(configManager.gamescfgPath + '/../..').resolve().mkdir()
+		Path(configManager.gamescfgPath + '/..').resolve().mkdir()
 		data = configparser.ConfigParser()
 		# create and open the file for writing
-		file = open(gamescfgPath, 'x')
+		file = open(configManager.gamescfgPath, 'x')
 		# the data
-		data[name] = {'steamid': steamid, 'dir': loc}
+		data[name] = {'steamid': steamid, 'dir': path}
 		# write it
 		data.write(file)
 		# close it
 		file.close()
+
+	@staticmethod
+	def hasGameWithID(steamid):
+		logger.debug(f'checking config for game with steamid {steamid}')
+		games = configparser.ConfigParser()
+		games.read(configManager.gamescfgPath)
+		for game in games.sections():
+			if games[game]['steamid'] == steamid:
+				return True
+		return False
+
+	@staticmethod
+	def hasGameWithName(name):
+		logger.debug(f'checking config for game with name {name}')
+		games = configparser.ConfigParser()
+		games.read(configManager.gamescfgPath)
+		if name in games:
+			return True
+		else:
+			return False
 
 
 class downloadError(Exception):
@@ -209,4 +301,4 @@ class BeeNotInstalledException(Exception):
 
 
 if __name__ == "__main__":
-	configManager.addGame("c:/hellothere", 'test')
+	configManager.addGame("c:/hello", 'test')
