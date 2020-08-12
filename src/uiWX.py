@@ -10,12 +10,13 @@ import beeManager
 import browser
 import config
 import logWindow
+import pluginsystem
 import settingsUI
 import utilities
 from srctools.logger import get_logger, init_logging
 
 LOGGER = get_logger()
-
+window: object
 
 class root (wx.Frame):
 
@@ -36,6 +37,8 @@ class root (wx.Frame):
             self.CenterOnScreen()
         self.SetSize(width=600, height=500)
         LOGGER.info(f'internet connected: {utilities.isonline()}')
+        LOGGER.info('started loading plugins!')
+        asyncio.run( pluginsystem.systemObj.start() )
         """
         A menu bar is composed of menus, which are composed of menu items.
         This section builds the menu bar and binds actions to them
@@ -51,8 +54,8 @@ class root (wx.Frame):
         self.optionsMenu = wx.Menu()
         settingsItem = self.optionsMenu.Append(4, "Settings\tCtrl-S", "opens the settings window")
         toggleLogWindowItem = self.optionsMenu.Append(5, "Toggle Log Window\tCtrl-L", "toggle the log window visibility")
-        reloadConfigItem = self.optionsMenu.Append(6, "Reload Configs (Restart)", "reload some configs")
-        reloadPackagesItem  = self.optionsMenu.Append(7, "Reload Packages", "reload packages")
+        reloadPluginsItem = self.optionsMenu.Append(6, "Reload Plugins", "hard reload plugins")
+        reloadPackagesItem = self.optionsMenu.Append(7, "Reload Packages", "reload packages")
 
         # portal 2 menu bar
         self.portalMenu = wx.Menu()
@@ -88,7 +91,7 @@ class root (wx.Frame):
         # options menu
         self.Bind(wx.EVT_MENU, self.openSettingsWindow, settingsItem)
         self.Bind(wx.EVT_MENU, logWindow.toggleVisibility, toggleLogWindowItem)
-        self.Bind(wx.EVT_MENU, self.reloadConfig, reloadConfigItem)
+        self.Bind(wx.EVT_MENU, self.reloadPlugins, reloadPluginsItem)
         self.Bind(wx.EVT_MENU, self.reloadPackages, reloadPackagesItem)
         # portal 2 menu
         self.Bind(wx.EVT_MENU, self.verifyGameCache, verifyGameCacheItem)
@@ -115,8 +118,14 @@ class root (wx.Frame):
         self.book = wx.Notebook(self, name="Main Menu")
         self.browserTab = browser.browser(self.book)
         self.book.AddPage(self.browserTab, "Package Browser")
+        # last thing
+        # last because if not, it captures a "snapshot" of the object
+        global window
+        window = self
 
     def OnClose(self, event: wx.CloseEvent):
+        # stop all plugins
+        asyncio.run( pluginsystem.systemObj.unloadAndStop() )
         # get the window position as wx.Point and convert it to list
         try:
             pos = list(self.GetPosition().Get())
@@ -155,10 +164,10 @@ class root (wx.Frame):
         self.settingsWindowInstance.show()  # show the window
 
     @staticmethod
-    def reloadConfig(event):
-        notimplementedyet()
+    def reloadPlugins(event=None):
+        asyncio.run( pluginsystem.systemObj.hardReload('all') )
 
-    def reloadPackages(self, event):
+    def reloadPackages(self, event=None):
         # remove the package browser window
         self.book.RemovePage(0)
         self.browserTab = browser.browser(self.book)

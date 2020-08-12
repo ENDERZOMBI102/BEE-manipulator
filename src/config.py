@@ -11,6 +11,7 @@ overwriteDict: dict = {}
 configPath: str = './config.cfg' if utilities.frozen() else './../config.cfg'
 assetsPath: str = './assets/' if utilities.frozen() else './../assets/'
 """the path to the assets folder (finishes with /)"""
+pluginsPath: str = './plugins' if utilities.frozen() else './../plugins'
 # the plugins dict HAS to be the last
 default_config = {
     'config_type': 'BEE2.4 Manipulator Config File',
