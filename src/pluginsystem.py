@@ -12,9 +12,13 @@ _eventHandlers: Dict[ str, List[Coroutine] ] = {}
 
 
 class PluginBase:
-
-	""" a base for plugins """
-
+	"""
+	a base for plugins
+	this is a boilerplate that offers some basic
+	variables premade
+	- logger
+	- __state__ (required by the system)
+	"""
 	__state__: str = 'unloaded'
 	logger: object
 
@@ -33,7 +37,11 @@ class PluginBase:
 
 class eventHandler:
 
-	""" a class that provides events """
+	"""
+	a class that provides events handling
+	- on(event, callback) subscribe CALLBACK to EVENT
+	- send(event, kwargs) triggers EVENT with KWARGS as data
+	"""
 
 	def __init__(self):
 		logger.info('plugin event handler started!')
@@ -110,12 +118,16 @@ class system:
 		"""
 		starts the plugin system
 		instantiate and loads the plugins
-		:return:
+		:return: nothing
 		"""
 		await self.instantiate()
 		await self.load()
 
 	async def instantiate(self):
+		"""
+		instantiate all plugins in the plugins folder
+		:return: nothing
+		"""
 		fdr = Path(f'{config.pluginsPath}/')
 		for plg in fdr.glob('*.py'):
 			if not plg.name.startswith('PLUGIN_'):
@@ -128,6 +140,11 @@ class system:
 			await getattr(self.plugins[name], 'getEventHandler', placeholder)(eventHandler)
 
 	async def load( self, identifier: str = None ):
+		"""
+		trigger the load event/method on every plugin/a specified plugin
+		:param identifier: plugin to trigger load for
+		:return: nothing
+		"""
 		if identifier is not None:
 			if self.plugins[identifier].__state__ == 'loaded':
 				raise Exception('trying to load an already loaded plugin!')
@@ -139,6 +156,11 @@ class system:
 			plg.__state__ = 'loaded'
 
 	async def unload( self, identifier: str = None):
+		"""
+		trigger the unload event/method on every plugin/a specified plugin
+		:param identifier: plugin to trigger unload for
+		:return: nothing
+		"""
 		if identifier is not None:
 			if self.plugins[identifier].__state__ == 'unloaded':
 				raise Exception('trying to unload an already unloaded plugin!')
@@ -150,11 +172,23 @@ class system:
 			plg.__state__ = 'unloaded'
 
 	async def reload(self, identifier: str):
+		"""
+		reload a specified plugin
+		:param identifier: plugin to reload
+		:return: nothing
+		"""
 		getattr(self.plugins[identifier], 'reload', str)()
 		await self.unload(identifier)
 		await self.load(identifier)
 
 	async def hardReload( self, identifier: str):
+		"""
+		hard reloads a specified plugin
+		- if the identifier is all reloads all plugins
+		- delete a plugin module and reload it from disk
+		:param identifier: plugin to reload
+		:return: nothing
+		"""
 		if identifier == 'all':
 			for name in self.plugins.keys():
 				await self.hardReload(name)
@@ -170,10 +204,14 @@ class system:
 			self.plugins[identifier].state = 'loaded'
 
 	async def unloadAndStop(self):
+		"""
+		unload all plugins and delete them, used to stop the system
+		:return: nothing
+		"""
 		await self.unload()
 		x = []
 		for identifier in self.plugins.keys():
-			x += identifier
+			x.append(identifier)
 		for i in x:
 			del self.plugins[i]
 
