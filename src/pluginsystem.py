@@ -12,9 +12,7 @@ _eventHandlers: Dict[ str, List[Coroutine] ] = {}
 
 
 class PluginBase:
-	"""
-	a base for plugins
-	"""
+	""" a base for plugins """
 	__state__: str = 'unloaded'
 	logger: object
 
@@ -32,9 +30,7 @@ class PluginBase:
 
 
 class eventHandler:
-	"""
-	a class that provides events
-	"""
+	""" a class that provides events """
 
 	def __init__(self):
 		logger.info('plugin event handler started!')
@@ -87,7 +83,7 @@ class eventHandler:
 		:param kwargs: data of the event
 		:return: nothing
 		"""
-		dispatcher.send(evt, kwargs)'''
+		dispatcher.send(evt, kwargs) '''
 
 
 async def placeholder(placeholder2):
