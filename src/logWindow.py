@@ -101,7 +101,7 @@ class logWindow(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         self.Bind(wx.EVT_MOVE_END, self.OnMoveEnd, self)
         self.Bind(wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn)
-        eventHandlerObj.send('logWindowObject', self)
+        eventHandlerObj.send('logWindowObject', object=self)
         updateVisibility()
 
     def OnClearButtonPressed(self, event):
