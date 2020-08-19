@@ -22,6 +22,7 @@
       <w>edir</w>
       <w>enderzombi</w>
       <w>etype</w>
+      <w>eventhandler</w>
       <w>excepthook</w>
       <w>filebytes</w>
       <w>filepath</w>
@@ -40,6 +41,7 @@
       <w>openp</w>
       <w>overwrited</w>
       <w>perations</w>
+      <w>pluginsystem</w>
       <w>prerelease</w>
       <w>prereleases</w>
       <w>pyinstaller</w>
