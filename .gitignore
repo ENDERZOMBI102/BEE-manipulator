@@ -19,3 +19,4 @@ src/logs
 logs
 /src/.env
 /plugins
+/docs/PLUGIN_CONSOLE_WINDOW.py
