@@ -68,12 +68,13 @@ class eventHandler:
 		:param kwargs: event data
 		:return:
 		"""
-		if len(kwargs) == 0:
-			for callback in _eventHandlers[evt]:
-				asyncio.run( callback() )
-		else:
-			for callback in _eventHandlers[evt]:
-				asyncio.run( callback(kwargs) )
+		if evt in _eventHandlers.keys():
+			if len(kwargs) == 0:
+				for callback in _eventHandlers[evt]:
+					asyncio.run( callback() )
+			else:
+				for callback in _eventHandlers[evt]:
+					asyncio.run( callback(kwargs) )
 	'''
 	# idk if use the wx one is better or not...
 	@staticmethod

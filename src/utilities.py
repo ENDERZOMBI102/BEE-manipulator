@@ -258,6 +258,26 @@ def __getbee() -> Union[None, str]:
 	return None
 
 
+def notimplementedyet():
+	"""
+	not implemented error
+	:return:
+	"""
+	wx.GenericMessageDialog(
+		parent=wx.GetActiveWindow(),
+		message='This feature is not yet implemented, return later!',
+		caption='Not implemented',
+		style=wx.ICON_INFORMATION | wx.STAY_ON_TOP | wx.OK
+	).ShowModal()
+
+
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
 env = 'dist'
 root: wx.Frame = None
+
+
+if __name__ == '__main__':
+	pass
+
+
+

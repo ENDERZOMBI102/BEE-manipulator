@@ -47,4 +47,3 @@ class aboutWindow(wx.Frame):
     @staticmethod
     def linkHandler(link):
         wb.open(link.GetHref())
-
