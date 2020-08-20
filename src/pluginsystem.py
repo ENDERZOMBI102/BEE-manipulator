@@ -2,13 +2,66 @@ import asyncio
 import importlib.util
 from abc import abstractmethod
 from pathlib import Path
-from typing import Dict, Coroutine, List
+from typing import Dict, Coroutine, List, Callable
 
 import config
 from srctools.logger import get_logger
 
 logger = get_logger()
-_eventHandlers: Dict[ str, List[Coroutine] ] = {}
+_eventHandlers: Dict[str, List[Coroutine]] = {}
+
+
+class Plugin:
+	"""
+	this decorator is used to create a plugin for BEE Manipulator
+	"""
+	def __init__(self, pluginid: str, name: str, version: str, getLogger=False):
+		self.getLogger = getLogger
+		self.pluginid = pluginid
+		self.name = name
+		self.version = version
+
+	def __call__(self, cls):
+		# make a subclass to check for methods
+		class wrap(cls):
+			__state__ = 'unloaded'
+			if self.getLogger:
+				logger = get_logger()
+		# checks if the plugin has the NEEDED methods
+		if not asyncio.iscoroutinefunction(getattr(wrap, 'load', Callable)):
+			raise PluginNotValid('missing required coroutine "load"!')
+		if not asyncio.iscoroutinefunction(getattr(wrap, 'unload', Callable)):
+			raise PluginNotValid('missing required coroutine "unload"!')
+		# checks the optional methods
+		if getattr(wrap, 'getEventHandler', placeholder) == placeholder:  # has getEventHandler?
+			pass  # no
+		elif asyncio.iscoroutinefunction( wrap.getEventHandler ):  # is it a coroutine?
+			raise PluginNotValid('the "getEventHandler" coroutine should be a method')  # yes
+		else:
+			self.checkGetEnventHandler( wrap.getEventhandler )  # has the correct number of parameters?
+		if not asyncio.iscoroutinefunction(getattr(wrap, 'reload', placeholder)):
+			raise PluginNotValid('the "reload" method should be a coroutine')
+		if self.pluginid in systemObj.plugins.keys():
+			logger.error(f'Duplicate plugin found! id: {self.pluginid}, name of the duplicate: {self.name}')
+		systemObj.plugins[self.pluginid] = wrap()
+		getattr(systemObj.plugins[self.pluginid], 'getEventHandler', placeholder2)(eventHandlerObj)
+		return wrap
+
+	def _checkGetEnventHandler(self, func: Callable):
+		# is a method?
+		if 'self' in func.__code__.co_varnames:
+			# yes
+			# does it have 1 parameter beside self?
+			if func.__code__.co_argcount - 1 != 1:
+				raise PluginNotValid('"getEventHandler" should have only 1 parameter (not counting self)')  # no
+		else:
+			# no
+			# does it have 1 parameter?
+			if func.__code__.co_argcount != 1:
+				raise PluginNotValid('"getEventHandler" should have only 1 parameter')  # no
+
+
+class PluginNotValid(Exception): pass
 
 
 class PluginBase:
@@ -36,7 +89,6 @@ class PluginBase:
 
 
 class eventHandler:
-
 	"""
 	a class that provides events handling
 	- on(event, callback) subscribe CALLBACK to EVENT
@@ -71,10 +123,11 @@ class eventHandler:
 		if evt in _eventHandlers.keys():
 			if len(kwargs) == 0:
 				for callback in _eventHandlers[evt]:
-					asyncio.run( callback() )
+					asyncio.run(callback())
 			else:
 				for callback in _eventHandlers[evt]:
-					asyncio.run( callback(kwargs) )
+					asyncio.run(callback(kwargs))
+
 	'''
 	# idk if use the wx one is better or not...
 	@staticmethod
@@ -108,8 +161,16 @@ async def placeholder(placeholder2):
 	pass
 
 
-class system:
+def placeholder2(ph0=None, ph1=0):
+	"""
+	placeholder function for when there's no methods to call
+	:param placeholder2: a place holder
+	:return: nothing
+	"""
+	pass
 
+
+class system:
 	plugins: Dict[str, PluginBase] = {}
 
 	def __init__(self):
@@ -133,16 +194,20 @@ class system:
 		"""
 		fdr = Path(f'{config.pluginsPath}/')
 		for plg in fdr.glob('*.py'):
-			if not plg.name.startswith('PLUGIN_'):
-				continue
-			name = plg.name.replace('PLUGIN_', '').replace('.py', '')
-			spec = importlib.util.spec_from_file_location( name, plg )
-			module = importlib.util.module_from_spec(spec)
-			spec.loader.exec_module(module)
-			self.plugins[name] = module.Plugin()
-			await getattr(self.plugins[name], 'getEventHandler', placeholder)(eventHandler)
+			try:
+				name = plg.name.replace('.py', '')
+				spec = importlib.util.spec_from_file_location(name, plg)
+				module = importlib.util.module_from_spec(spec)
+				spec.loader.exec_module(module)
+				# self.plugins[name] = module.Plugin()
+			except PluginNotValid as e:
+				logger.error(f"can't load a plugin! error:\n{e}")
+			except Exception as e:
+				logger.error(f"can't load plugin! error: {e.__class__} {e}")
+			else:
+				pass  # getattr(self.plugins[name], 'getEventHandler', placeholder)(eventHandler)
 
-	async def load( self, identifier: str = None ):
+	async def load(self, identifier: str = None):
 		"""
 		trigger the load event/method on every plugin/a specified plugin
 		:param identifier: plugin to trigger load for
@@ -158,7 +223,7 @@ class system:
 			await plg.load()
 			plg.__state__ = 'loaded'
 
-	async def unload( self, identifier: str = None):
+	async def unload(self, identifier: str = None):
 		"""
 		trigger the unload event/method on every plugin/a specified plugin
 		:param identifier: plugin to trigger unload for
@@ -184,7 +249,7 @@ class system:
 		await self.unload(identifier)
 		await self.load(identifier)
 
-	async def hardReload( self, identifier: str):
+	async def hardReload(self, identifier: str):
 		"""
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
@@ -198,7 +263,7 @@ class system:
 		else:
 			await self.plugins[identifier].unload()
 			path = Path(f'{config.pluginsPath}/PLUGIN_{identifier}.py')
-			spec = importlib.util.spec_from_file_location( identifier, path )
+			spec = importlib.util.spec_from_file_location(identifier, path)
 			module = importlib.util.module_from_spec(spec)
 			spec.loader.exec_module(module)
 			self.plugins[identifier] = module.Plugin()
