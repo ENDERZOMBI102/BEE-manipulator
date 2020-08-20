@@ -22,7 +22,7 @@
       </ENTRIES>
     </EXTENSION>
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/BEEManipulator.py" />
-    <option name="PARAMETERS" value="--dev" />
+    <option name="PARAMETERS" value="--dev --time" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
