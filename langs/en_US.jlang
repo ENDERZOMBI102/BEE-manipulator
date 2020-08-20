@@ -37,5 +37,10 @@
   "menu.help.discord.name": "Discord",
   "menu.help.discord.description": "invite to the BEEmod server",
   "statusbar.text": "Hi {username}!",
-  "tab.packagebrowser.name": "Package Browser"
+  "tab.packagebrowser.name": "Package Browser",
+  "settings.window.text": "Settings",
+  "settings.tab.general.name": "General",
+  "settings.tab.paths.name": "Paths",
+  "settings.tab.advanced.name": "Advanced",
+  "egg": ""
 }

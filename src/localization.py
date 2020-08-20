@@ -31,7 +31,6 @@ class Localize:
 		self.install()
 		# set globals
 		loc = self.loc
-		LocalizeObj = self
 		# run initialization
 		asyncio.run(self.init())
 
@@ -42,13 +41,14 @@ class Localize:
 	def install(self):
 		builtins.loc = self.loc
 
-	def loc(self, textId):
+	def loc(self, textId) -> str:
 		return self.localizations[self.lang][textId]
 
 	def setLang(self, newLang: str):
 		logger.debug(f'checking if language {newLang} is supported..')
 		if newLang in self.localizations.keys():
 			self.lang = newLang
+			config.save(newLang, 'lang')
 			logger.info(f'changed lang to {newLang}')
 		else:
 			logger.error(LangNotSupportedError(f'unsupported language {newLang}!'))
@@ -56,7 +56,7 @@ class Localize:
 	async def loadLocFiles(self):
 		logger.debug('loading lang folder path..')
 		# create Path obj with the lang file path
-		folder = Path(config.load('l18nFolderPath'))
+		folder = Path( config.load('l18nFolderPath') )
 		# if it doesn't exist, download the default lang file: EN_us.jlang
 		if not folder.exists():
 			logger.error(f'NO LANG FOLDER FOUND!')
