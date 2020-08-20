@@ -10,6 +10,7 @@ import beeManager
 import browser
 import config
 import logWindow
+# from localization import loc
 import pluginsystem
 import settingsUI
 import utilities
@@ -36,7 +37,7 @@ class root(wx.Frame):
 			self.CenterOnScreen()
 		self.SetSize(width=600, height=500)
 		LOGGER.info(f'internet connected: {utilities.isonline()}')
-		LOGGER.info('started loading plugins!')
+		# load plugins
 		asyncio.run(pluginsystem.systemObj.start())
 		"""
 		A menu bar is composed of menus, which are composed of menu items.
@@ -44,44 +45,43 @@ class root(wx.Frame):
 		"""
 		# file menu bar
 		self.fileMenu = wx.Menu()
-		openPortalDirItem = self.fileMenu.Append(0, "Open Portal 2 Directory\tCtrl-P", "opens the portal 2 directory")
-		openBeeDirItem = self.fileMenu.Append(1, "Open BEEmod Directory\tCtrl-B", "opens the BEEmod directory")
-		syncGamesItem = self.fileMenu.Append(2, "Sync Games", " ")
-		exitItem = self.fileMenu.Append(3, "Exit", " ")
+		openPortalDirItem = self.fileMenu.Append(0, loc('menu.file.openportaldir.name')+'\tCtrl-P', loc('menu.file.openportaldir.description') )
+		openBeeDirItem = self.fileMenu.Append(1, loc('menu.file.openbeedir.name')+"\tCtrl-B", loc('menu.file.openbeedir.description') )
+		syncGamesItem = self.fileMenu.Append(2, loc('menu.file.syncgames.name'), loc('menu.file.syncgames.description') )
+		exitItem = self.fileMenu.Append(3, loc('menu.file.exit.name'), loc('menu.file.exit.description') )
 
 		# options menu bar
 		self.optionsMenu = wx.Menu()
-		settingsItem = self.optionsMenu.Append(4, "Settings\tCtrl-S", "opens the settings window")
-		toggleLogWindowItem = self.optionsMenu.Append(5, "Toggle Log Window\tCtrl-L",
-													  "toggle the log window visibility")
-		reloadPluginsItem = self.optionsMenu.Append(6, "Reload Plugins", "hard reload plugins")
-		reloadPackagesItem = self.optionsMenu.Append(7, "Reload Packages", "reload packages")
+		settingsItem = self.optionsMenu.Append(4, loc('menu.options.settings.name')+'\tCtrl-S', loc('menu.options.settings.description') )
+		toggleLogWindowItem = self.optionsMenu.Append(5, loc('menu.options.logtoggle.name')+'\tCtrl-L', loc('menu.options.logtoggle.description') )
+		reloadPluginsItem = self.optionsMenu.Append(6, loc('menu.options.reloadplugins.name'), loc('menu.options.reloadplugins.description') )
+		reloadPackagesItem = self.optionsMenu.Append(7, loc('menu.options.reloadpackages.name'), loc('menu.options.reloadpackages.description') )
 
 		# portal 2 menu bar
 		self.portalMenu = wx.Menu()
-		verifyGameCacheItem = self.portalMenu.Append(8, "Verify Game Cache", " ")
-		uninstallBeeItem = self.portalMenu.Append(9, "Uninstall BEE 2.4", "remove BEE2 from disk")
-		installBeeItem = self.portalMenu.Append(10, "Install BEE 2.4", "")
+		verifyGameCacheItem = self.portalMenu.Append(8, loc('menu.portal.vgc.name'), loc('menu.portal.vgc.description') )
+		uninstallBeeItem = self.portalMenu.Append(9, loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description'))
+		installBeeItem = self.portalMenu.Append(10, loc('menu.portal.installbee.name'), loc('menu.portal.installbee.description') )
 
 		# help menu bar
 		self.helpMenu = wx.Menu()
-		aboutItem = self.helpMenu.Append(11, "About BEE Manipulator", "opens the about window")
-		checkUpdatesItem = self.helpMenu.Append(12, "Check Updates", "check for app updates")
-		wikiItem = self.helpMenu.Append(13, "Wiki", "opens the online wiki")
-		githubItem = self.helpMenu.Append(14, "Github", "opens the github page")
-		discordItem = self.helpMenu.Append(15, "Discord", "invite to the BEEmod server")
+		aboutItem = self.helpMenu.Append(11, loc('menu.help.about.name'), loc('menu.help.about.description') )
+		checkUpdatesItem = self.helpMenu.Append(12, loc('menu.help.cupdates.name'), loc('menu.help.cupdates.description') )
+		wikiItem = self.helpMenu.Append(13, loc('menu.help.wiki.name'), loc('menu.help.wiki.description') )
+		githubItem = self.helpMenu.Append(14, loc('menu.help.github.name'), loc('menu.help.github.description') )
+		discordItem = self.helpMenu.Append(15, loc('menu.help.discord.name'), loc('menu.help.discord.description') )
 
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()
-		self.menuBar.Append(self.fileMenu, "File")
-		self.menuBar.Append(self.optionsMenu, "Options")
-		self.menuBar.Append(self.portalMenu, "Portal 2")
-		self.menuBar.Append(self.helpMenu, "Help")
+		self.menuBar.Append(self.fileMenu, loc('menu.file.name') )
+		self.menuBar.Append(self.optionsMenu, loc('menu.options.name') )
+		self.menuBar.Append(self.portalMenu, loc('menu.portal.name') )
+		self.menuBar.Append(self.helpMenu, loc('menu.help.name') )
 
 		# Give the menu bar to the frame
 		self.SetMenuBar(self.menuBar)
 		self.CreateStatusBar()
-		self.SetStatusText(f'Hi {config.steamUsername()}!')
+		self.SetStatusText(loc('statusbar.text').replace('{username}', config.steamUsername() ) )
 
 		# file menu
 		self.Bind(wx.EVT_MENU, self.openp2dir, openPortalDirItem)

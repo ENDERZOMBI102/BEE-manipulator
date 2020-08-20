@@ -121,8 +121,10 @@ class system:
 		instantiate and loads the plugins
 		:return: nothing
 		"""
+		logger.info('started loading plugins!')
 		await self.instantiate()
 		await self.load()
+		logger.info('finished loading plugins!')
 
 	async def instantiate(self):
 		"""

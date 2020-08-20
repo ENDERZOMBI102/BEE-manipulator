@@ -7,6 +7,7 @@ from sys import argv
 import wx
 
 import config
+import localization
 import srctools.logger
 from uiWX import root
 
@@ -33,6 +34,7 @@ LOGGER = srctools.logger.get_logger('BEE Manipulator')
 if '--dev' in argv:
     config.overwrite('logLevel', 'DEBUG')
     config.overwrite('logWindowVisibility', True)
+    config.overwrite('l18nFolderPath', './../langs')
     env = 'dev'
 # app init
 try:
@@ -50,9 +52,13 @@ else:
     LOGGER.info('Creating new config file...')
     config.createConfig()
     LOGGER.info('Config file created!')
+# start localizations
+_ = localization.Localize()
+LOGGER.info(f'current lang: { _.loc("currentLang") }')
+# start ui
 LOGGER.info(f'Starting BEE Manipulator v{config.version()}!')
 LOGGER.info('starting ui!')
-# start the ui + main loop
+# start the main loop
 root = root()
 root.Show()
 app.SetTopWindow(root)

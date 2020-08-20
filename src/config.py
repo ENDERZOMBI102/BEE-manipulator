@@ -23,7 +23,9 @@ default_config = {
     'beeVersion': None,
     'logWindowVisibility': False,
     'logLevel': 'info',
+    'l18nFolderPath': './langs' if utilities.frozen() else './../langs',
     'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
+    'lang': 'en_US',
     'noVerifyDialog': False,
     'plugins': {}
 }
