@@ -6,6 +6,7 @@ dist
 build
 *.pyc
 docs/~$BM_ui.pptx
+Pipfile.lock
 config.cfg
 BEEManipulator.7z
 activityManager/.vs
@@ -14,7 +15,6 @@ activityManager/x64
 assets/database.json
 assets/about.html
 assets/packages
-config.cfg
 src/logs
 logs
 /src/.env
