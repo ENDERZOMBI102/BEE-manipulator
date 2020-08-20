@@ -10,7 +10,6 @@ import beeManager
 import browser
 import config
 import logWindow
-# from localization import loc
 import pluginsystem
 import settingsUI
 import utilities
