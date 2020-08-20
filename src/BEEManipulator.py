@@ -9,7 +9,12 @@ import wx
 import config
 import localization
 import srctools.logger
-from uiWX import root
+import timeTest
+
+timeStartup = False
+if '--time' in argv:
+    timeStartup = True
+    timeTest.start()
 
 # use file dir as working dir
 path = Path(__file__).resolve()
@@ -55,6 +60,8 @@ else:
 # start localizations
 _ = localization.Localize()
 LOGGER.info(f'current lang: { _.loc("currentLang") }')
+# import after localize() object init so that loc() is already present
+from uiWX import root
 # start ui
 LOGGER.info(f'Starting BEE Manipulator v{config.version()}!')
 LOGGER.info('starting ui!')
@@ -62,4 +69,6 @@ LOGGER.info('starting ui!')
 root = root()
 root.Show()
 app.SetTopWindow(root)
+if timeStartup:
+    timeTest.stop()
 app.MainLoop()
