@@ -9,14 +9,11 @@ docs/~$BM_ui.pptx
 Pipfile.lock
 config.cfg
 BEEManipulator.7z
-activityManager/.vs
-activityManager/Debug
-activityManager/x64
 assets/database.json
 assets/about.html
-assets/packages
 src/logs
 logs
 /src/.env
 /plugins
 /docs/PLUGIN_CONSOLE_WINDOW.py
+packages/
