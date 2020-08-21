@@ -150,6 +150,8 @@ def updateVisibility():
     logger.debug(f'saved window visibility')
     if visible:
         window.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
+        window.Raise()
+        wx.GetTopLevelWindows()[0].Raise()
     else:
         window.HideWithEffect(wx.SHOW_EFFECT_BLEND)
 
