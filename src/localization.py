@@ -2,6 +2,7 @@ import asyncio
 import builtins
 import json
 from pathlib import Path
+from sys import argv
 from typing import Dict
 
 import requests
@@ -11,6 +12,15 @@ from srctools.logger import get_logger
 
 logger = get_logger()
 loc: callable
+
+# check of forced language
+if '--lang' in argv:
+	try:
+		lang = argv[argv.index('--lang') + 1]
+	except:
+		logger.error('missing value for command line parameter --lang! it will be ignored!')
+	else:
+		config.overwrite('lang', lang)
 
 
 class LangNotSupportedError(Exception):
