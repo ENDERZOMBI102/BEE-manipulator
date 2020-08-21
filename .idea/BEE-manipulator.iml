@@ -6,7 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/assets/packages" />
       <excludeFolder url="file://$MODULE_DIR$/src/logs" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (BEE-manipulator-xMPheCny)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (BEE-manipulator)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
