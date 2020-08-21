@@ -70,6 +70,12 @@ class root(wx.Frame):
 		githubItem = self.helpMenu.Append(14, loc('menu.help.github.name'), loc('menu.help.github.description') )
 		discordItem = self.helpMenu.Append(15, loc('menu.help.discord.name'), loc('menu.help.discord.description') )
 
+		# set menu item icons
+		self.helpMenu.FindItemById(11).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
+		self.helpMenu.FindItemById(13).SetBitmap(wx.Bitmap(f'{config.assetsPath}icons/menu_github.png'))
+		self.helpMenu.FindItemById(14).SetBitmap(wx.Bitmap(f'{config.assetsPath}icons/menu_github.png'))
+		self.helpMenu.FindItemById(15).SetBitmap(wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png'))
+
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()
 		self.menuBar.Append(self.fileMenu, loc('menu.file.name') )
