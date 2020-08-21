@@ -15,5 +15,6 @@ src/logs
 logs
 /src/.env
 /plugins
-/plugins/PLUGIN_CONSOLE_WINDOW.py
+docs/console.py
+docs/plugin.py
 packages/
