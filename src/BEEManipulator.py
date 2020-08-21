@@ -10,6 +10,7 @@ import config
 import localization
 import srctools.logger
 import timeTest
+import utilities
 
 timeStartup = False
 if '--time' in argv:
@@ -60,6 +61,8 @@ else:
 # start localizations
 _ = localization.Localize()
 LOGGER.info(f'current lang: { _.loc("currentLang") }')
+# create icon object
+utilities.__setIcon()
 # import after localize() object init so that loc() is already present
 from uiWX import root
 # start ui

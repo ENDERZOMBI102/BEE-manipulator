@@ -24,7 +24,7 @@ class root(wx.Frame):
 	def __init__(self):
 		super().__init__(None, title="BEE Manipulator " + str(config.version()))
 		# sets the app icon
-		self.SetIcon(wx.Icon(f'{config.assetsPath}icon.ico'))
+		self.SetIcon(utilities.icon)
 		# init the logging window
 		asyncio.run(logWindow.init())
 		asyncio.run(appDateCheck())

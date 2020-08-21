@@ -12,6 +12,13 @@ import config
 from srctools.logger import get_logger
 
 logger = get_logger("utils")
+icon: wx.Icon
+"""BEE Manipulator icon as wx.Icon object"""
+
+
+def __setIcon():
+	global icon
+	icon = wx.Icon(f'{config.assetsPath}icons/icon.png')
 
 
 def boolcmp(value: Union[bool, int, str]) -> bool:

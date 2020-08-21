@@ -4,6 +4,7 @@ import wx
 
 import config
 import srctools.logger
+import utilities
 from pluginsystem import eventHandlerObj
 
 # the visibility of the log window, is initially setted to the value saved in the config file
@@ -59,7 +60,7 @@ class logWindow(wx.Frame):
                         )  # init the window
         global window
         window = self
-        self.SetIcon( wx.Icon(f'{config.assetsPath}icon.ico') )
+        self.SetIcon( utilities.icon )
         self.SetSize(0, 0, 500, 365)
         sizer = wx.FlexGridSizer(rows=2, cols=1, gap=wx.Size(0, 0))
         try:

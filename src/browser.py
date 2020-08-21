@@ -71,7 +71,7 @@ def checkDatabase() -> None:
 			json.load(file)
 		logger.debug('the package database is valid')
 	except:
-		logger.error("ERROR! the database isn't valid json! the database will be downloaded again.")
+		logger.error("the database isn't valid json! it will be downloaded again.")
 		if not utilities.isonline():
 			logger.warning("can't download database while offline, aborting")
 			exit(2)
