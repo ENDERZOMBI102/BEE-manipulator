@@ -1,6 +1,5 @@
 import asyncio
 import importlib.util
-from abc import abstractmethod
 from pathlib import Path
 from typing import Dict, Coroutine, List, Callable
 
@@ -27,6 +26,9 @@ class Plugin:
 			__state__ = 'unloaded'
 			if self.getLogger:
 				logger = get_logger()
+
+			def getPath(self):
+				self.__class__.__base__.__module__
 		# checks if the plugin has the NEEDED methods
 		if not asyncio.iscoroutinefunction(getattr(wrap, 'load', Callable)):
 			raise PluginNotValid('missing required coroutine "load"!')
@@ -38,54 +40,32 @@ class Plugin:
 		elif asyncio.iscoroutinefunction( wrap.getEventHandler ):  # is it a coroutine?
 			raise PluginNotValid('the "getEventHandler" coroutine should be a method')  # yes
 		else:
-			self.checkGetEnventHandler( wrap.getEventhandler )  # has the correct number of parameters?
+			self.checkGetEventHandler( wrap.getEventhandler )  # has the correct number of parameters?
 		if not asyncio.iscoroutinefunction(getattr(wrap, 'reload', placeholder)):
 			raise PluginNotValid('the "reload" method should be a coroutine')
 		if self.pluginid in systemObj.plugins.keys():
-			logger.error(f'Duplicate plugin found! id: {self.pluginid}, name of the duplicate: {self.name}')
+			if not systemObj.isReloading:
+				logger.error(f'Duplicate plugin found! id: {self.pluginid}, duplicate name: {self.name}, it will replace the other plugin')
 		systemObj.plugins[self.pluginid] = wrap()
 		getattr(systemObj.plugins[self.pluginid], 'getEventHandler', placeholder2)(eventHandlerObj)
 		return wrap
 
-	def _checkGetEnventHandler(self, func: Callable):
-		# is a method?
-		if 'self' in func.__code__.co_varnames:
-			# yes
-			# does it have 1 parameter beside self?
-			if func.__code__.co_argcount - 1 != 1:
-				raise PluginNotValid('"getEventHandler" should have only 1 parameter (not counting self)')  # no
-		else:
-			# no
-			# does it have 1 parameter?
-			if func.__code__.co_argcount != 1:
-				raise PluginNotValid('"getEventHandler" should have only 1 parameter')  # no
+
+def _checkGetEventHandler(func: Callable):
+	# is a method?
+	if 'self' in func.__code__.co_varnames:
+		# yes
+		# does it have 1 parameter beside self?
+		if func.__code__.co_argcount - 1 != 1:
+			raise PluginNotValid('"getEventHandler" should have only 1 parameter (not counting self)')  # no
+	else:
+		# no
+		# does it have 1 parameter?
+		if func.__code__.co_argcount != 1:
+			raise PluginNotValid('"getEventHandler" should have only 1 parameter')  # no
 
 
 class PluginNotValid(Exception): pass
-
-
-class PluginBase:
-	"""
-	a base for plugins
-	this is a boilerplate that offers some basic
-	variables premade
-	- logger
-	- __state__ (required by the system)
-	"""
-	__state__: str = 'unloaded'
-	logger: object
-
-	def __init__(self):
-		self.logger = get_logger()
-		print('base plugin is being instantiated')
-
-	@abstractmethod
-	async def load(self):
-		raise NotImplementedError('you should overwrite this method!')
-
-	@abstractmethod
-	async def unload(self):
-		raise NotImplementedError('you should overwrite this method!')
 
 
 class eventHandler:
@@ -153,25 +133,17 @@ class eventHandler:
 
 
 async def placeholder(placeholder2):
-	"""
-	placeholder function for when there's no methods to call
-	:param placeholder2: a place holder
-	:return: nothing
-	"""
 	pass
 
 
 def placeholder2(ph0=None, ph1=0):
-	"""
-	placeholder function for when there's no methods to call
-	:param placeholder2: a place holder
-	:return: nothing
-	"""
 	pass
 
 
 class system:
-	plugins: Dict[str, PluginBase] = {}
+
+	isReloading: bool= False
+	plugins: Dict[str, object] = {}
 
 	def __init__(self):
 		pass
@@ -194,18 +166,15 @@ class system:
 		"""
 		fdr = Path(f'{config.pluginsPath}/')
 		for plg in fdr.glob('*.py'):
+			name = plg.name.replace('.py', '')
+			spec = importlib.util.spec_from_file_location(name, plg)
+			module = importlib.util.module_from_spec(spec)
 			try:
-				name = plg.name.replace('.py', '')
-				spec = importlib.util.spec_from_file_location(name, plg)
-				module = importlib.util.module_from_spec(spec)
 				spec.loader.exec_module(module)
-				# self.plugins[name] = module.Plugin()
 			except PluginNotValid as e:
 				logger.error(f"can't load a plugin! error:\n{e}")
 			except Exception as e:
 				logger.error(f"can't load plugin! error: {e.__class__} {e}")
-			else:
-				pass  # getattr(self.plugins[name], 'getEventHandler', placeholder)(eventHandler)
 
 	async def load(self, identifier: str = None):
 		"""
@@ -249,27 +218,34 @@ class system:
 		await self.unload(identifier)
 		await self.load(identifier)
 
-	async def hardReload(self, identifier: str):
+	async def hardReload(self, pluginid: str):
 		"""
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
 		- delete a plugin module and reload it from disk
-		:param identifier: plugin to reload
+		:param pluginid: plugin to reload
 		:return: nothing
 		"""
-		if identifier == 'all':
+		if pluginid == 'all':
+			# reload every plugin
 			for name in self.plugins.keys():
 				await self.hardReload(name)
 		else:
-			await self.plugins[identifier].unload()
-			path = Path(f'{config.pluginsPath}/PLUGIN_{identifier}.py')
-			spec = importlib.util.spec_from_file_location(identifier, path)
+			# we're reloading, set isReloading to True
+			self.isReloading = True
+			# wait for the plugin to unload
+			await self.plugins[pluginid].unload()
+			# get the plugin's module spec
+			spec = importlib.util.find_spec(self.plugins[pluginid].__class__.__base__.__module__)
+			# get the plugin's module
 			module = importlib.util.module_from_spec(spec)
+			# execute the plugin's module
 			spec.loader.exec_module(module)
-			self.plugins[identifier] = module.Plugin()
-			await getattr(self.plugins[identifier], 'getEventHandler', placeholder)(eventHandler)
-			await self.plugins[identifier].load()
-			self.plugins[identifier].state = 'loaded'
+			# wait for the plugin to load
+			await self.plugins[pluginid].load()
+			# change the plugin's state to loaded
+			self.plugins[pluginid].__state__ = 'loaded'
+			self.isReloading = False
 
 	async def unloadAndStop(self):
 		"""

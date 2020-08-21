@@ -122,7 +122,7 @@ def saveAll(cfg: dict = None):
     A function that saves (and overwrites) the config file
     :param cfg: the config dict
     """
-    if ( cfg is None ) or ( 'config_type' is not 'BEE2.4 Manipulator Config File' ):
+    if ( cfg is None ) or ( 'config_type' != 'BEE2.4 Manipulator Config File' ):
         raise ValueError("parameter cfg can't be an invalid config!")
     try:
         with open(configPath, 'w', encoding='utf-8') as file:
@@ -273,7 +273,7 @@ def libraryFolders() -> list:
         raise Exception(f'Error while reading steam library file: {e}')
 
     # check for other library paths, if the dict is empty, there's no one
-    if not len(library['libraryfolders']) is 0:
+    if len(library['libraryfolders']) != 0:
         for i in len(library['libraryfolders']):
             paths.append(library['libraryfolders'][str(i)] + '/steamapps/')  # append the path
 
