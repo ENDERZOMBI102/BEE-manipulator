@@ -3,10 +3,10 @@ from pathlib import Path
 from sys import argv
 
 if '--help' in argv:
-    print('BEE Manipulator development tool v2.2')
+    print('BEE Manipulator development tool v2.3')
     print('Made By ENDERZOMBI102')
     print('Possible parameters:')
-    print('--install    installs BM dependencies from pipfile')
+    print('--install    installs BM dependencies from requirements.txt')
     print('--start      start BM from source')
     print('--build      use pyinstaller to compile BM to an exe')
     print('--release --debug necessary for --build to work')
@@ -15,12 +15,12 @@ if '--help' in argv:
     print('--deldist    delete the dist folder')
     print('--delbuild   delete the build folder')
     print('--clean      clean up the folder (includes --deldist and --delbuild)')
-    print('--pass "ARG" passes the "ARG" string to the exe [new in v2.2]')
+    print('--pass "ARG" passes the "ARG" string to the exe')
 
 if '--install' in argv:
-    system('pip install pipenv')
-    system('pipenv lock')
-    system('pipenv sync')
+    system('pip install virtualenv')
+    system('py -m venv .')
+    system('pip install requirements.txt')
 
 if '--start' in argv:
     chdir('./src')
