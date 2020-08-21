@@ -1,6 +1,7 @@
 import asyncio
 import importlib.util
 from pathlib import Path
+from types import ModuleType
 from typing import Dict, Coroutine, List, Callable
 
 import config
@@ -142,8 +143,9 @@ def placeholder2(ph0=None, ph1=0):
 
 class system:
 
-	isReloading: bool= False
+	isReloading: bool = False
 	plugins: Dict[str, object] = {}
+	modules: List[ModuleType] = []
 
 	def __init__(self):
 		pass
@@ -169,6 +171,7 @@ class system:
 			name = plg.name.replace('.py', '')
 			spec = importlib.util.spec_from_file_location(name, plg)
 			module = importlib.util.module_from_spec(spec)
+			self.modules.append(module)
 			try:
 				spec.loader.exec_module(module)
 			except PluginNotValid as e:
@@ -218,7 +221,7 @@ class system:
 		await self.unload(identifier)
 		await self.load(identifier)
 
-	async def hardReload(self, pluginid: str):
+	async def hardReload(self, ph=None):
 		"""
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
@@ -226,17 +229,23 @@ class system:
 		:param pluginid: plugin to reload
 		:return: nothing
 		"""
-		if pluginid == 'all':
-			# reload every plugin
-			for name in self.plugins.keys():
-				await self.hardReload(name)
-		else:
+		# cicle in the plugins
+		print(len( self.plugins))
+		for i in range( len( self.plugins) ):
 			# we're reloading, set isReloading to True
 			self.isReloading = True
+			# get data
+			f = 0
+			for key in self.plugins.keys():
+				if f == i:
+					pluginid = key
+				f += 1
+			module = self.modules[i]
+			print('stop!')
 			# wait for the plugin to unload
 			await self.plugins[pluginid].unload()
 			# get the plugin's module spec
-			spec = importlib.util.find_spec(self.plugins[pluginid].__class__.__base__.__module__)
+			spec = importlib.util.spec_from_file_location( name=module.__name__, location=module.__file__ )
 			# get the plugin's module
 			module = importlib.util.module_from_spec(spec)
 			# execute the plugin's module
@@ -245,6 +254,7 @@ class system:
 			await self.plugins[pluginid].load()
 			# change the plugin's state to loaded
 			self.plugins[pluginid].__state__ = 'loaded'
+			# no mo reloading
 			self.isReloading = False
 
 	async def unloadAndStop(self):
