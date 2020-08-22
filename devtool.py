@@ -19,8 +19,8 @@ if '--help' in argv:
 
 if '--install' in argv:
     system('pip install virtualenv')
-    system('py -m venv .')
-    system('pip install requirements.txt')
+    system('py -m venv %userprofile%/.virtualenvs/BEE-manipulator')
+    system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && pip install -r requirements.txt')
 
 if '--start' in argv:
     chdir('./src')
