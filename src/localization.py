@@ -90,7 +90,7 @@ class Localize:
 			# get lang file from github
 			data = requests.get(
 				f'https://github.com/ENDERZOMBI102/BEE-manipulator/raw/master/langs/{langToDownload}.jlang'
-			).json
+			).json()
 			# TODO: substitute with chained version
 			# create a Path object with the lang file path
 			langFile = Path(f'{config.load("l18nFolderPath")}/{langToDownload}.jlang')
@@ -103,7 +103,7 @@ class Localize:
 			with langFile.open(mode=mode) as file:
 				# write the Json LANG file
 				json.dump(data, file, indent=4)
-		except:
+		except Exception as e:
 			# en_US is the base/essential lang file, without it, we can't continue
 			if langToDownload == 'en_US':
 				logger.fatal(f' Failed to download lang file!', exc_info=True)
