@@ -72,7 +72,7 @@ class Localize:
 			logger.error(f'NO LANG FOLDER FOUND!')
 			folder.mkdir()
 			logger.info('downloading english lang from github!')
-			await self.dl('en_US')
+			self.dl('en_US')
 		logger.info(f'langs folder path is "{folder.absolute()}"')
 		langFile: Path
 		# iterate in all jlang files in the lang folder
