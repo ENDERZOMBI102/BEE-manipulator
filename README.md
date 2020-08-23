@@ -27,13 +27,14 @@ Planned & realized features!
 
  - GUI (40% done)
  - BEE & App Updater With A Togglable Auto Updater (1% done)
- - BEE 2.4 Installer (40% done)
+ - BEE 2.4 Installer (done)
  - App (Auto)Updater (90% done)
  - Package Browser & Manager (working on it)
- - Custom Type of Package: BM Package (90% done)
+ - Custom Type of Package: BM Package (0% done)
  - Custom Application For BEE2.4 Shortcuts (for the auto update feature) (1% done) 
  - Discord Rich Presence (0% done)
- - Add Functionality to BM Using BM Packages (aka plugins) (15% done)
+ - Add Functionality to BM Using Plugins (done)
+ - App Installer (10% done)
 
 The Future
 
@@ -48,4 +49,4 @@ yes, i'm already thinking of the future of this application ;)
  - Key Binder (bind commands to keys without file edits)
  - Rating system for the package browser
 
-You can find plugins docs in the wiki
+[plugin docs](Plugin-docs)
