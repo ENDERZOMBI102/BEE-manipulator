@@ -49,4 +49,4 @@ yes, i'm already thinking of the future of this application ;)
  - Key Binder (bind commands to keys without file edits)
  - Rating system for the package browser
 
-[plugin docs](Plugin-docs)
+[plugin docs](https://github.com/ENDERZOMBI102/BEE-manipulator/wiki/Plugins-docs)
