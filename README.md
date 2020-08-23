@@ -35,14 +35,6 @@ Planned & realized features!
  - Discord Rich Presence (0% done)
  - Add Functionality to BM Using BM Packages (aka plugins) (15% done)
 
-Libraries that i'm making for this project
-
- - config.py:<br>
-  a config manager (load, save, and check json-formatted config.cfg) with some handy capabilities as retrieve steam's games folders and username
-  
- - [chained]( https://github.com/ENDERZOMBI102/chained )<br>
-  a library with various wrappers to use chained functions
-
 The Future
 
 yes, i'm already thinking of the future of this application ;)
