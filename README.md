@@ -35,6 +35,7 @@ Planned & realized features!
  - Discord Rich Presence (0% done)
  - Add Functionality to BM Using Plugins (done)
  - App Installer (10% done)
+ - [Open With BM](https://github.com/ENDERZOMBI102/BEE-manipulator/wiki/Open-with-BM)
 
 The Future
 
