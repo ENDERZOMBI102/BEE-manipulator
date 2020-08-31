@@ -41,7 +41,7 @@ if '--dev' in argv:
     config.overwrite('logLevel', 'DEBUG')
     config.overwrite('logWindowVisibility', True)
     config.overwrite('l18nFolderPath', './../langs')
-    env = 'dev'
+    utilities.env = 'dev'
 # app init
 try:
     LOGGER.debug("setting application name..")
@@ -59,8 +59,8 @@ else:
     config.createConfig()
     LOGGER.info('Config file created!')
 # start localizations
-_ = localization.Localize()
-LOGGER.info(f'current lang: { _.loc("currentLang") }')
+localization.Localize()
+LOGGER.info(f'current lang: { loc("currentLang") }')
 # create icon object
 utilities.__setIcon()
 # import after localize() object init so that loc() is already present

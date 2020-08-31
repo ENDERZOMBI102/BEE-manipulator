@@ -3,7 +3,7 @@ import builtins
 import json
 from pathlib import Path
 from sys import argv
-from typing import Dict
+from typing import Dict, Callable
 
 import requests
 
@@ -11,7 +11,7 @@ import config
 from srctools.logger import get_logger
 
 logger = get_logger()
-loc: callable
+loc: Callable
 
 # check of forced language
 if '--lang' in argv:
@@ -36,11 +36,12 @@ class Localize:
 
 	def __init__(self):
 		# get globals
-		global loc
+		global loc, localizeObj
 		# inject loc function to builtins
 		self.install()
 		# set globals
 		loc = self.loc
+		localizeObj = self
 		# run initialization
 		asyncio.run(self.init())
 
@@ -110,3 +111,6 @@ class Localize:
 				exit(1)
 			else:
 				logger.error(f'failed to download lang file {langToDownload}')
+
+
+localizeObj = None
