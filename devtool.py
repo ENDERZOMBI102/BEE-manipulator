@@ -2,6 +2,9 @@ from os import system, chdir, remove
 from pathlib import Path
 from sys import argv
 
+upxpath = 'C:/Users/Flavia/AppData/Local/Programs/UPX/upx-3.96-win64/upx.exe'
+distpath = str( Path('./dist/BEE Manipulator').resolve() ).replace('\\', '/')
+
 if '--help' in argv:
     print('BEE Manipulator development tool v2.3')
     print('Made By ENDERZOMBI102')
@@ -28,9 +31,11 @@ if '--start' in argv:
 
 if ('--build' in argv) and ('--release' in argv):
     system('pyinstaller src/BEEManipulator_release.spec --noconfirm')
+    system(f'pyinstaller src/urlhandler/urlhandler.spec --noconfirm --upx-dir="{upxpath}" --distpath="{distpath}"')
 
 if ('--build' in argv) and ('--debug' in argv):
     system('pyinstaller src/BEEManipulator_debug.spec --noconfirm')
+    system(f'pyinstaller src/urlhandler/urlhandler.spec --noconfirm --upx-dir="{upxpath}" --distpath="{distpath}"')
 
 if ('--build' in argv) and not ('--debug' or '--release' in argv):
     print('--build needs --debug or --release parameters')
