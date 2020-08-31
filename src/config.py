@@ -27,6 +27,8 @@ default_config = {
     'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
     'lang': 'en_US',
     'noVerifyDialog': False,
+    'noUninstallDialog': False,
+    'noStartupUpdateCheck': False,
     'plugins': {}
 }
 
@@ -39,7 +41,7 @@ def createConfig():
         json.dump(default_config, file, indent=3)
 
 
-def load(section) -> Union[str, int, None, dict, list]:  # load a config
+def load(section: str, default = None) -> Union[str, int, None, dict, list]:  # load a config
     """
     loads a section of the config (json-formatted) and return the data.
     raise an exception if the config or the requested section doesn't exist
@@ -48,6 +50,7 @@ def load(section) -> Union[str, int, None, dict, list]:  # load a config
         >>> import config
         >>> print(config.load('version'))
         2.6
+    :param default: if no value is found, return this value
     :param section: section of the config to read
     :returns: the readed data
     """
@@ -60,7 +63,9 @@ def load(section) -> Union[str, int, None, dict, list]:  # load a config
             readeData = config[section]  # take the requested field
         return readeData  # return the readed data
     except Exception:
-        if section in default_config:
+        if default is not None:
+            return default
+        elif section in default_config:
             logger.warning(f"can't load {section} from config file, using default")
             return default_config[section]
         else:
