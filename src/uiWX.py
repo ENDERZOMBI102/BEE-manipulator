@@ -58,7 +58,7 @@ class root(wx.Frame):
 
 		# portal 2 menu bar
 		self.portalMenu = wx.Menu()
-		verifyGameCacheItem = self.portalMenu.Append(8, loc('menu.portal.vgc.name'), loc('menu.portal.vgc.description') )
+		verifyGameFilesItem = self.portalMenu.Append(8, loc('menu.portal.vgf.name'), loc('menu.portal.vgf.description') )
 		uninstallBeeItem = self.portalMenu.Append(9, loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description'))
 		installBeeItem = self.portalMenu.Append(10, loc('menu.portal.installbee.name'), loc('menu.portal.installbee.description') )
 
@@ -99,7 +99,7 @@ class root(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.reloadPlugins, reloadPluginsItem)
 		self.Bind(wx.EVT_MENU, self.reloadPackages, reloadPackagesItem)
 		# portal 2 menu
-		self.Bind(wx.EVT_MENU, self.verifyGameCache, verifyGameCacheItem)
+		self.Bind(wx.EVT_MENU, self.verifyGameFiles, verifyGameFilesItem)
 		self.Bind(wx.EVT_MENU, self.uninstallBee, uninstallBeeItem)
 		self.Bind(wx.EVT_MENU, self.installBee, installBeeItem)
 		# help menu
@@ -160,9 +160,18 @@ class root(wx.Frame):
 		called again it will be faster, because it don't have to create everything again
 		:param event: wx.EVT_something
 		"""
-		if self.settingsWindowInstance is None:  # if the window was opened once, this isn't None
-			self.settingsWindowInstance = settingsUI.window()  # set it to the settings window instance
-		self.settingsWindowInstance.show()  # show the window
+
+		if utilities.env == 'dev':
+			try:
+				import importlib
+				importlib.reload(settingsUI)
+				settingsUI.window().Show(self)
+			except:
+				pass
+		else:
+			if self.settingsWindowInstance is None:  # if the window was opened once, this isn't None
+				self.settingsWindowInstance = settingsUI.window()  # set it to the settings window instance
+			self.settingsWindowInstance.show()  # show the window
 
 	@staticmethod
 	def reloadPlugins(event=None):
@@ -188,7 +197,7 @@ class root(wx.Frame):
 		self.Refresh()
 
 	# portal 2 items actions
-	def verifyGameCache(self, event):
+	def verifyGameFiles(self, event):
 		"""
 		triggers the verify game cache dialog + event
 		:param event:
@@ -203,7 +212,7 @@ class root(wx.Frame):
 				wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
 			)
 			dialog.ShowDetailedText(
-				"if you don't want this dialog to show check this checkbox, but beware, this is here to protect you"
+				"if you don't want this dialog to show check this checkbox, but be aware, this is here to protect you"
 			)
 			dialog.ShowCheckBox("Don't show again")
 			choice = dialog.ShowModal()
