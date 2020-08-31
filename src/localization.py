@@ -17,7 +17,7 @@ loc: callable
 if '--lang' in argv:
 	try:
 		lang = argv[argv.index('--lang') + 1]
-	except:
+	except IndexError:
 		logger.error('missing value for command line parameter --lang! it will be ignored!')
 	else:
 		config.overwrite('lang', lang)
