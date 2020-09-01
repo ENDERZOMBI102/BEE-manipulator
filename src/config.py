@@ -26,10 +26,13 @@ default_config = {
     'logLevel': 'info',
     'l18nFolderPath': './langs' if utilities.frozen() else './../langs',
     'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
+    'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
+    'onlineDatabaseUrl': 'https://github.com/ENDERZOMBI102/ucpDatabase/blob/master/Database.json',
     'lang': 'en_US',
     'noVerifyDialog': False,
     'noUninstallDialog': False,
     'noStartupUpdateCheck': False,
+    "noSplashScreen": False,
     'plugins': {}
 }
 
