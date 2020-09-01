@@ -53,7 +53,11 @@ class Localize:
 		builtins.loc = self.loc
 
 	def loc(self, textId) -> str:
-		return self.localizations[self.lang][textId]
+		try:
+			return self.localizations[self.lang][textId]
+		except KeyError:
+			logger.error(f'missing translation! key: {textId}')
+			return 'OHNO'
 
 	def setLang(self, newLang: str):
 		logger.debug(f'checking if language {newLang} is supported..')
