@@ -1,4 +1,5 @@
 import json
+from sys import argv
 from typing import Dict, Union
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
@@ -61,6 +62,8 @@ def load(section: str, default = None) -> Union[str, int, None, dict, list]:  # 
         with open(configPath, 'r', encoding='utf-8') as file:
             config = json.load(file)  # load the config
             readeData = config[section]  # take the requested field
+        if '--sayconfig' in argv:
+            logger.info(f'{section}: {readeData}')
         return readeData  # return the readed data
     except Exception:
         if default is not None:
@@ -93,6 +96,8 @@ def save(data, section):  # save a config
         with open(configPath, 'w', encoding='utf-8') as file:
             json.dump(cfg, file, indent=3)
         logger.debug(f'saved {section}')
+        if '--sayconfig' in argv:
+            logger.info(f'{section}: {data}')
     except:
         logger.error(f'failed to save {data} to {section}!')
         raise configError('error while saving the config')
