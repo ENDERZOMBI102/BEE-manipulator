@@ -1,5 +1,6 @@
 {
   "currentLang": "en_US",
+  "missingtranslation": "HONO",
   "menu.file.name": "File",
   "menu.file.openportaldir.name": "Open Portal 2 Directory",
   "menu.file.openportaldir.description" : "opens the portal 2 directory",
@@ -40,15 +41,28 @@
   "tab.packagebrowser.name": "Package Browser",
   "settings.window.text": "Settings",
   "settings.tab.general.name": "General",
-  "settings.tab.paths.name": "Paths",
-  "settings.tab.advanced.name": "Advanced",
   "settings.tab.general.buwc.text": "BEE Uninstall Warning",
   "settings.tab.general.buwc.tooltip": "If checked, shows a warning when uninstalling BEE",
   "settings.tab.general.vgfc.text": "Verify Game Files Warning",
   "settings.tab.general.vgfc.tooltip": "If checked, shows a warning when verifying game files",
   "settings.tab.general.succ.text": "Startup Update Check",
   "settings.tab.general.succ.tooltip": "If checked, checks if updates are available on startup",
-  "settings.tab.general.lddl.tooltip": "The language of BM, requires restart"
-
-
+  "settings.tab.general.lddl.text": "Language",
+  "settings.tab.general.lddl.tooltip": "The language of BM, requires restart",
+  "settings.tab.general.ssc.text": "Splash Screen",
+  "settings.tab.general.ssc.tooltip": "If checked, shows a splash screen on startup",
+  "settings.tab.general.rlfb.text": "Reload Lang Files",
+  "settings.tab.general.rlfb.tooltip": "Reloads the language files from disk",
+  "settings.tab.paths.name": "Paths",
+  "settings.tab.paths.p2pdp.text": "Portal 2 path",
+  "settings.tab.paths.p2pdp.tooltip": "",
+  "settings.tab.paths.p1pdp.text": "Portal 1 path",
+  "settings.tab.paths.p1pdp.tooltip": "",
+  "settings.tab.paths.bpdp.text": "BEE path",
+  "settings.tab.paths.bpdp.tooltip": "",
+  "settings.tab.paths.ldbpdp.text": "Local database path",
+  "settings.tab.paths.ldbpdp.tooltip": "",
+  "settings.tab.paths.ppdp.text": "Plugins path",
+  "settings.tab.paths.ppdp.tooltip": "",
+  "settings.tab.development.name": "Development"
 }
