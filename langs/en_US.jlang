@@ -42,5 +42,13 @@
   "settings.tab.general.name": "General",
   "settings.tab.paths.name": "Paths",
   "settings.tab.advanced.name": "Advanced",
-  "egg": ""
+  "settings.tab.general.buwc.text": "BEE Uninstall Warning",
+  "settings.tab.general.buwc.tooltip": "If checked, shows a warning when uninstalling BEE",
+  "settings.tab.general.vgfc.text": "Verify Game Files Warning",
+  "settings.tab.general.vgfc.tooltip": "If checked, shows a warning when verifying game files",
+  "settings.tab.general.succ.text": "Startup Update Check",
+  "settings.tab.general.succ.tooltip": "If checked, checks if updates are available on startup",
+  "settings.tab.general.lddl.tooltip": "The language of BM, requires restart"
+
+
 }
