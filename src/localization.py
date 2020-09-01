@@ -57,6 +57,8 @@ class Localize:
 			return self.localizations[self.lang][textId]
 		except KeyError:
 			logger.error(f'missing translation! key: {textId}')
+			if 'missingtranslation' in self.localizations[self.lang].keys():
+				return self.localizations[self.lang]['missingtranslation']
 			return 'OHNO'
 
 	def setLang(self, newLang: str):
