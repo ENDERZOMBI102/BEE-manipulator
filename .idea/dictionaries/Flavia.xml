@@ -8,6 +8,8 @@
       <w>beepackage</w>
       <w>bmpackage</w>
       <w>boolcmp</w>
+      <w>bpdp</w>
+      <w>bpst</w>
       <w>browserframe</w>
       <w>bsizer</w>
       <w>bytesdata</w>
@@ -38,6 +40,8 @@
       <w>isnegative</w>
       <w>isonline</w>
       <w>langs</w>
+      <w>ldbpdp</w>
+      <w>ldbpst</w>
       <w>libraryfolders</w>
       <w>loglevel</w>
       <w>logwindow</w>
@@ -50,6 +54,8 @@
       <w>perations</w>
       <w>pluginid</w>
       <w>pluginsystem</w>
+      <w>ppdp</w>
+      <w>ppst</w>
       <w>prerelease</w>
       <w>prereleases</w>
       <w>pyinstaller</w>
