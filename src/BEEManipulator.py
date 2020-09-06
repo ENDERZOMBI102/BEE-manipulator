@@ -34,6 +34,12 @@ app = wx.App()
 sys.excepthook = lambda etype, value, tb: \
     wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
 
+instance = wx.SingleInstanceChecker('BM')
+if instance.IsAnotherRunning():
+    print('another instace of BM is running, aborting.')
+    exit()
+
+
 srctools.logger.init_logging("./logs/latest.log")
 LOGGER = srctools.logger.get_logger('BEE Manipulator')
 # if we started with --dev parameter, set loglevel to debug
