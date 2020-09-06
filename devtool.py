@@ -26,8 +26,7 @@ if '--install' in argv:
     system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && pip install -r requirements.txt')
 
 if '--start' in argv:
-    chdir('./src')
-    system('pipenv run py BEEManipulator.py')
+    system('py src/BEEManipulator.py')
 
 if ('--build' in argv) and ('--release' in argv):
     system('pyinstaller src/BEEManipulator_release.spec --noconfirm')
