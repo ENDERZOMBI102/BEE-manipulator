@@ -84,7 +84,7 @@ def installBee():
 	dialog = wx.ProgressDialog(
 		parent=wx.GetTopLevelWindows()[0],
 		title='Installing BEE2..',
-		message='Downloading packages..',
+		message='Downloading application..',
 		maximum=100
 	)
 	if not beeIsPresent():
@@ -108,6 +108,13 @@ def installBee():
 		# read the data as bytes and then create the zipfile object from it
 		ZipFile(zipdata).extractall(config.load('beePath'))  # extract BEE
 		logger.info('BEE2.4 application installed!')
+	dialog.Close()
+	dialog = wx.ProgressDialog(
+		parent=wx.GetTopLevelWindows()[0],
+		title='Installing BEE2..',
+		message='Downloading default packages..',
+		maximum=100
+	)
 	# install default package pack
 	# get the url
 	dl_url = get(beePackagesApiUrl).json()['assets'][0]['browser_download_url']
