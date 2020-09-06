@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 
 import wx
 
@@ -219,6 +220,8 @@ class PathsPage(wx.PreferencesPage):
 			path=config.portalDir()
 		)
 		self.P2PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p2pdp.tooltip')))
+		self.P2PDP.TextCtrl: wx.TextCtrl
+		self.P2PDP.TextCtrl.SetMinSize( wx.Size( 400, self.P2PDP.TextCtrl.GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.P2PST,
@@ -242,6 +245,7 @@ class PathsPage(wx.PreferencesPage):
 				path=''
 			)
 			self.P1PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p1pdp.tooltip')))
+			self.P1PDP.TextCtrl.SetMinSize(wx.Size(400, self.P1PDP.TextCtrl.GetSize()[1]))
 			leftsizer.AddMany([
 				(
 					self.P1PST,
@@ -268,6 +272,7 @@ class PathsPage(wx.PreferencesPage):
 			self.BPDP.SetPath('not installed')
 			self.BPDP.Enable(False)
 		self.BPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.bpdp.tooltip')))
+		self.BPDP.TextCtrl.SetMinSize( wx.Size( 400, self.BPDP.TextCtrl.GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.BPST,
@@ -290,6 +295,7 @@ class PathsPage(wx.PreferencesPage):
 			path=config.load('databasePath')
 		)
 		self.LDBPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.ldbpdp.tooltip')))
+		self.LDBPDP.TextCtrl.SetMinSize( wx.Size( 400, self.LDBPDP.TextCtrl.GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.LDBPST,
@@ -312,6 +318,7 @@ class PathsPage(wx.PreferencesPage):
 			path=config.load('pluginsPath')
 		)
 		self.PPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.ppdp.tooltip')))
+		self.PPDP.TextCtrl.SetMinSize( wx.Size( 400, self.PPDP.TextCtrl.GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.PPST,
@@ -346,6 +353,8 @@ class PathsPage(wx.PreferencesPage):
 		return panel
 
 	def save(self, evt: wx.FileDirPickerEvent):
+		if not ( Path( evt.GetPath() ).exists() and Path( evt.GetPath() ).is_dir() ):
+			return
 		if evt.EventObject.GetName() == 'P2PDP':
 			config.save(evt.GetPath(), 'portal2Dir')
 		elif evt.EventObject.GetName() == 'P1PDP' and self.p1:
