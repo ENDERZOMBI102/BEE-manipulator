@@ -8,6 +8,7 @@
       <w>beepackage</w>
       <w>bmpackage</w>
       <w>boolcmp</w>
+      <w>bottomsizer</w>
       <w>bpdp</w>
       <w>bpst</w>
       <w>browserframe</w>
@@ -47,6 +48,7 @@
       <w>logwindow</w>
       <w>ltype</w>
       <w>noconfirm</w>
+      <w>nodb</w>
       <w>notimplementedyet</w>
       <w>ohno</w>
       <w>openp</w>
@@ -65,12 +67,14 @@
       <w>setted</w>
       <w>sizers</w>
       <w>skybox</w>
+      <w>splitted</w>
       <w>startexe</w>
       <w>steamapps</w>
       <w>steamid</w>
       <w>textid</w>
       <w>timenextstatsreport</w>
       <w>togglable</w>
+      <w>upsizer</w>
       <w>versioncmp</w>
       <w>wdots</w>
       <w>zipdata</w>
