@@ -4,7 +4,7 @@ BEE Manipulator plugin documentation
 this is how a basic plugin looks:
 
 ```python
-from pluginsystem import PluginBase
+from pluginSystem import PluginBase
 
 class Plugin(PluginBase):
     async def load(self):

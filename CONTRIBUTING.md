@@ -35,10 +35,10 @@ All strings should use `''` if the string doesn't contain a `'`, else, use `""`.
 
 ```python
 # Example
-ok = 'Hello World!'
-no = "Hello world!"
-ok = "you're a dev!"
-no = 'you\'re a dev!'
+'Hello World!'  # ok
+"Hello world!"  # no
+"you're a dev!"  # ok
+'you\'re a dev!'  # no
 ```
 
 If you need to concat a value to a string o vice versa, is preferred to use `f''` instead of `+` or `.join()`. This is for concatenating more values too.
