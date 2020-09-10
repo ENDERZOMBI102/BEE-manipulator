@@ -1,80 +1,102 @@
-import logging
-from typing import List
+from pathlib import Path
+from pathlib import Path
+from typing import List, Union
 
 import wx
 import wx.lib
+from pydantic import BaseModel
 
-from srctools import logger
+import config
+from srctools.logger import get_logger
+
+logger = get_logger()
 
 
-class PackageFrame(wx.Panel):
-	"""	this is a frame in the package browser """
+class BPackage(BaseModel):
 
-	logger: logging.Logger
 	identifier: str
 	authors: List[str]
-	version: str
 	name: str
 	description: str
-	url: str
-	filename: str
-	service: str
+	website: Union[str, None]
 	repo: str
-	# contents: str
-	# configs: Dict[str, Any]
-	
-	def __init__(self, master: wx.Window, identifier: str, authors: List[str], version: str, name: str, description: str, url: str, filename: str, y_pos: int):
-		self.logger = logger.get_logger()
-		# set obj data
-		self.identifier = identifier
-		self.authors = authors
-		self.version = version
-		self.name = name
-		self.description = description
-		self.url = url
-		self.filename = filename
-		# self.contents = contents
-		# set the service
-		if 'github' in self.url:
-			self.service = 'github'
-		elif 'dropbox' in self.url:
-			self.service = 'dropbox'
-		elif 'drive.google' in self.url:
-			self.service = 'gdrive'
-		# set the repo if we use github
-		if self.service == 'github':
-			splittedUrl = self.url.split("/")
-			self.repo = f'https://github.com/{splittedUrl[4]}/{splittedUrl[5]}/'
-		else:
-			self.repo = None
-		super().__init__(
-			parent=master,
-			size=wx.Size(500, 100),
-			pos=[0, y_pos],
-			name=f'BROWSERFRAME_{self.identifier}'
-		)
-		sizer = wx.BoxSizer(wx.VERTICAL)
 
-		infoButton = wx.Button(self, label="More Info")
-		modifyButton = wx.Button(self, label="Install")
-		self.Bind(wx.EVT_BUTTON, self.OnModifyButtonHandler, modifyButton)
-		self.Bind(wx.EVT_BUTTON, self.OnInfoButtonHandler, infoButton)
-		self.Bind(wx.EVT_MOUSE_AUX1_DCLICK, self.OnClickHandler, self)
-		self.Show()
 
-	def OnClickHandler(self, event: wx.EVT_MOUSE_AUX1_DCLICK):
-		pass
+class BMPackage(BaseModel):
 
-	def OnModifyButtonHandler(self, event: wx.EVT_BUTTON):
-		pass
-
-	def OnInfoButtonHandler(self, event: wx.EVT_BUTTON):
-		pass
+	identifier: str
+	authors: List[str]
+	name: str
+	description: str
+	website: Union[str, None]
+	repo: str
+	files: List[str]
 
 
 class PackageLargeView(wx.Frame):
-	pass
+
+	#
+	def __init__(self):
+		super().__init__(
+
+		)
 
 
-if __name__ == "__main__":
-	pass
+class PackageView(wx.Panel):
+
+	package: BPackage
+	image: wx.StaticBitmap
+	largeView: PackageLargeView
+
+	def __init__(self, master: wx.ScrolledWindow, package: BPackage):
+		self.package = package
+		super().__init__(
+			parent=master,
+			name=f'VIEW_{self.package.identifier}'
+		)
+		# create sizers
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		upsizer = wx.BoxSizer()
+		bottomsizer = wx.BoxSizer()
+		# image
+		self.image = wx.StaticBitmap(
+			parent=self,
+			bitmap=getIcon(self.package.identifier)
+		)
+		upsizer.Add(
+			self.image
+		)
+
+		# set the sizers inside the panel
+		sizer.Add(
+			upsizer,
+			wx.SizerFlags(1).Top()
+		)
+		sizer.AddSpacer(10)
+		sizer.Add(
+			bottomsizer
+		)
+		self.SetSizer(sizer)
+
+
+class PlaceHolderView(PackageView):
+
+	image: wx.StaticBitmap
+
+	def __init__(self, master: wx.ScrolledWindow):
+		super().__init__( master )
+		self.image = wx.StaticBitmap(
+			parent=self,
+			bitmap=wx.Bitmap(f'{config.assetsPath}nodb.png'),
+			pos=wx.Point(100, 100),
+			size=wx.Size(200, 200)
+		)
+		self.image.Show(True)
+
+
+def getIcon(pid: str) -> wx.Bitmap:
+	path = Path( f'{config.assetsPath}packages/{pid}/icon.png' )
+	if path.exists():
+		return wx.Bitmap( str( path ) )
+	else:
+		return wx.Bitmap()

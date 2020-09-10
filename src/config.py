@@ -29,11 +29,10 @@ default_config = {
     'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
     'onlineDatabaseUrl': 'https://github.com/ENDERZOMBI102/ucpDatabase/blob/master/Database.json',
     'lang': 'en_US',
-    'noVerifyDialog': False,
-    'noUninstallDialog': False,
-    'noStartupUpdateCheck': False,
-    "noSplashScreen": False,
-    'plugins': {}
+    'showVerifyDialog': False,
+    'showUninstallDialog': False,
+    'startupUpdateCheck': False,
+    "ShowSplashScreen": False
 }
 
 
@@ -76,6 +75,7 @@ def load(section: str, default = None) -> Union[str, int, None, dict, list]:  # 
             return default_config[section]
         else:
             logger.error(f"can't load {section} from config file")
+            raise ConfigError(f'{section} not found')
 
 
 def save(data, section):  # save a config
@@ -103,7 +103,7 @@ def save(data, section):  # save a config
             logger.info(f'{section}: {data}')
     except:
         logger.error(f'failed to save {data} to {section}!')
-        raise configError('error while saving the config')
+        raise ConfigError('error while saving the config')
 
 
 def loadAll(overwrite: bool = False) -> dict:
@@ -331,7 +331,7 @@ def devMode() -> bool:
     return utilities.boolcmp( load('devMode') )
 
 
-class configError(BaseException):
+class ConfigError(BaseException):
     r"""
     base error for config operations
     """

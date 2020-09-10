@@ -4,18 +4,26 @@ import webbrowser as wb
 from pathlib import Path
 
 import wx
+import wx.adv
 
 import aboutWindow
 import beeManager
 import browser
 import config
 import logWindow
-import pluginsystem
+import pluginSystem
 import settingsUI
 import utilities
 from srctools.logger import get_logger, init_logging
 
+# init important things
 LOGGER = get_logger()
+
+if utilities.env == 'dev':
+	import importlib
+
+
+wx.InitAllImageHandlers()
 
 
 class root(wx.Frame):
@@ -32,12 +40,13 @@ class root(wx.Frame):
 		utilities.root = self
 		try:
 			self.SetPosition(wx.Point(config.load('mainWindowPos')))
-		except:
+		except config.ConfigError:
 			self.CenterOnScreen()
-		self.SetSize(width=600, height=500)
+		# self.SetSize(width=600, height=500)
+		self.SetMinSize( wx.Size(width=600, height=500) )
 		LOGGER.info(f'internet connected: {utilities.isonline()}')
 		# load plugins
-		asyncio.run(pluginsystem.systemObj.start())
+		asyncio.run(pluginSystem.systemObj.start())
 		"""
 		A menu bar is composed of menus, which are composed of menu items.
 		This section builds the menu bar and binds actions to them
@@ -121,12 +130,12 @@ class root(wx.Frame):
 		This section makes the notebook
 		"""
 		self.book = wx.Notebook(self, name="Main Menu")
-		self.browserTab = browser.browser(self.book)
+		self.browserTab = PackageBrowserPage(self.book)
 		self.book.AddPage(self.browserTab, "Package Browser")
 
 	def OnClose(self, event: wx.CloseEvent):
 		# stop all plugins
-		asyncio.run(pluginsystem.systemObj.unloadAndStop())
+		asyncio.run(pluginSystem.systemObj.unloadAndStop())
 		# get the window position as wx.Point and convert it to list
 		try:
 			pos = list(self.GetPosition().Get())
@@ -163,7 +172,6 @@ class root(wx.Frame):
 
 		if utilities.env == 'dev':
 			try:
-				import importlib
 				importlib.reload(settingsUI)
 				settingsUI.window().Show(self)
 			except:
@@ -180,7 +188,7 @@ class root(wx.Frame):
 		:param event: placeholder
 		:return: nothing
 		"""
-		asyncio.run(pluginsystem.systemObj.hardReload('all'))
+		asyncio.run(pluginSystem.systemObj.hardReload('all'))
 
 	def reloadPackages(self, event=None):
 		"""
@@ -188,10 +196,7 @@ class root(wx.Frame):
 		:param event: placeholder
 		:return:
 		"""
-		# remove the package browser window
-		self.book.RemovePage(0)
-		self.browserTab = browser.browser(self.book)
-		self.book.AddPage(self.browserTab, "Package Browser")
+		self.browserTab.reload()
 		self.book.Refresh()
 		self.Update()
 		self.Refresh()
@@ -321,6 +326,41 @@ async def appDateCheck():
 	if data.ShowModal() == wx.ID_NO:
 		return  # user don't want to update
 	utilities.update()
+
+
+class PackageBrowserPage(wx.Window):
+
+	loadingGif: wx.adv.AnimationCtrl
+	browserObj: browser.Browser
+
+	def __init__(self, master: wx.Notebook):
+		super().__init__(
+			parent=master
+		)
+		'''self.loadingGif = wx.adv.AnimationCtrl(
+			parent=self,
+			anim=wx.adv.Animation(f'{config.assetsPath}icons/loading.gif'),
+			size=wx.Size(100, 100)
+		)'''
+		#sizer.Add( self.loadingGif, wx.SizerFlags(1).Center() )
+		self.browserObj = browser.Browser(self)
+		#sizer.Add(self.browserObj)
+		#self.SetSizer(sizer)
+
+	def toggleAnimation(self):
+		return
+		if self.loadingGif.IsPlaying():
+			self.loadingGif.Stop()
+		else:
+			self.loadingGif.Play()
+
+	def reload(self):
+		if utilities.env == 'dev':
+			try:
+				importlib.reload(browser)
+			except:
+				pass
+		self.browserObj = browser.Browser
 
 
 if __name__ == "__main__":

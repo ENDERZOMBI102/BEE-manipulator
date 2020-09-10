@@ -9,7 +9,7 @@ from pluginSystem import eventHandlerObj
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 
-visible: bool = config.load("logWindowVisibility")
+visible: bool = config.load('logWindowVisibility')
 window = None  # then converted to wx.Frame
 logger = srctools.logger.get_logger()
 
@@ -20,14 +20,14 @@ class logHandler(logging.Handler):
     recive, format and send the log message to the window
     using the same BEE2.4 log format people are familiar with
     """
-    def __init__(self, wxDest=None):
-        logger.debug(f'initialised log handler with level NOTSET')
+    def __init__(self):
+        logger.debug('initialised log handler with level NOTSET')
         super().__init__(logging.NOTSET)
         self.setLevel(logging.NOTSET)
 
     def emit(self, record: logging.LogRecord):
         """
-        recive, format, colorize and display a log message
+        receive, format, colorize and display a log message
         """
         global window
         if record.levelno == logging.INFO:
@@ -55,7 +55,7 @@ class logWindow(wx.Frame):
     def __init__(self):
         super().__init__(
                             wx.GetTopLevelWindows()[0],  # parent
-                            title="Logs",  # window title
+                            title='Logs',  # window title
                             style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER  # to make the window not resizeable
                         )  # init the window
         global window
@@ -65,10 +65,9 @@ class logWindow(wx.Frame):
         sizer = wx.FlexGridSizer(rows=2, cols=1, gap=wx.Size(0, 0))
         try:
             pos = config.load('logWindowPos')
-            if pos is not None:
-                self.SetPosition(wx.Point(pos))
-        except Exception as e:
-            logger.warning(e)  # not a problem if it fails
+            self.SetPosition( wx.Point(pos) )
+        except config.ConfigError as e:
+            pass
         self.text = wx.TextCtrl(
             self,
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.VSCROLL | wx.TE_RICH,
@@ -110,7 +109,7 @@ class logWindow(wx.Frame):
 
     @staticmethod
     def OnClose(event):
-        logger.debug(f'hided log window')
+        logger.debug('hided log window')
         toggleVisibility()
 
     def OnMoveEnd(self, event):
@@ -147,8 +146,8 @@ def toggleVisibility(placeHolder=None):
 def updateVisibility():
     global visible
     # save the visibility
-    config.save(visible, "logWindowVisibility")
-    logger.debug(f'saved window visibility')
+    config.save(visible, 'logWindowVisibility')
+    logger.debug('saved window visibility')
     if visible:
         window.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
         window.Raise()
@@ -166,17 +165,17 @@ def changeLevel(level: str) -> None:
     """
     global window
     level = level.upper()
-    if level == "INFO":
+    if level == 'INFO':
         data = logging.INFO
-    elif level == "WARNING":
+    elif level == 'WARNING':
         data = logging.WARNING
-    elif level == "ERROR":
-        data  = logging.ERROR
+    elif level == 'ERROR':
+        data = logging.ERROR
     else:
         data = logging.DEBUG
     logger.info(f'changed log level to {level}')
     logger.info(f'saved log level {level} to config')
-    config.save(level, "logLevel")
+    config.save(level, 'logLevel')
     window.logHandler.setLevel(data)
 
 
@@ -187,13 +186,13 @@ def getLevel() -> int:
     :return: log level
     """
     # check for the level
-    savedLevel = str(config.load("logLevel")).upper()
+    savedLevel = str( config.load('logLevel') ).upper()
     logger.info(f'loaded log level {savedLevel} from config!')
-    if savedLevel == "INFO":
+    if savedLevel == 'INFO':
         level = logging.INFO
-    elif savedLevel == "WARNING":
+    elif savedLevel == 'WARNING':
         level = logging.WARNING
-    elif savedLevel == "ERROR":
+    elif savedLevel == 'ERROR':
         level = logging.ERROR
     else:
         level = logging.DEBUG
