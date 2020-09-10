@@ -1,8 +1,5 @@
-BEE2.4 Manipulator
+BEE Manipulator
 -
-
-a BEE2.4 manager!
-
 [![Codacy grade](https://img.shields.io/codacy/grade/3cd982db8ee640cda0e1dc21d2b9c36c?style=for-the-badge)](https://app.codacy.com/manual/enderzombi102.end/BEE-manipulator?utm_source=github.com&utm_medium=referral&utm_content=ENDERZOMBI102/BEE-manipulator&utm_campaign=Badge_Grade_Dashboard)
 [![Release](https://img.shields.io/github/v/release/ENDERZOMBI102/BEE-manipulator?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/latest)
 [![Discord](https://img.shields.io/discord/293435914598744064?logo=discord&style=for-the-badge)](https://discord.gg/hnGFJrz)
@@ -27,15 +24,13 @@ i plan to release version 1.0.0 _and_ switch to [Semantic Versioning](https://se
 Planned & realized features!
 
  - GUI (40% done)
- - BEE & App Updater With A Togglable Auto Updater (1% done)
  - BEE 2.4 Installer (done)
  - App (Auto)Updater (90% done)
  - Package Browser & Manager (working on it)
- - Custom Type of Package: BM Package (0% done)
  - Custom Application For BEE2.4 Shortcuts (for the auto update feature) (1% done) 
  - Discord Rich Presence (0% done)
- - Add Functionality to BM Using Plugins (done)
- - App Installer (10% done)
+ - Plugin System (done)
+ - Custom Installer (10% done)
  - [Open With BM](https://github.com/ENDERZOMBI102/BEE-manipulator/wiki/Open-with-BM)
 
 The Future
@@ -43,7 +38,6 @@ The Future
 yes, i'm already thinking of the future of this application ;)
 
  - Portal 2 Data Manager (manage the folders and faster file verify)
- - Custom Installer 
  - Package Creator:
    - Skybox Maker
    - Style Maker
