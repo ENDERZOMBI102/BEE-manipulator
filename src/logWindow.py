@@ -5,7 +5,7 @@ import wx
 import config
 import srctools.logger
 import utilities
-from pluginsystem import eventHandlerObj
+from pluginSystem import eventHandlerObj
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 
