@@ -3,11 +3,11 @@ BEE2.4 Manipulator
 
 a BEE2.4 manager!
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3cd982db8ee640cda0e1dc21d2b9c36c)](https://app.codacy.com/manual/enderzombi102.end/BEE-manipulator?utm_source=github.com&utm_medium=referral&utm_content=ENDERZOMBI102/BEE-manipulator&utm_campaign=Badge_Grade_Dashboard)
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/ENDERZOMBI102/BEE-manipulator?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/latest)
+[![Codacy grade](https://img.shields.io/codacy/grade/3cd982db8ee640cda0e1dc21d2b9c36c?style=for-the-badge)](https://app.codacy.com/manual/enderzombi102.end/BEE-manipulator?utm_source=github.com&utm_medium=referral&utm_content=ENDERZOMBI102/BEE-manipulator&utm_campaign=Badge_Grade_Dashboard)
+[![Release](https://img.shields.io/github/v/release/ENDERZOMBI102/BEE-manipulator?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/releases/latest)
 [![Discord](https://img.shields.io/discord/293435914598744064?logo=discord&style=for-the-badge)](https://discord.gg/hnGFJrz)
-[![Commits](https://img.shields.io/github/commits-since/ENDERZOMBI102/BEE-manipulator/latest?style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/commits/master)
-[![PyVersion](https://img.shields.io/github/pipenv/locked/python-version/ENDERZOMBI102/BEE-manipulator?style=for-the-badge)](https://www.python.org/downloads/release/python-378/)
+[![Commits](https://img.shields.io/github/commits-since/ENDERZOMBI102/BEE-manipulator/latest?include_prereleases&style=for-the-badge)](https://github.com/ENDERZOMBI102/BEE-manipulator/commits/master)
+[![PyVersion](https://img.shields.io/badge/Python-3.7%20%7C%203.8-brightgreen.svg&style=for-the-badge)](https://www.python.org/downloads/release/python-378/)
 [![pypresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=python&logoWidth=20)](https://github.com/qwertyquerty/pypresence)
 
 BEE Manipulator is a "manager" for BEE2.4 and Portal 2, with BM (short for BEE Manipulator) you can browse user-created packages
