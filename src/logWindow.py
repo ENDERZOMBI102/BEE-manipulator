@@ -10,7 +10,6 @@ from pluginsystem import eventHandlerObj
 # the visibility of the log window, is initially setted to the value saved in the config file
 
 visible: bool = config.load("logWindowVisibility")
-window = None  # then converted to wx.Frame
 logger = srctools.logger.get_logger()
 
 
@@ -52,14 +51,16 @@ class logWindow(wx.Frame):
     """
     this class make the log window and the log handler
     """
+
+    instance = None
+
     def __init__(self):
         super().__init__(
                             wx.GetTopLevelWindows()[0],  # parent
                             title="Logs",  # window title
                             style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER  # to make the window not resizeable
                         )  # init the window
-        global window
-        window = self
+        logWindow.instance = self
         self.SetIcon( utilities.icon )
         self.SetSize(0, 0, 500, 365)
         sizer = wx.FlexGridSizer(rows=2, cols=1, gap=wx.Size(0, 0))
@@ -136,7 +137,7 @@ def toggleVisibility(placeHolder=None):
     :param placeHolder:
     :return:
     """
-    global visible, window
+    global visible
     if not visible:
         visible = True
     else:
@@ -150,11 +151,11 @@ def updateVisibility():
     config.save(visible, "logWindowVisibility")
     logger.debug(f'saved window visibility')
     if visible:
-        window.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
-        window.Raise()
+        logWindow.instance.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
+        logWindow.instance.Raise()
         wx.GetTopLevelWindows()[0].Raise()
     else:
-        window.HideWithEffect(wx.SHOW_EFFECT_BLEND)
+        logWindow.instance.HideWithEffect(wx.SHOW_EFFECT_BLEND)
 
 
 def changeLevel(level: str) -> None:
@@ -164,7 +165,6 @@ def changeLevel(level: str) -> None:
     :param level: level to set the window to
     :return: none
     """
-    global window
     level = level.upper()
     if level == "INFO":
         data = logging.INFO
@@ -177,7 +177,7 @@ def changeLevel(level: str) -> None:
     logger.info(f'changed log level to {level}')
     logger.info(f'saved log level {level} to config')
     config.save(level, "logLevel")
-    window.logHandler.setLevel(data)
+    logWindow.instancelogHandler.setLevel(data)
 
 
 def getLevel() -> int:
