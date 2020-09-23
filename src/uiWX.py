@@ -34,8 +34,8 @@ class root(wx.Frame):
 		# sets the app icon
 		self.SetIcon(utilities.icon)
 		# init the logging window
-		asyncio.run(logWindow.init())
-		asyncio.run(appDateCheck())
+		asyncio.run( logWindow.init() )
+		asyncio.run( appDateCheck() )
 		# set the utilities.root pointer to the object of this class
 		utilities.root = self
 		try:
@@ -46,7 +46,7 @@ class root(wx.Frame):
 		self.SetMinSize( wx.Size(width=600, height=500) )
 		LOGGER.info(f'internet connected: {utilities.isonline()}')
 		# load plugins
-		asyncio.run(pluginSystem.systemObj.start())
+		asyncio.run( pluginSystem.systemObj.start() )
 		"""
 		A menu bar is composed of menus, which are composed of menu items.
 		This section builds the menu bar and binds actions to them
@@ -95,7 +95,7 @@ class root(wx.Frame):
 		# Give the menu bar to the frame
 		self.SetMenuBar(self.menuBar)
 		self.CreateStatusBar()
-		self.SetStatusText(loc('statusbar.text').replace('{username}', config.steamUsername() ) )
+		self.SetStatusText( loc('statusbar.text').replace('{username}', config.steamUsername() ) )
 
 		# file menu
 		self.Bind(wx.EVT_MENU, self.openp2dir, openPortalDirItem)
@@ -337,22 +337,7 @@ class PackageBrowserPage(wx.Window):
 		super().__init__(
 			parent=master
 		)
-		'''self.loadingGif = wx.adv.AnimationCtrl(
-			parent=self,
-			anim=wx.adv.Animation(f'{config.assetsPath}icons/loading.gif'),
-			size=wx.Size(100, 100)
-		)'''
-		#sizer.Add( self.loadingGif, wx.SizerFlags(1).Center() )
 		self.browserObj = browser.Browser(self)
-		#sizer.Add(self.browserObj)
-		#self.SetSizer(sizer)
-
-	def toggleAnimation(self):
-		return
-		if self.loadingGif.IsPlaying():
-			self.loadingGif.Stop()
-		else:
-			self.loadingGif.Play()
 
 	def reload(self):
 		if utilities.env == 'dev':

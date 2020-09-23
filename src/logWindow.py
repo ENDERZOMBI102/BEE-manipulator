@@ -5,7 +5,7 @@ import wx
 import config
 import srctools.logger
 import utilities
-from pluginsystem import eventHandlerObj
+from pluginSystem import eventHandlerObj
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 
@@ -15,8 +15,8 @@ logger = srctools.logger.get_logger()
 
 class logHandler(logging.Handler):
     """
-    this class rappresents the log handler, this will
-    recive, format and send the log message to the window
+    this class represents the log handler, this will
+    receive, format and send the log message to the window
     using the same BEE2.4 log format people are familiar with
     """
     def __init__(self, wxDest=None):
@@ -26,7 +26,9 @@ class logHandler(logging.Handler):
 
     def emit(self, record: logging.LogRecord):
         """
-        recive, format, colorize and display a log message
+        receive, format, colorize and display a log message
+        :param record: logging.LogRecord object
+        :return: None
         """
         if record.levelno == logging.INFO:
             logWindow.instance.text.SetDefaultStyle(wx.TextAttr(wx.Colour(0, 80, 255)))  # blue/cyan
@@ -67,7 +69,7 @@ class logWindow(wx.Frame):
             pos = config.load('logWindowPos')
             if pos is not None:
                 self.SetPosition(wx.Point(pos))
-        except Exception as e:
+        except config.ConfigError as e:
             logger.warning(e)  # not a problem if it fails
         self.text = wx.TextCtrl(
             self,

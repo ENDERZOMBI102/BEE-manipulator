@@ -17,17 +17,13 @@ class Browser(wx.ScrolledWindow):
 	sizer: wx.GridBagSizer
 
 	def __init__(self, master: wx.Window):
-		master.toggleAnimation()
 		super().__init__(parent=master)
 		# return
 		self.database = PDatabase()
 		if self.database.checkDatabase():
-			asyncio.run( self.database.loadObjects(self) )
+			asyncio.run(  self.database.loadObjects(self) )
 		else:
-			self.views = [PlaceHolderView()]
-		master.toggleAnimation()
-		master
+			self.views = [ PlaceHolderView(self) ]
 
 	def reload(self):
 		self.database = PDatabase()
-

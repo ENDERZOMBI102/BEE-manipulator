@@ -27,7 +27,7 @@ default_config = {
     'l18nFolderPath': './langs' if utilities.frozen() else './../langs',
     'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
     'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
-    'onlineDatabaseUrl': 'https://github.com/ENDERZOMBI102/ucpDatabase/blob/master/Database.json',
+    'onlineDatabaseUrl': 'https://raw.githubusercontent.com/ENDERZOMBI102/ucpDatabase/master/Database.json',
     'lang': 'en_US',
     'showVerifyDialog': False,
     'showUninstallDialog': False,

@@ -26,21 +26,26 @@ else:
     print(f"BM source path: {path.parent}")
     os.chdir( path.parent )
 
+
+def quitter():
+    # app restarter
+    if getattr(sys, 'restart', False):
+        os.system(__file__)
+
+
 # create the wx app obj
 app = wx.App()
 
-
-# custom unhandled exception handler for the "cool" error window
-sys.excepthook = lambda etype, value, tb: \
-    wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
 
 instance = wx.SingleInstanceChecker('BM')
 if instance.IsAnotherRunning():
     print('another instace of BM is running, aborting.')
     exit()
 
-
-srctools.logger.init_logging("./logs/latest.log")
+# initialize logging
+# custom unhandled exception handler for the "cool" error window
+srctools.logger.init_logging("./logs/latest.log", on_error=lambda etype, value, tb: \
+    wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) ) )
 LOGGER = srctools.logger.get_logger('BEE Manipulator')
 # if we started with --dev parameter, set loglevel to debug
 if '--dev' in argv:
@@ -77,7 +82,9 @@ LOGGER.info('starting ui!')
 # start the main loop
 root = root()
 root.Show()
+app.OnExit = quitter
 app.SetTopWindow(root)
 if timeStartup:
     timeTest.stop()
 app.MainLoop()
+

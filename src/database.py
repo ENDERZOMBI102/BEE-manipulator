@@ -119,5 +119,6 @@ class PDatabase:
 
 def makeIconUrl(repo: str) -> str:
 	splittedUrl = repo.split('/')
-	logger.debug(f'icon url: "https://raw.githubusercontent.com/{splittedUrl[4]}/{splittedUrl[5]}/master/icon.png"')
-	return f'https://raw.githubusercontent.com/{splittedUrl[4]}/{splittedUrl[5]}/master/icon.png'
+	i = splittedUrl.index('github.com') + 1
+	logger.debug(f'icon url: "https://raw.githubusercontent.com/{splittedUrl[i]}/{splittedUrl[i+1]}/master/icon.png"')
+	return f'https://raw.githubusercontent.com/{splittedUrl[i]}/{splittedUrl[i+1]}/master/icon.png'

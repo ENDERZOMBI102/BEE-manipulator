@@ -66,7 +66,8 @@ def _checkGetEventHandler(func: Callable):
 			raise PluginNotValid('"getEventHandler" should have only 1 parameter')  # no
 
 
-class PluginNotValid(Exception): pass
+class PluginNotValid(Exception):
+	pass
 
 
 class eventHandler:
