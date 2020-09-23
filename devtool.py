@@ -1,9 +1,11 @@
 from os import system, chdir, remove
 from pathlib import Path
 from sys import argv
+from os import getenv
 
-upxpath = 'C:/Users/Flavia/AppData/Local/Programs/UPX/upx-3.96-win64/upx.exe'
+upxpath = 'C:/Users/Flavia/AppData/Local/Programs/UPX/upx-3.96-win64/upx.exe' if getenv('upxpath') is None else getenv('upxpath')
 distpath = str( Path('./dist/BEE Manipulator').resolve() ).replace('\\', '/')
+sevenzippath = 'C:\"Program Files"\7-Zip\7z' if getenv('7zpath') is None else getenv('7zpath')
 
 if '--help' in argv:
     print('BEE Manipulator development tool v2.3')
@@ -45,7 +47,7 @@ if '--zip' in argv:
         remove('./BEEManipulator.7z')
     except FileNotFoundError:
         pass
-    system(r'C:\"Program Files"\7-Zip\7z a -r BEEManipulator ./dist/"BEE Manipulator"/*')
+    system(f'{sevenzippath} a -r BEEManipulator ./dist/"BEE Manipulator"/*')
     print('finished step: zip')
 
 if '--startexe' in argv:
