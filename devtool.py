@@ -6,9 +6,10 @@ from os import getenv
 upxpath = 'C:/Users/Flavia/AppData/Local/Programs/UPX/upx-3.96-win64/upx.exe' if getenv('upxpath') is None else getenv('upxpath')
 distpath = str( Path('./dist/BEE Manipulator').resolve() ).replace('\\', '/')
 sevenzippath = 'C:\"Program Files"\7-Zip\7z' if getenv('7zpath') is None else getenv('7zpath')
+py = 'py' if getenv('pypatg') is None else getenv('pypath')
 
 if '--help' in argv:
-    print('BEE Manipulator development tool v2.3')
+    print('BEE Manipulator development tool v2.4')
     print('Made By ENDERZOMBI102')
     print('Possible parameters:')
     print('--install    installs BM dependencies from requirements.txt')
@@ -24,18 +25,20 @@ if '--help' in argv:
 
 if '--install' in argv:
     system('pip install virtualenv')
-    system('py -m venv %userprofile%/.virtualenvs/BEE-manipulator')
+    system(f'{py} -m venv %userprofile%/.virtualenvs/BEE-manipulator')
     system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && pip install -r requirements.txt')
 
 if '--start' in argv:
     chdir('./src')
-    system('pipenv run py BEEManipulator.py')
+    system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && py BEEManipulator.py')
 
 if ('--build' in argv) and ('--release' in argv):
+    system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate')
     system('pyinstaller src/BEEManipulator_release.spec --noconfirm')
     system(f'pyinstaller src/urlhandler/urlhandler.spec --noconfirm --upx-dir="{upxpath}" --distpath="{distpath}"')
 
 if ('--build' in argv) and ('--debug' in argv):
+    system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate &&')
     system('pyinstaller src/BEEManipulator_debug.spec --noconfirm')
     system(f'pyinstaller src/urlhandler/urlhandler.spec --noconfirm --upx-dir="{upxpath}" --distpath="{distpath}"')
 
