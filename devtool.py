@@ -24,7 +24,7 @@ if '--help' in argv:
     print('--pass "ARG" passes the "ARG" string to the exe')
 
 if '--install' in argv:
-    system('pip install virtualenv')
+    system('pip3 install virtualenv')
     system(f'{py} -m venv %userprofile%/.virtualenvs/BEE-manipulator')
     system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && pip install -r requirements.txt')
 
