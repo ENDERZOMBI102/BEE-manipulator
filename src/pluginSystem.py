@@ -1,5 +1,7 @@
 import asyncio
 import importlib.util
+import traceback
+from abc import ABCMeta, abstractmethod
 from pathlib import Path
 from types import ModuleType
 from typing import Dict, Coroutine, List, Callable
@@ -15,8 +17,7 @@ class Plugin:
 	"""
 	this decorator is used to create a plugin for BEE Manipulator
 	"""
-	def __init__(self, pluginid: str, name: str, version: str, getLogger=False):
-		self.getLogger = getLogger
+	def __init__(self, pluginid: str, name: str, version: str = None ):
 		self.pluginid = pluginid
 		self.name = name
 		self.version = version
@@ -25,121 +26,60 @@ class Plugin:
 		# make a subclass to check for methods
 		class wrap(cls):
 			__state__ = 'unloaded'
-			if self.getLogger:
-				logger = get_logger()
 
 			def getPath(self):
-				self.__class__.__base__.__module__
+				return self.__class__.__base__.__module__
 		# checks if the plugin has the NEEDED methods
+		# load
 		if not asyncio.iscoroutinefunction(getattr(wrap, 'load', Callable)):
 			raise PluginNotValid('missing required coroutine "load"!')
+		# unload
 		if not asyncio.iscoroutinefunction(getattr(wrap, 'unload', Callable)):
 			raise PluginNotValid('missing required coroutine "unload"!')
 		# checks the optional methods
-		if getattr(wrap, 'getEventHandler', placeholder) == placeholder:  # has getEventHandler?
-			pass  # no
-		elif asyncio.iscoroutinefunction( wrap.getEventHandler ):  # is it a coroutine?
-			raise PluginNotValid('the "getEventHandler" coroutine should be a method')  # yes
-		else:
-			self.checkGetEventHandler( wrap.getEventhandler )  # has the correct number of parameters?
+		# reload
 		if not asyncio.iscoroutinefunction(getattr(wrap, 'reload', placeholder)):
 			raise PluginNotValid('the "reload" method should be a coroutine')
 		if self.pluginid in systemObj.plugins.keys():
 			if not systemObj.isReloading:
 				logger.error(f'Duplicate plugin found! id: {self.pluginid}, duplicate name: {self.name}, it will replace the other plugin')
 		systemObj.plugins[self.pluginid] = wrap()
-		getattr(systemObj.plugins[self.pluginid], 'getEventHandler', placeholder2)(eventHandlerObj)
 		return wrap
-
-
-def _checkGetEventHandler(func: Callable):
-	# is a method?
-	if 'self' in func.__code__.co_varnames:
-		# yes
-		# does it have 1 parameter beside self?
-		if func.__code__.co_argcount - 1 != 1:
-			raise PluginNotValid('"getEventHandler" should have only 1 parameter (not counting self)')  # no
-	else:
-		# no
-		# does it have 1 parameter?
-		if func.__code__.co_argcount != 1:
-			raise PluginNotValid('"getEventHandler" should have only 1 parameter')  # no
 
 
 class PluginNotValid(Exception):
 	pass
 
 
-class eventHandler:
-	"""
-	a class that provides events handling
-	- on(event, callback) subscribe CALLBACK to EVENT
-	- send(event, kwargs) triggers EVENT with KWARGS as data
-	"""
-
-	def __init__(self):
-		logger.info('plugin event handler started!')
-
-	@staticmethod
-	def on(evt: str, callback: Coroutine):
-		"""
-		listen for an event
-		:param evt: event to listen for
-		:param callback: the coroutine that will be executed when this event is triggered
-		:return: nothing
-		"""
-		if evt in _eventHandlers.keys():
-			_eventHandlers[evt].append(callback)
-		else:
-			_eventHandlers[evt] = []
-			_eventHandlers[evt].append(callback)
-
-	@staticmethod
-	def send(evt: str, **kwargs):
-		"""
-		trigger an event
-		:param evt: event to trigger
-		:param kwargs: event data
-		:return:
-		"""
-		if evt in _eventHandlers.keys():
-			if len(kwargs) == 0:
-				for callback in _eventHandlers[evt]:
-					asyncio.run(callback())
-			else:
-				for callback in _eventHandlers[evt]:
-					asyncio.run(callback(kwargs))
-
-	'''
-	# idk if use the wx one is better or not...
-	@staticmethod
-	def on(evt: str, callback: Coroutine):
-		"""
-		a version of on that uses the wx dispatcher
-		:param evt: event to listen for
-		:param callback: the callback that will be executed with event data
-		:return: nothing
-		"""
-		dispatcher.connect(callback, evt)
-
-	@staticmethod
-	def send(evt: str, **kwargs):
-		"""
-		a version of send that uses the wx dispatcher
-		:param evt: event to trigger
-		:param kwargs: data of the event
-		:return: nothing
-		"""
-		dispatcher.send(evt, kwargs)
-	'''
-
-
-async def placeholder(placeholder2):
+async def placeholder(ph0=None):
 	pass
 
 
 def placeholder2(ph0=None, ph1=0):
 	pass
+
+
+class BasePlugin(metaclass=ABCMeta):
+
+	@abstractmethod
+	async def load(self):
+		"""
+		this is called when the plugin should load things and create stuff
+		"""
+		pass
+
+	@abstractmethod
+	async def unload(self):
+		"""
+		called when the plugin is being unloaded, do clean up stuff here
+		"""
+		pass
+
+	async def reload(self):
+		"""
+		called when the plugin is being reloaded
+		"""
+		pass
 
 
 class system:
@@ -151,16 +91,19 @@ class system:
 	def __init__(self):
 		pass
 
-	async def start(self):
+	def startSync(self):
 		"""
 		starts the plugin system
 		instantiate and loads the plugins
 		:return: nothing
 		"""
 		logger.info('started loading plugins!')
+		asyncio.run( self.start() )
+		logger.info('finished loading plugins!')
+
+	async def start(self):
 		await self.instantiate()
 		await self.load()
-		logger.info('finished loading plugins!')
 
 	async def instantiate(self):
 		"""
@@ -178,7 +121,8 @@ class system:
 			except PluginNotValid as e:
 				logger.error(f"can't load a plugin! error:\n{e}")
 			except Exception as e:
-				logger.error(f"can't load plugin! error: {e.__class__} {e}")
+				error = ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) )
+				logger.error(f"can't load plugin! error: {error}")
 
 	async def load(self, identifier: str = None):
 		"""
@@ -231,7 +175,7 @@ class system:
 		:return: nothing
 		"""
 		# cicle in the plugins
-		print(len( self.plugins))
+		print( f'plugins found: {len( self.plugins)}' )
 		for i in range( len( self.plugins) ):
 			# we're reloading, set isReloading to True
 			self.isReloading = True
@@ -271,5 +215,4 @@ class system:
 			del self.plugins[i]
 
 
-eventHandlerObj: eventHandler = eventHandler()
 systemObj: system = system()

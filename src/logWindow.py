@@ -5,7 +5,6 @@ import wx
 import config
 import srctools.logger
 import utilities
-from pluginSystem import eventHandlerObj
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 
@@ -28,22 +27,22 @@ class logHandler(logging.Handler):
         """
         receive, format, colorize and display a log message
         :param record: logging.LogRecord object
-        :return: None
         """
+
         if record.levelno == logging.INFO:
-            logWindow.instance.text.SetDefaultStyle(wx.TextAttr(wx.Colour(0, 80, 255)))  # blue/cyan
+            logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(0, 80, 255) ) )  # blue/cyan
         #
         elif record.levelno == logging.WARNING:
-            logWindow.instance.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 125, 0)))  # orange
+            logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 125, 0) ) )  # orange
         #
         elif record.levelno == logging.ERROR:
-            logWindow.instance.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 0, 0)))  # red
+            logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 0, 0) ) )  # red
         #
         elif record.levelno == logging.DEBUG:
-            logWindow.instance.text.SetDefaultStyle(wx.TextAttr(wx.Colour(128, 128, 128)))  # grey
+            logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(128, 128, 128) ) )  # grey
         #
         elif record.levelno == logging.CRITICAL:
-            logWindow.instance.text.SetDefaultStyle(wx.TextAttr(wx.Colour(255, 255, 255)))  # white
+            logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 255, 255) ) )  # white
         # display the log message
         logWindow.instance.text.AppendText(self.format(record))
 
@@ -104,7 +103,7 @@ class logWindow(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         self.Bind(wx.EVT_MOVE_END, self.OnMoveEnd, self)
         self.Bind(wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn)
-        eventHandlerObj.send('logWindowObject', object=self)
+        wx.py.dispatcher.send('LogWindow', self, window=self)
         updateVisibility()
 
     def OnClearButtonPressed(self, event):
