@@ -44,7 +44,7 @@ def createConfig():
         json.dump(default_config, file, indent=3)
 
 
-def load(section: str, default = None) -> Union[str, int, None, dict, list]:  # load a config
+def load(section: str, default = None) -> Union[str, int, bool, None, dict, list]:  # load a config
     """
     loads a section of the config (json-formatted) and return the data.
     raise an exception if the config or the requested section doesn't exist
