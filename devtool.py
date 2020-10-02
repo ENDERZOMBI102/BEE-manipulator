@@ -24,7 +24,7 @@ if '--help' in argv:
     print('--pass "ARG" passes the "ARG" string to the exe')
 
 if '--install' in argv:
-    system('pip install virtualenv')
+    system('pip3 install virtualenv')
     system(f'{py} -m venv %userprofile%/.virtualenvs/BEE-manipulator')
     system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && pip install -r requirements.txt')
 
@@ -33,9 +33,9 @@ if '--start' in argv:
     system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && py BEEManipulator.py')
 
 if ('--build' in argv) and ('--release' in argv):
-    system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate')
-    system('pyinstaller src/BEEManipulator_release.spec --noconfirm')
-    system(f'pyinstaller src/urlhandler/urlhandler.spec --noconfirm --upx-dir="{upxpath}" --distpath="{distpath}"')
+    system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate && '+
+    'pyinstaller src/BEEManipulator_release.spec --noconfirm && '+
+    f'pyinstaller src/urlhandler/urlhandler.spec --noconfirm --upx-dir="{upxpath}" --distpath="{distpath}"')
 
 if ('--build' in argv) and ('--debug' in argv):
     system('%userprofile%/.virtualenvs/BEE-manipulator/scripts/activate &&')
