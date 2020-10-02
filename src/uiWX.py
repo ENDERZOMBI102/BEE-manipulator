@@ -46,7 +46,8 @@ class root(wx.Frame):
 		self.SetMinSize( wx.Size(width=600, height=500) )
 		LOGGER.info(f'internet connected: {utilities.isonline()}')
 		# load plugins
-		asyncio.run( pluginSystem.systemObj.start() )
+		wx.CallLater(0, pluginSystem.systemObj.startSync )
+		#asyncio.run( pluginSystem.systemObj.start() )
 		"""
 		A menu bar is composed of menus, which are composed of menu items.
 		This section builds the menu bar and binds actions to them
@@ -81,9 +82,9 @@ class root(wx.Frame):
 
 		# set menu item icons
 		self.helpMenu.FindItemById(11).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
-		self.helpMenu.FindItemById(13).SetBitmap(wx.Bitmap(f'{config.assetsPath}icons/menu_github.png'))
-		self.helpMenu.FindItemById(14).SetBitmap(wx.Bitmap(f'{config.assetsPath}icons/menu_github.png'))
-		self.helpMenu.FindItemById(15).SetBitmap(wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png'))
+		self.helpMenu.FindItemById(13).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
+		self.helpMenu.FindItemById(14).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
+		self.helpMenu.FindItemById(15).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
 
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()
@@ -125,6 +126,10 @@ class root(wx.Frame):
 		else:
 			self.portalMenu.Enable(10, False)
 
+		# trigger the registerMenu event
+
+
+
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
@@ -145,6 +150,11 @@ class root(wx.Frame):
 			pass
 		self.Destroy()
 
+	def AddMenu(self, menu: wx.Menu, title: str):
+		menu = self.GetMenuBar()
+		menu.Append(menu, title)
+		menu.Refresh()
+
 	# file menu items actions
 	@staticmethod
 	def openp2dir(event):
@@ -152,7 +162,7 @@ class root(wx.Frame):
 
 	@staticmethod
 	def openBEEdir(event):
-		os.startfile(config.load("beePath"))
+		os.startfile( Path( config.load("beePath") ).parent )
 
 	@staticmethod
 	def syncGames(event):
