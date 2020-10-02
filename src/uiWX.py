@@ -5,6 +5,7 @@ from pathlib import Path
 
 import wx
 import wx.adv
+import wx.py.dispatcher
 
 import aboutWindow
 import beeManager
@@ -127,8 +128,7 @@ class root(wx.Frame):
 			self.portalMenu.Enable(10, False)
 
 		# trigger the registerMenu event
-
-
+		wx.py.dispatcher.send('RegisterMenus', self, MenuBar=self.menuBar)
 
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
@@ -158,7 +158,7 @@ class root(wx.Frame):
 	# file menu items actions
 	@staticmethod
 	def openp2dir(event):
-		os.startfile(config.portalDir())
+		os.startfile( config.portalDir() )
 
 	@staticmethod
 	def openBEEdir(event):
@@ -169,7 +169,7 @@ class root(wx.Frame):
 		utilities.notimplementedyet()
 
 	def exit(self, event):
-		self.OnClose(wx.CloseEvent())  # there's already an handler, so use that
+		self.OnClose( wx.CloseEvent() )  # there's already an handler, so use that
 
 	# options menu items actions
 	def openSettingsWindow(self, event=None):
@@ -182,7 +182,7 @@ class root(wx.Frame):
 
 		if utilities.env == 'dev':
 			try:
-				importlib.reload(settingsUI)
+				importlib.reload( settingsUI )
 				settingsUI.window().Show(self)
 			except:
 				pass
@@ -198,7 +198,7 @@ class root(wx.Frame):
 		:param event: placeholder
 		:return: nothing
 		"""
-		asyncio.run(pluginSystem.systemObj.hardReload('all'))
+		asyncio.run( pluginSystem.systemObj.hardReload('all') )
 
 	def reloadPackages(self, event=None):
 		"""
