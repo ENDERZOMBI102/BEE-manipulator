@@ -26,3 +26,6 @@ class BasePlugin(metaclass=ABCMeta):
 	@abstractmethod
 	async def unload(self):
 		pass
+
+	async def reload(self):
+		pass
