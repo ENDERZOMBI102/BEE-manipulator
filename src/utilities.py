@@ -146,20 +146,6 @@ def getReleaseUrl(data) -> str:
 	raise Exception("how this happened?, you're on linux?")
 
 
-def versioncmp(ver0: str, ver1: str):
-	"""
-	do a ver0 > ver1 comparison, three . separated values
-	:param ver0: version base
-	:param ver1: version to compare
-	:return: ver0 > ver1
-	"""
-	ver0 = ver0.replace('.', '')
-	ver1 = ver1.replace('.', '')
-	if (int(ver0[0]) > int(ver1[0])) or (int(ver0[1]) > int(ver1[1])) or (int(ver0[2]) > int(ver1[2])):
-		return True
-	return False
-
-
 def isnegative(value: Union[None, bool]) -> bool:
 	"""
 	a function that checks if a value is negative (None, False, 0)
