@@ -7,6 +7,7 @@ from typing import Union
 
 import wx
 from requests import get, RequestException
+from semver import VersionInfo
 
 import config
 from srctools.logger import get_logger
@@ -18,11 +19,11 @@ icon: wx.Icon
 
 class UpdateInfo:
 
-	version: int
+	version: VersionInfo
 	url: str
 	description: str
 
-	def __init__(self, ver: int, url: str, desc: str):
+	def __init__(self, ver: VersionInfo, url: str, desc: str):
 		self.version = ver
 		self.url = url
 		self.description = desc
@@ -90,7 +91,7 @@ def toNumbers(arg=None):
 	return int(''.join(nums))
 
 
-def checkUpdate(url: str, curVer: str) -> UpdateInfo: # Dict[ str, Union[bool, str, int, None] ]:
+def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 	"""
 	A function that check for updates, this doesn't include prereleases
 	:param url: the api/repo github url
@@ -104,17 +105,26 @@ def checkUpdate(url: str, curVer: str) -> UpdateInfo: # Dict[ str, Union[bool, s
 	logger.debug(f'url valid!')
 	logger.debug(f'checking updates on url: {url}')
 	data = get( url ).json()  # get the latest release data
-	if 'documentation_url' in data.keys():
+	if isinstance(data, dict):
 		return UpdateInfo( None, None, None )
+	usePrereleases: bool = config.load('usePrereleases')
+	for ver in data:
+		if ver['draft'] is True: continue
+		if ( ver['prerelease'] is True ) and ( usePrereleases is False ): continue
+		data = ver
+		break
 	# variables
 	releaseUrl: str = None
-	# first we convert the tag name to an int
-	# then we compare it with the given current version
-	if versioncmp( data['tag_name'], curVer ):
-		if not boolcmp( data["draft"] ):  # check if the release is not a draft
-			# not a draft
-			releaseUrl = getReleaseUrl(data)
-	return UpdateInfo( data['tag_name'], releaseUrl, data['body'] )
+	releaseVer: VersionInfo = None
+	releaseDesc: str = None
+	# if the most recent release is not a greater one,
+	# we just return a UpdateInfo object with every value setted to None
+	# else we return a "complete" UpdateInfo object
+	if VersionInfo.parse( data['tag_name'] ) > curVer:
+		releaseUrl = getReleaseUrl(data)
+		releaseVer = VersionInfo.parse( data['tag_name'] )
+		releaseDesc = data['body']
+	return UpdateInfo( releaseVer, releaseUrl, releaseDesc )
 
 
 def genApiUrl(url: str = None) -> str:
@@ -124,7 +134,7 @@ def genApiUrl(url: str = None) -> str:
 	:return: the github api url
 	"""
 	splitUrl = url.split('/')  # slit the url in various segments
-	return f'https://api.github.com/repos/{splitUrl[3]}/{splitUrl[4]}/releases/latest'  # return the formed url
+	return f'https://api.github.com/repos/{splitUrl[3]}/{splitUrl[4]}/releases'  # return the formed url
 
 
 def getReleaseUrl(data) -> str:
@@ -275,7 +285,7 @@ def notimplementedyet():
 
 
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
-env = 'dist'
+env = 'dev'
 root: wx.Frame = None
 
 

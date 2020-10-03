@@ -31,7 +31,7 @@ class root(wx.Frame):
 	settingsWindowInstance: settingsUI.window = None
 
 	def __init__(self):
-		super().__init__(None, title="BEE Manipulator " + str(config.version()))
+		super().__init__( None, title="BEE Manipulator " + str(config.version) )
 		# sets the app icon
 		self.SetIcon(utilities.icon)
 		# init the logging window
@@ -43,7 +43,7 @@ class root(wx.Frame):
 			self.SetPosition(wx.Point(config.load('mainWindowPos')))
 		except config.ConfigError:
 			self.CenterOnScreen()
-		# self.SetSize(width=600, height=500)
+		self.SetSize(width=600, height=500)
 		self.SetMinSize( wx.Size(width=600, height=500) )
 		LOGGER.info(f'internet connected: {utilities.isonline()}')
 		# load plugins
@@ -327,7 +327,7 @@ async def appDateCheck():
 	"""
 	if not utilities.isonline():  # if we're not online return false
 		return False
-	data = utilities.checkUpdate('https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion"))
+	data = utilities.checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', config.version )
 	if data.url is None:
 		return
 	data = wx.GenericMessageDialog(
