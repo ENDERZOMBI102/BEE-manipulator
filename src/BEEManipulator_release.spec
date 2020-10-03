@@ -1,7 +1,4 @@
 # -*- mode: python ; coding: utf-8 -*-
-# this should fix the "maximum recursion exceeded" error
-import sys
-sys.setrecursionlimit(5000)
 
 a = Analysis(['BEEManipulator.py'],
              pathex=['./'],
