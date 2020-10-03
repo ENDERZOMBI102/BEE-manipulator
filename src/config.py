@@ -3,6 +3,8 @@ from sys import argv
 from typing import Dict, Union
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
+from semver import VersionInfo
+
 import utilities
 from srctools import Property
 from srctools.logger import get_logger
@@ -13,11 +15,17 @@ configPath: str = './config.cfg' if utilities.frozen() else './../config.cfg'
 assetsPath: str = './assets/' if utilities.frozen() else './../assets/'
 """the path to the assets folder (finishes with /)"""
 pluginsPath: str = './plugins' if utilities.frozen() else './../plugins'
+version: VersionInfo = VersionInfo(
+        major=1,
+        minor=0,
+        patch=0,
+        prerelease='pre3'
+    )
+"""current app version"""
 # the plugins dict HAS to be the last
 default_config = {
     'config_type': 'BEE2.4 Manipulator Config File',
-    'appVersion': '0.0.1',
-    'lastVersion': True,
+    'usePrereleases': False if utilities.frozen() else True,
     'steamDir': None,
     'portal2Dir': None,
     'beePath': utilities.__getbee(),
@@ -310,14 +318,6 @@ def steamUsername():
         return keyValue[0]
     except:
         return None
-
-
-def checkUpdates() -> bool:
-
-
-
-def version():
-    return load('appVersion')
 
 
 def devMode() -> bool:

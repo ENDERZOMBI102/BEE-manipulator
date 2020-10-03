@@ -20,7 +20,7 @@ if '--time' in argv:
 # use file dir as working dir
 path = Path(__file__).resolve()
 if getattr(sys, 'frozen', False):
-    print(f"BM exe path: {path.parent}")
+    print(f"BM exe path: {path.parent.resolve()}")
     os.chdir( path.parent )
 else:
     print(f"BM source path: {path.parent}")
@@ -77,7 +77,7 @@ utilities.__setIcon()
 # import after localize() object init so that loc() is already present
 from uiWX import root
 # start ui
-LOGGER.info(f'Starting BEE Manipulator v{config.version()}!')
+LOGGER.info(f'Starting BEE Manipulator v{config.version}!')
 LOGGER.info('starting ui!')
 # start the main loop
 root = root()
