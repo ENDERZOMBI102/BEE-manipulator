@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 from sys import platform
-from typing import Union, Tuple
+from typing import Union
 
 import wx
 from requests import get, RequestException
@@ -14,6 +14,18 @@ from srctools.logger import get_logger
 logger = get_logger("utils")
 icon: wx.Icon
 """BEE Manipulator icon as wx.Icon object"""
+
+
+class UpdateInfo:
+
+	version: int
+	url: str
+	description: str
+
+	def __init__(self, ver: int, url: str, desc: str):
+		self.version = ver
+		self.url = url
+		self.description = desc
 
 
 def __setIcon():
@@ -78,7 +90,7 @@ def toNumbers(arg=None):
 	return int(''.join(nums))
 
 
-def checkUpdate(url: str, curVer: str) -> Union[Tuple[bool, str, int], Tuple[bool, None, None]]:
+def checkUpdate(url: str, curVer: str) -> UpdateInfo: # Dict[ str, Union[bool, str, int, None] ]:
 	"""
 	A function that check for updates, this doesn't include prereleases
 	:param url: the api/repo github url
@@ -88,23 +100,21 @@ def checkUpdate(url: str, curVer: str) -> Union[Tuple[bool, str, int], Tuple[boo
 	logger.debug(f'checking url..')
 	if 'api.github' not in url:
 		logger.debug(f'converting url..')
-		url = genApiUrl(url)  # convert normal github repo url to github api url
+		url = genApiUrl( url )  # convert normal github repo url to github api url
 	logger.debug(f'url valid!')
 	logger.debug(f'checking updates on url: {url}')
-	data = get(url).json()  # get the latest release data
+	data = get( url ).json()  # get the latest release data
 	if 'documentation_url' in data.keys():
-		return False, None, None
+		return UpdateInfo( None, None, None )
 	# variables
-	available: bool = True
 	releaseUrl: str = None
 	# first we convert the tag name to an int
 	# then we compare it with the given current version
-	if versioncmp(data['tag_name'], curVer):
-		if not boolcmp(data["draft"]):  # check if the release is not a draft
+	if versioncmp( data['tag_name'], curVer ):
+		if not boolcmp( data["draft"] ):  # check if the release is not a draft
 			# not a draft
-			available = True
 			releaseUrl = getReleaseUrl(data)
-	return available, releaseUrl, data['tag_name']
+	return UpdateInfo( data['tag_name'], releaseUrl, data['body'] )
 
 
 def genApiUrl(url: str = None) -> str:

@@ -313,14 +313,7 @@ def steamUsername():
 
 
 def checkUpdates() -> bool:
-    if not utilities.isonline():  # if we're not online return false
-        return False
-    available, url, ver = utilities.checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion") )
-    if available:
-        save(url, 'lastVersionUrl')
-        save(False, 'lastRelease')
-        save(ver, 'onlineAppVersion')
-    return available
+
 
 
 def version():

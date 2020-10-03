@@ -325,12 +325,15 @@ async def appDateCheck():
 	check app updates
 	:return:
 	"""
-	if not (config.checkUpdates() is True):  # update check
-		return  # no updates, return
+	if not utilities.isonline():  # if we're not online return false
+		return False
+	data = utilities.checkUpdate('https://github.com/ENDERZOMBI102/BEE-manipulator', load("appVersion"))
+	if data.url is None:
+		return
 	data = wx.GenericMessageDialog(
 		parent=wx.GetTopLevelWindows()[0],
-		message="An update for the app is avaiable, do you want to update now?)",
-		caption=f'Update Avaiable - new version: {config.load("onlineVersion")}',
+		message=f'An update for the app is available, do you want to update now?\n\n{data.description}',
+		caption=f'Update Available - new version: {data.version}',
 		style=wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
 	)
 	if data.ShowModal() == wx.ID_NO:
