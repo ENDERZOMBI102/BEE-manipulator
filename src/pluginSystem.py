@@ -8,6 +8,7 @@ from types import ModuleType
 from typing import Dict, Callable
 
 import wx
+from wx.py import dispatcher
 
 import config
 from srctools.logger import get_logger
@@ -18,7 +19,8 @@ logger = get_logger()
 class Events(Enum):
 
 	RegisterMenus = 'RegisterMenusEvent'
-	LogWindowCreated = 'LogWindow'
+	LogWindowCreated = 'LogWindowEvent'
+	UnregisterMenu = 'UnregisterMenuEvent'
 
 
 class Plugin:
@@ -53,7 +55,7 @@ class Plugin:
 			if not systemObj.isReloading:
 				logger.error(f'Duplicate plugin found! id: {self.pluginid}, duplicate name: {self.name}, it will replace the other plugin')
 		systemObj.plugins[self.pluginid] = WrappedPlugin()
-		return wrap
+		return WrappedPlugin
 
 
 class PluginNotValid(Exception):
@@ -218,8 +220,7 @@ class system:
 					pluginid = key
 					break
 				f += 1
-			module = self.modules[ self.plugins[pluginid].__module__ ]
-			print('stop!')
+			module = self.modules[ self.plugins[pluginid].__class__.__base__.__module__ ]
 			# wait for the plugin to unload
 			try:
 				await self.plugins[pluginid].unload()
@@ -250,6 +251,9 @@ class system:
 			self.plugins[pluginid].__state__ = 'loaded'
 			# no mo reloading
 			self.isReloading = False
+		dispatcher.send(Events.RegisterMenus, MenuBar=wx.GetTopLevelWindows()[0].menuBar)
+		from logWindow import logWindow
+		dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
 
 	async def unloadAndStop(self):
 		"""

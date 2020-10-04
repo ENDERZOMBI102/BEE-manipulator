@@ -125,7 +125,8 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 		releaseVer = VersionInfo.parse( data['tag_name'] )
 		releaseDesc = data['body']
 	return UpdateInfo( releaseVer, releaseUrl, releaseDesc )
-f
+
+
 def genReleasesApiUrl(url: str = None) -> str:
 	"""
 	A function that makes a github api latest release url from a repo url

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import wx
 import wx.adv
-import wx.py.dispatcher
+import wx.py.dispatcher as dispatcher
 
 import aboutWindow
 import beeManager
@@ -15,6 +15,7 @@ import logWindow
 import pluginSystem
 import settingsUI
 import utilities
+from pluginSystem import Events
 from srctools.logger import get_logger, init_logging
 
 # init important things
@@ -31,6 +32,7 @@ class root(wx.Frame):
 	settingsWindowInstance: settingsUI.window = None
 
 	def __init__(self):
+		# load plugins
 		super().__init__( None, title="BEE Manipulator " + str(config.version) )
 		# sets the app icon
 		self.SetIcon(utilities.icon)
@@ -46,9 +48,7 @@ class root(wx.Frame):
 		self.SetSize(width=600, height=500)
 		self.SetMinSize( wx.Size(width=600, height=500) )
 		LOGGER.info(f'internet connected: {utilities.isonline()}')
-		# load plugins
-		wx.CallLater(0, pluginSystem.systemObj.startSync )
-		#asyncio.run( pluginSystem.systemObj.start() )
+		pluginSystem.systemObj.startSync()
 		"""
 		A menu bar is composed of menus, which are composed of menu items.
 		This section builds the menu bar and binds actions to them
@@ -126,10 +126,10 @@ class root(wx.Frame):
 			self.fileMenu.Enable(1, False)
 		else:
 			self.portalMenu.Enable(10, False)
-
+		# register event handlers
+		dispatcher.connect(self.UnregisterMenu, Events.UnregisterMenu)
 		# trigger the registerMenu event
-		wx.py.dispatcher.send('RegisterMenus', self, MenuBar=self.menuBar)
-
+		dispatcher.send(Events.RegisterMenus, MenuBar=self.menuBar)
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
@@ -313,6 +313,9 @@ class root(wx.Frame):
 	@staticmethod
 	def openDiscord(event):
 		openUrl('https://discord.gg/hnGFJrz')
+
+	def UnregisterMenu(self, menu: str):
+		self.menuBar.FindMenu(menu)
 
 
 def openUrl(url: str):
