@@ -1,7 +1,8 @@
 import pytest
-from srctools.property_parser import Property, KeyValError, NoKeyError
-from srctools.tokenizer import C_Tokenizer, Py_Tokenizer
+
 from srctools import property_parser as pp_mod
+from srctools.property_parser import Property, KeyValError
+from srctools.tokenizer import C_Tokenizer, Py_Tokenizer
 
 if C_Tokenizer is not None:
     parms = [C_Tokenizer, Py_Tokenizer]

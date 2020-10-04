@@ -1,14 +1,12 @@
 """Reads the GameInfo file to determine where Source game data is stored."""
-from pathlib import Path
+import itertools
 import os
 import sys
+from pathlib import Path
 from typing import Union, List
-
-import itertools
 
 from srctools import Property
 from srctools.filesys import FileSystemChain, VPKFileSystem, RawFileSystem
-
 
 GINFO = 'gameinfo.txt'
 

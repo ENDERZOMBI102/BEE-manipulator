@@ -1,24 +1,24 @@
 """Handles the list of files which are desired to be packed into the BSP."""
 import io
-from collections import OrderedDict
-from typing import Iterable, Dict, Tuple, List, Iterator, Set, Optional
-from enum import Enum
-from zipfile import ZipFile
 import os
+from collections import OrderedDict
+from enum import Enum
+from typing import Iterable, Dict, Tuple, List, Iterator, Set, Optional
+from zipfile import ZipFile
 
-from srctools.tokenizer import TokenSyntaxError
-from srctools.property_parser import Property, KeyValError
-from srctools.vmf import VMF
-from srctools.fgd import FGD, ValueTypes as KVTypes, KeyValues
+import srctools.logger
 from srctools.bsp import BSP
+from srctools.fgd import FGD, ValueTypes as KVTypes, KeyValues
 from srctools.filesys import (
-    FileSystem, VPKFileSystem, FileSystemChain, File,
-    VirtualFileSystem,
+	FileSystem, VPKFileSystem, FileSystemChain, File,
+	VirtualFileSystem,
 )
 from srctools.mdl import Model
-from srctools.vmt import Material, VarType
+from srctools.property_parser import Property, KeyValError
 from srctools.sndscript import Sound, SND_CHARS
-import srctools.logger
+from srctools.tokenizer import TokenSyntaxError
+from srctools.vmf import VMF
+from srctools.vmt import Material, VarType
 
 LOGGER = srctools.logger.get_logger(__name__)
 

@@ -1,9 +1,8 @@
 import itertools as _itertools
 import os as _os
 from collections import abc as _abc
-from typing import Union, Type, TypeVar, Iterator, Sequence, List, Container
 from types import TracebackType
-
+from typing import Union, Type, TypeVar, Iterator, Sequence, List, Container
 
 __all__ = [
     'Vec', 'Vec_tuple', 'parse_vec_str',

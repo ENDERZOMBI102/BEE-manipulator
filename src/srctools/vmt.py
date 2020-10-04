@@ -1,11 +1,10 @@
 """Parses material files."""
-from typing import (
-    Iterable, List, Dict, Union, Callable, Optional, Iterator,
-    Tuple,
-)
-
 import sys
 from enum import Enum
+from typing import (
+	Iterable, List, Dict, Union, Callable, Optional, Iterator,
+	Tuple,
+)
 
 from srctools import FileSystem, Property
 from srctools.tokenizer import Token as Tok, Tokenizer as Tokenizer

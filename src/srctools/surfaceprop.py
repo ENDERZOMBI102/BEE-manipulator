@@ -1,11 +1,10 @@
 """Parse surfaceproperties files, to determine surface physics.
 """
-from srctools.property_parser import Property
-from srctools.filesys import FileSystem, File
-
-from typing import Optional, Dict, TypeVar
 from enum import Enum
+from typing import Optional, Dict, TypeVar
 
+from srctools.filesys import FileSystem, File
+from srctools.property_parser import Property
 
 __all__ = ['SurfChar', 'SurfaceProp']
 

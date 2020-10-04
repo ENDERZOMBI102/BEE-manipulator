@@ -3,7 +3,7 @@
 A list of options are passed in, which parse each option to a basic type.
 """
 import inspect
-from enum import Enum, EnumMeta
+from enum import Enum
 from pathlib import Path
 from typing import TypeVar, Union, Any, List, Type, Optional, Dict, IO, overload
 

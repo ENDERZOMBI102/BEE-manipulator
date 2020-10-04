@@ -1,9 +1,9 @@
 """Transformations that can be applied to the BSP file."""
 from typing import Callable, Dict, Tuple, List
+
 from srctools import FileSystem, VMF, Output
 from srctools.logger import get_logger
 from srctools.packlist import PackList
-
 
 LOGGER = get_logger(__name__, 'bsp_trans')
 

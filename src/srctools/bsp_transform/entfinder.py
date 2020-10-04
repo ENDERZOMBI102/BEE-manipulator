@@ -2,10 +2,10 @@
 import itertools
 import math
 from enum import Enum
-from typing import Dict, Tuple
+from typing import Dict
 
-from srctools.bsp_transform import trans, Context
 from srctools import conv_bool, conv_float, Vec, Entity
+from srctools.bsp_transform import trans, Context
 from srctools.logger import get_logger
 
 LOGGER = get_logger(__name__)

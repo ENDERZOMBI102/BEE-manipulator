@@ -10,7 +10,6 @@ from srctools import Entity, Output
 from srctools.bsp_transform import trans, Context
 from srctools.logger import get_logger
 
-
 LOGGER = get_logger(__name__)
 
 

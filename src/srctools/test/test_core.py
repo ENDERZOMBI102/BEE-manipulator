@@ -1,8 +1,8 @@
 """Test functionality in srctools.__init__."""
 import pytest
 
-from srctools import EmptyMapping
 import srctools
+from srctools import EmptyMapping
 
 
 class FalseObject:

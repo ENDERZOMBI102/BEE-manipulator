@@ -1,17 +1,16 @@
-from itertools import zip_longest
-import pytest
 import codecs
+from itertools import zip_longest
 
+import pytest
 from pytest import raises
 
-from srctools.test.test_property_parser import parse_test as prop_parse_test
 from srctools.property_parser import KeyValError
+from srctools.test.test_property_parser import parse_test as prop_parse_test
 from srctools.tokenizer import (
-    Token,
-    Tokenizer,
-    C_Tokenizer, Py_Tokenizer,
-    escape_text, _py_escape_text,
-    TokenSyntaxError,
+	Token,
+	C_Tokenizer, Py_Tokenizer,
+	escape_text, _py_escape_text,
+	TokenSyntaxError,
 )
 
 T = Token

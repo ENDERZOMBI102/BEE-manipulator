@@ -1,7 +1,7 @@
 """Implemenations of specific code for each FGD helper type."""
 from typing import (
-    List, Optional, Iterator, Union, Tuple, TYPE_CHECKING,
-    Collection,
+	List, Optional, Iterator, Union, Tuple, TYPE_CHECKING,
+	Collection,
 )
 
 from srctools import Vec, parse_vec_str

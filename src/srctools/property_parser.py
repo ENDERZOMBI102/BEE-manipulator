@@ -57,24 +57,22 @@ They end with a quote."
 
     \n, \t, and \\ will be converted in Property values.
 """
-import sys
-import keyword
 import builtins  # Property.bool etc shadows these.
-
-from srctools import BOOL_LOOKUP, EmptyMapping
-from srctools.vec import Vec as _Vec
-from srctools.tokenizer import Token, Tokenizer, TokenSyntaxError, escape_text
-
+import keyword
+import sys
 from typing import (
-    Optional, Union, Any,
-    List, Tuple, Dict, Iterator,
-    TypeVar,
-    Iterable,
-    overload,
-    Callable,
-    Mapping,
+	Optional, Union, Any,
+	List, Tuple, Dict, Iterator,
+	TypeVar,
+	Iterable,
+	overload,
+	Callable,
+	Mapping,
 )
 
+from srctools import BOOL_LOOKUP, EmptyMapping
+from srctools.tokenizer import Token, Tokenizer, TokenSyntaxError, escape_text
+from srctools.vec import Vec as _Vec
 
 __all__ = ['KeyValError', 'NoKeyError', 'Property']
 

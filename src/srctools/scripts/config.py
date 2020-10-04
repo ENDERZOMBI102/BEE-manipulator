@@ -2,12 +2,10 @@
 from pathlib import Path
 from typing import Tuple, Set
 
-from srctools.game import Game
-
 from srctools import Property, logger, AtomicWriter
 from srctools.filesys import FileSystemChain, FileSystem, RawFileSystem, VPKFileSystem
+from srctools.game import Game
 from srctools.props_config import Opt, Config, TYPE
-
 
 __all__ = [
     'LOGGER',

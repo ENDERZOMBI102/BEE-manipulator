@@ -1,10 +1,10 @@
 """Runs before VRAD, to run operations on the final BSP."""
 import argparse
+import sys
+from pathlib import Path
 
 from srctools import Property
 from srctools.logger import init_logging
-from pathlib import Path
-import sys
 
 # Put the logs in the executable folders.
 LOGGER = init_logging(Path(sys.argv[0]).with_name('postcompiler.log'))

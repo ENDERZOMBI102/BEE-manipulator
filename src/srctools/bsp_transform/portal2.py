@@ -1,6 +1,6 @@
 """Portal-2 specific transformations."""
-from srctools.bsp_transform import trans, Context
 from srctools import Output, conv_bool, conv_int, VMF
+from srctools.bsp_transform import trans, Context
 
 
 @trans('Fix Laser Catcher Skins')

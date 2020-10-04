@@ -1,17 +1,12 @@
 import tkinter as tk
-from tkinter import messagebox as msg
-import tkinter.ttk as ttk
-import config
-from typing import Union
-from utilities import *
-import beeManager
 import webbrowser as wb
-import os
+
 import logWindow
 from browser import browser
-from utilities import set_window_icon
 from settingsUI import settingsWindow
-from srctools.logger import get_logger
+from utilities import *
+from utilities import set_window_icon
+
 
 class root(tk.Tk):
     def __init__(self):

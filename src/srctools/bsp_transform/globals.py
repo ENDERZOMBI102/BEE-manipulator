@@ -3,10 +3,9 @@ import itertools
 from collections import defaultdict
 from typing import Dict, Tuple, List
 
+from srctools import Output
 from srctools.bsp_transform import trans, Context
 from srctools.logger import get_logger
-from srctools import Output
-
 
 LOGGER = get_logger(__name__)
 

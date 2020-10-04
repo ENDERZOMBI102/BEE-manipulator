@@ -1,7 +1,7 @@
+from os import getenv
 from os import system, chdir, remove
 from pathlib import Path
 from sys import argv
-from os import getenv
 
 upxpath = 'C:/Users/Flavia/AppData/Local/Programs/UPX/upx-3.96-win64/upx.exe' if getenv('upxpath') is None else getenv('upxpath')
 distpath = str( Path('./dist/BEE Manipulator').resolve() ).replace('\\', '/')

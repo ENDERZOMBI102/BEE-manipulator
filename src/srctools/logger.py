@@ -3,11 +3,11 @@ Wrapper around logging to provide our own functionality.
 
 This adds the ability to log using str.format() instead of %.
 """
+import io
 import itertools
 import logging
 import os
 import sys
-import io
 import traceback
 from types import TracebackType
 from typing import Dict, Tuple, Union, Type, Callable, Any

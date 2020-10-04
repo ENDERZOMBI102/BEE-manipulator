@@ -2,24 +2,23 @@
 Wraps property_parser tree in a set of classes which smartly handle
 specifics of VMF files.
 """
+import builtins
 import io
 import itertools
 import operator
-import builtins
 from collections import defaultdict, namedtuple
 from contextlib import suppress
-
 from typing import (
-    Optional, Union, Any, overload, TypeVar,
-    Dict, List, Tuple, Set, Mapping, IO,
-    Iterable, Iterator,
-    NamedTuple,
+	Optional, Union, Any, overload, TypeVar,
+	Dict, List, Tuple, Set, Mapping, IO,
+	Iterable, Iterator,
+	NamedTuple,
 )
 
-from srctools import BOOL_LOOKUP, EmptyMapping
-from srctools.vec import Vec
-from srctools.property_parser import Property
 import srctools
+from srctools import BOOL_LOOKUP, EmptyMapping
+from srctools.property_parser import Property
+from srctools.vec import Vec
 
 # Used to set the defaults for versioninfo
 CURRENT_HAMMER_VERSION = 400

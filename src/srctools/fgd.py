@@ -1,19 +1,18 @@
 """Parse FGD files, used to describe Hammer entities."""
+import io
 import itertools
+import math
 from enum import Enum
 from pathlib import PurePosixPath
 from struct import Struct
-import io
-import math
-
 from typing import (
-    Optional, Union, overload,
-    TypeVar, Callable, Type,
-    Dict, Tuple, List, Set, FrozenSet,
-    Mapping, Iterator, Iterable, Collection,
-    BinaryIO, TextIO,
-    Container,
-    IO,
+	Optional, Union, overload,
+	TypeVar, Callable, Type,
+	Dict, Tuple, List, Set, FrozenSet,
+	Mapping, Iterator, Iterable, Collection,
+	BinaryIO, TextIO,
+	Container,
+	IO,
 )
 
 import srctools

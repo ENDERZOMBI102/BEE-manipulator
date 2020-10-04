@@ -4,8 +4,8 @@ Those are ones that don't simply appear in fgd.
 """
 from typing import Iterator, Callable, Tuple, Union, List, Dict
 
-from srctools.packlist import FileType
 from srctools import Entity, conv_int
+from srctools.packlist import FileType
 
 __all__ = ['CLASS_RESOURCES']
 

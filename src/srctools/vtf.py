@@ -3,21 +3,19 @@
 After this is imported, the imghdr module can recoginise
 VTF images (returning 'source_vtf').
 """
-from array import array
 import math
 import struct
+from array import array
 from collections import namedtuple
 from enum import Enum
+from typing import IO, Dict, List, Optional, Tuple, Iterable, Union
 
 from srctools import Vec
-
-from typing import IO, Dict, List, Optional, Tuple, Iterable, Union
+# noinspection PyProtectedMember
+from srctools import _py_vtf_readwrite as _py_format_funcs
 
 # A little dance to import both the Cython and Python versions,
 # and choose an appropriate unprefixed version.
-
-# noinspection PyProtectedMember
-from srctools import _py_vtf_readwrite as _py_format_funcs
 try:
     # noinspection PyUnresolvedReferences, PyProtectedMember
     from srctools import _cy_vtf_readwrite as _cy_format_funcs # type: ignore

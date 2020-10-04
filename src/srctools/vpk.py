@@ -1,12 +1,10 @@
 """Classes for reading and writing Valve's VPK format, version 1."""
+import operator
 import os
 import struct
-import operator
+from binascii import crc32  # The checksum method Valve uses
 from enum import Enum
-from binascii import crc32 # The checksum method Valve uses
-
 from typing import Union, Dict, Optional, List, Tuple, Iterator, BinaryIO
-
 
 VPK_SIG = 0x55aa1234  # First byte of the file..
 DIR_ARCH_INDEX = 0x7fff  # File index used for the _dir file.

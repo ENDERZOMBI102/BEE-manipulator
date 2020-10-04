@@ -1,10 +1,9 @@
 """Code for running VBSP and VRAD."""
-from typing import List, IO
-
-import os.path
-import sys
-import subprocess
 import logging
+import os.path
+import subprocess
+import sys
+from typing import List, IO
 
 from srctools.logger import get_logger
 

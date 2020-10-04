@@ -6,7 +6,6 @@ from srctools.bsp_transform import trans, Context
 from srctools.logger import get_logger
 from srctools.packlist import FileType, SoundScriptMode, unify_path
 
-
 LOGGER = get_logger(__name__, 'trans.packing')
 
 

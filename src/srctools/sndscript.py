@@ -1,14 +1,13 @@
 """Reads and writes Soundscripts."""
 from enum import Enum
+from typing import (
+	Optional, Union, TypeVar,
+	List, Tuple, Dict,
+	Callable,
+	TextIO,
+)
 
 from srctools import Property, conv_float
-
-from typing import (
-    Optional, Union, TypeVar,
-    List, Tuple, Dict,
-    Iterable, Type, Callable,
-    TextIO,
-)
 
 # All the prefixes  wavs can have.
 SND_CHARS = '*@#<>^)}$!?'

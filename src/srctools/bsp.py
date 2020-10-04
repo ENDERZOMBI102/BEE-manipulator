@@ -2,19 +2,15 @@
 
 """
 import contextlib
-
-from io import BytesIO
 import itertools
-
+import struct
+from io import BytesIO
+from typing import List, Dict, Iterator, Union, Optional, BinaryIO
 from zipfile import ZipFile
 
 from srctools import AtomicWriter, Vec, conv_int
-from srctools.vmf import VMF, Entity, Output
 from srctools.property_parser import Property
-import struct
-
-from typing import List, Dict, Iterator, Union, Optional, Tuple, BinaryIO
-
+from srctools.vmf import VMF, Entity, Output
 
 try:
     from enum import Enum, Flag

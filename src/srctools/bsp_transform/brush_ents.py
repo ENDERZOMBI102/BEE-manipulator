@@ -1,6 +1,6 @@
 """Implements various brush entities."""
-from srctools.bsp_transform import trans, Context
 from srctools import Output, conv_bool, conv_float
+from srctools.bsp_transform import trans, Context
 
 
 @trans('P2 Coop Trigger')

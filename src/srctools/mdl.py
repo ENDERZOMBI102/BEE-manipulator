@@ -1,17 +1,15 @@
 """Parses Source models, to extract metadata."""
-from typing import (
-    Union, Iterator, Iterable,
-    List, Dict, Tuple, NamedTuple,
-    BinaryIO,
-)
 from enum import IntFlag, Enum
 from pathlib import PurePosixPath
+from struct import unpack, Struct, calcsize
+from typing import (
+	Union, Iterator, Iterable,
+	List, Dict, Tuple, NamedTuple,
+	BinaryIO,
+)
 
 from srctools.filesys import FileSystem, File
 from srctools.vec import Vec
-from struct import unpack, Struct, calcsize
-import os
-
 
 IncludedMDL = NamedTuple('IncludedMDL', [
     ('label', str),

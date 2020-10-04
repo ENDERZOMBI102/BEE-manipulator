@@ -1,7 +1,7 @@
 """Compute diffs between files that srctools handles."""
 import sys
-import os
 from pathlib import Path
+
 from srctools import VPK
 
 

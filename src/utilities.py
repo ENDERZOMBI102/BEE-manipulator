@@ -101,7 +101,7 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 	logger.debug(f'checking url..')
 	if 'api.github' not in url:
 		logger.debug(f'converting url..')
-		url = genApiUrl( url )  # convert normal github repo url to github api url
+		url = genReleasesApiUrl(url)  # convert normal github repo url to github api url
 	logger.debug(f'url valid!')
 	logger.debug(f'checking updates on url: {url}')
 	data = get( url ).json()  # get the latest release data
@@ -125,12 +125,11 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 		releaseVer = VersionInfo.parse( data['tag_name'] )
 		releaseDesc = data['body']
 	return UpdateInfo( releaseVer, releaseUrl, releaseDesc )
-
-
-def genApiUrl(url: str = None) -> str:
+f
+def genReleasesApiUrl(url: str = None) -> str:
 	"""
 	A function that makes a github api latest release url from a repo url
-	:param url: repo url to be transformed
+	aram url: repo url to be transformed
 	:return: the github api url
 	"""
 	splitUrl = url.split('/')  # slit the url in various segments

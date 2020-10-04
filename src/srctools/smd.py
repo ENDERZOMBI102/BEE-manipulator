@@ -1,12 +1,11 @@
 """Parses SMD model/animation data."""
+import math
 import os
 import re
 from operator import itemgetter
-
-import math
 from typing import (
-    List, Optional, Dict, Tuple, Iterator, Iterable, Union,
-    BinaryIO,
+	List, Optional, Dict, Tuple, Iterator, Iterable, Union,
+	BinaryIO,
 )
 
 from srctools import Vec

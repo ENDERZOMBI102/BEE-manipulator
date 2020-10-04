@@ -2,7 +2,6 @@
 import argparse
 import sys
 import traceback
-from pathlib import Path
 from collections import defaultdict, Counter
 from typing import List
 

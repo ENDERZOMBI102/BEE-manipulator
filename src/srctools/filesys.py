@@ -3,22 +3,20 @@
 This allows accessing raw files, zips and VPKs in the same way.
 Files are case-insensitive, and both slashes are converted to '/'.
 """
-from zipfile import ZipFile, ZipInfo
 import io
 import os
-
-from srctools.vpk import VPK, FileInfo as VPKFile
-from srctools.property_parser import Property
-
 from typing import (
-    Union, Iterator,
-    List, Tuple, Dict,
-    TextIO, BinaryIO,
-    Any,
-    Optional,
-    Set,
+	Union, Iterator,
+	List, Tuple, Dict,
+	TextIO, BinaryIO,
+	Any,
+	Optional,
+	Set,
 )
+from zipfile import ZipFile, ZipInfo
 
+from srctools.property_parser import Property
+from srctools.vpk import VPK, FileInfo as VPKFile
 
 __all__ = [
     'File', 'FileSystem', 'get_filesystem',
