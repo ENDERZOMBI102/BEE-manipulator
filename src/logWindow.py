@@ -1,14 +1,16 @@
 import logging
 
 import wx
+import wx.py.dispatcher as dispatcher
 
 import config
 import srctools.logger
 import utilities
+from pluginSystem import Events
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 
-visible: bool = config.load("logWindowVisibility")
+visible: bool = config.load('logWindowVisibility')
 logger = srctools.logger.get_logger()
 
 
@@ -57,7 +59,7 @@ class logWindow(wx.Frame):
     def __init__(self):
         super().__init__(
                             wx.GetTopLevelWindows()[0],  # parent
-                            title="Logs",  # window title
+                            title='Logs',  # window title
                             style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER  # to make the window not resizeable
                         )  # init the window
         logWindow.instance = self
@@ -103,7 +105,7 @@ class logWindow(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose, self)
         self.Bind(wx.EVT_MOVE_END, self.OnMoveEnd, self)
         self.Bind(wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn)
-        wx.py.dispatcher.send('LogWindow', self, window=self)
+        dispatcher.send(Events.LogWindowCreated, None, window=self)
         updateVisibility()
 
     def OnClearButtonPressed(self, event):
@@ -111,7 +113,7 @@ class logWindow(wx.Frame):
 
     @staticmethod
     def OnClose(event):
-        logger.debug(f'hided log window')
+        logger.debug(f'hidden log window')
         toggleVisibility()
 
     def OnMoveEnd(self, event):
@@ -148,7 +150,7 @@ def toggleVisibility(placeHolder=None):
 def updateVisibility():
     global visible
     # save the visibility
-    config.save(visible, "logWindowVisibility")
+    config.save(visible, 'logWindowVisibility')
     logger.debug(f'saved window visibility')
     if visible:
         logWindow.instance.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
@@ -166,18 +168,18 @@ def changeLevel(level: str) -> None:
     :return: none
     """
     level = level.upper()
-    if level == "INFO":
+    if level == 'INFO':
         data = logging.INFO
-    elif level == "WARNING":
+    elif level == 'WARNING':
         data = logging.WARNING
-    elif level == "ERROR":
-        data  = logging.ERROR
+    elif level == 'ERROR':
+        data = logging.ERROR
     else:
         data = logging.DEBUG
     logger.info(f'changed log level to {level}')
     logger.info(f'saved log level {level} to config')
-    config.save(level, "logLevel")
-    logWindow.instancelogHandler.setLevel(data)
+    config.save(level, 'logLevel')
+    logWindow.instance.logHandler.setLevel(data)
 
 
 def getLevel() -> int:
