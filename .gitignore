@@ -14,7 +14,7 @@ assets/about.html
 src/logs
 logs
 /src/.env
-/plugins
+plugins
 docs/console.py
 docs/plugin.py
-packages/
+packages
