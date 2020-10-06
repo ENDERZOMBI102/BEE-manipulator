@@ -18,9 +18,34 @@ logger = get_logger()
 
 class Events(Enum):
 
-	RegisterMenus = 'RegisterMenusEvent'
+	RegisterEvent = 'RegisterMenusEvent'
 	LogWindowCreated = 'LogWindowEvent'
 	UnregisterMenu = 'UnregisterMenuEvent'
+
+
+class Errors:
+
+	class MenuNotFoundException(Exception):
+		pass
+
+	class DupeMenuFoundException(Exception):
+		pass
+
+
+class RegisterHandler:
+
+	_mainWindow: wx.Frame
+	"""PRIVATE ATTRIBUTE"""
+
+	def __init__(self, win: wx.Frame):
+		self._mainWindow = win
+
+	def RegisterMenu( self, menu: wx.Menu, title: str):
+		index = self._mainWindow.menuBar.FindMenu(title)
+		if index == wx.NOT_FOUND:
+			self._mainWindow.menuBar.Append( menu, title )
+		else:
+			raise Errors.DupeMenuFoundException(f'duplicate menu "{menu}"')
 
 
 class Plugin:
@@ -251,7 +276,7 @@ class system:
 			self.plugins[pluginid].__state__ = 'loaded'
 			# no mo reloading
 			self.isReloading = False
-		dispatcher.send(Events.RegisterMenus, MenuBar=wx.GetTopLevelWindows()[0].menuBar)
+		dispatcher.send( Events.RegisterEvent, RegisterHandler=RegisterHandler( wx.GetTopLevelWindows()[0] ) )
 		from logWindow import logWindow
 		dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
 

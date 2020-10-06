@@ -127,9 +127,9 @@ class root(wx.Frame):
 		else:
 			self.portalMenu.Enable(10, False)
 		# register event handlers
-		dispatcher.connect(self.UnregisterMenu, Events.UnregisterMenu)
+		dispatcher.connect( receiver=self.UnregisterMenu, signal=Events.UnregisterMenu )
 		# trigger the registerMenu event
-		dispatcher.send(Events.RegisterMenus, MenuBar=self.menuBar)
+		dispatcher.send( Events.RegisterEvent, RegisterHandler=pluginSystem.RegisterHandler(self) )
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
@@ -315,7 +315,11 @@ class root(wx.Frame):
 		openUrl('https://discord.gg/hnGFJrz')
 
 	def UnregisterMenu(self, menu: str):
-		self.menuBar.FindMenu(menu)
+		index = self.menuBar.FindMenu(menu)
+		if index == wx.NOT_FOUND:
+			raise pluginSystem.Errors.MenuNotFoundException(f'unknown menu "{menu}"')
+		else:
+			self.menuBar.Remove(index)
 
 
 def openUrl(url: str):
