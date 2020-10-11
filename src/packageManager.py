@@ -6,7 +6,8 @@ import requests
 
 import beeManager
 import config
-from packages import PackageFrame, PackageLargeView
+import utilities
+from packages import BPackage, PackageLargeView
 from srctools.logger import get_logger
 
 logger = get_logger()
@@ -43,18 +44,19 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 
 class PackageManager:
 
-	database: Dict[str, PackageFrame]
+	database: Dict[str, BPackage]
 	apiUrl: str
-	databasePath = Path( config.load('databasePath') )
+	databaseUrl = config.load('onlineDatabaseUrl')
 	packagesWindows: Dict[str, PackageLargeView]
 
 	def __init__(self):
 		logger.info(f'checking package database.. ({self.databasePath})')
-		if not self.databasePath.exists():
-			# download database
+		if not utilities.isonline():
+			pass
+		else:
 			pass
 
-	def getPackage(self, identifier: str) -> PackageFrame:
+	def getPackage(self, identifier: str) -> BPackage:
 		return self.database[identifier]
 
 	def getPackageLargeView(self, identifier: str) -> PackageLargeView:

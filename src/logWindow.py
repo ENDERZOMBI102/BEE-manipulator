@@ -46,7 +46,7 @@ class logHandler(logging.Handler):
         elif record.levelno == logging.CRITICAL:
             logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 255, 255) ) )  # white
         # display the log message
-        logWindow.instance.text.AppendText(self.format(record))
+        logWindow.instance.text.AppendText( self.format(record) )
 
 
 class logWindow(wx.Frame):
@@ -54,7 +54,7 @@ class logWindow(wx.Frame):
     this class make the log window and the log handler
     """
 
-    instance = None
+    instance: 'logWindow' = None
 
     def __init__(self):
         super().__init__(
