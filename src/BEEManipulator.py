@@ -1,8 +1,11 @@
 import os
 import sys
 import traceback
+from logging import Logger
 from pathlib import Path
 from sys import argv
+from types import TracebackType
+from typing import Type
 
 import wx
 
@@ -12,79 +15,82 @@ import srctools.logger
 import timeTest
 import utilities
 
-timeStartup = False
-if '--time' in argv:
-    timeStartup = True
-    timeTest.start()
 
-# use file dir as working dir
-path = Path(__file__).resolve()
-if getattr(sys, 'frozen', False):
-    print(f"BM exe path: {path.parent.resolve()}")
-    os.chdir( path.parent )
-else:
-    print(f"BM source path: {path.parent}")
-    os.chdir( path.parent )
+class App(wx.App):
+
+	instanceChecker = wx.SingleInstanceChecker('BM')
+	root: 'root'
+	logger: Logger
+
+	def OnRun(self):
+		if self.instanceChecker.IsAnotherRunning():
+			print('another instace of BM is running, aborting.')
+			return False
+
+	def OnPreInit(self):
+		# initialize logging
+		# custom unhandled exception handler for the "cool" error window
+		srctools.logger.init_logging( './logs/latest.log', on_error=self.OnError )
+		self.logger = srctools.logger.get_logger('BEE Manipulator')
+		# if we started with --dev parameter, set loglevel to debug
+		if '--dev' in argv:
+			config.overwrite('logLevel', 'DEBUG')
+		config.overwrite('logWindowVisibility', True)
+		config.overwrite('l18nFolderPath', './../langs')
+		utilities.env = 'dev'
+		# check configs
+		self.logger.info('Checking config file..')
+		if config.check():
+			self.logger.info('Valid config file found!')
+		else:
+			self.logger.error('Invalid or inesistent config file detected!')
+			self.logger.info('Creating new config file...')
+			config.createConfig()
+			self.logger.info('Config file created!')
+		# start localizations
+		localization.Localize()
+		self.logger.info(f'current lang: {loc("currentLang")}')
+
+	def OnInit(self):
+		# create icon object
+		utilities.__setIcon()
+		# import after localize() object is created so that loc() is already present
+		from uiWX import root
+		# set app name
+		self.logger.debug("setting application name..")
+		self.SetAppName("BEE Manipulator")
+		self.SetAppDisplayName("BEE Manipulator")
+		self.logger.debug("setted app name")
+		# start ui
+		self.logger.info(f'Starting BEE Manipulator v{config.version}!')
+		self.logger.info('starting ui!')
+		# start the main loop
+		root = root()
+		root.Show()
+		self.SetTopWindow(root)
+		return True
+
+	def OnExit(self):
+		return True
+
+	def OnError( self, etype: Type[BaseException], value: BaseException, tb: TracebackType ):
+		wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
+		if self.root is not None:
+			self.root.Destroy()
 
 
-def quitter():
-    # app restarter
-    if getattr(sys, 'restart', False):
-        os.system(__file__)
-
-
-# create the wx app obj
-app = wx.App()
-
-
-instance = wx.SingleInstanceChecker('BM')
-if instance.IsAnotherRunning():
-    print('another instace of BM is running, aborting.')
-    exit()
-
-# initialize logging
-# custom unhandled exception handler for the "cool" error window
-srctools.logger.init_logging("./logs/latest.log", on_error=lambda etype, value, tb: \
-    wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) ) )
-LOGGER = srctools.logger.get_logger('BEE Manipulator')
-# if we started with --dev parameter, set loglevel to debug
-if '--dev' in argv:
-    config.overwrite('logLevel', 'DEBUG')
-    config.overwrite('logWindowVisibility', True)
-    config.overwrite('l18nFolderPath', './../langs')
-    utilities.env = 'dev'
-# app init
-try:
-    LOGGER.debug("setting application name..")
-    app.SetAppName("BEE Manipulator")
-    app.SetAppDisplayName("BEE Manipulator")
-    LOGGER.debug("successfully setted app name")
-except:
-    LOGGER.debug("Can't set app name!")
-LOGGER.info('Checking config file..')
-if config.check():
-    LOGGER.info('Valid config file found!')
-else:
-    LOGGER.error('Invalid or inesistent config file detected!')
-    LOGGER.info('Creating new config file...')
-    config.createConfig()
-    LOGGER.info('Config file created!')
-# start localizations
-localization.Localize()
-LOGGER.info(f'current lang: { loc("currentLang") }')
-# create icon object
-utilities.__setIcon()
-# import after localize() object init so that loc() is already present
-from uiWX import root
-# start ui
-LOGGER.info(f'Starting BEE Manipulator v{config.version}!')
-LOGGER.info('starting ui!')
-# start the main loop
-root = root()
-root.Show()
-app.OnExit = quitter
-app.SetTopWindow(root)
-if timeStartup:
-    timeTest.stop()
-app.MainLoop()
-
+if __name__ == '__main__':
+	# use file dir as working dir
+	path = Path(__file__).resolve()
+	if getattr(sys, 'frozen', False):
+		print(f"BM exe path: {path.parent.resolve()}")
+	else:
+		print(f"BM source path: {path.parent}")
+	os.chdir(path.parent)
+	timeStartup = '--time' in argv
+	if timeStartup:
+		timeTest.start()
+	app = App()
+	if timeStartup:
+		timeTest.stop()
+	app.MainLoop()
