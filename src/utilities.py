@@ -17,6 +17,10 @@ icon: wx.Icon
 """BEE Manipulator icon as wx.Icon object"""
 
 
+class wxStyles:
+	TITLEBAR_ONLY_BUTTON_CLOSE = wx.DEFAULT_FRAME_STYLE ^ wx.MINIMIZE_BOX ^ wx.MAXIMIZE_BOX
+
+
 class UpdateInfo:
 
 	version: VersionInfo
