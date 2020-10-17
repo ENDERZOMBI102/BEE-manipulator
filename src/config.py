@@ -1,6 +1,7 @@
 import json
+from pathlib import Path
 from sys import argv
-from typing import Dict, Union
+from typing import Dict, Union, Any
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
 from semver import VersionInfo
@@ -11,7 +12,7 @@ from srctools.logger import get_logger
 
 logger = get_logger()
 overwriteDict: dict = {}
-configPath: str = './config.cfg' if utilities.frozen() else './../config.cfg'
+configPath: Path = Path( './config.cfg' if utilities.frozen() else './../config.cfg' )
 assetsPath: str = './assets/' if utilities.frozen() else './../assets/'
 """the path to the assets folder (finishes with /)"""
 pluginsPath: str = './plugins' if utilities.frozen() else './../plugins'
@@ -22,7 +23,7 @@ version: VersionInfo = VersionInfo(
 	prerelease='pre3'
 )
 """current app version"""
-# the plugins dict HAS to be the last
+
 default_config = {
 	'config_type': 'BEE2.4 Manipulator Config File',
 	'usePrereleases': False if utilities.frozen() else True,
@@ -40,8 +41,12 @@ default_config = {
 	'showVerifyDialog': False,
 	'showUninstallDialog': False,
 	'startupUpdateCheck': False,
-	"ShowSplashScreen": False
+	"showSplashScreen": False
 }
+
+
+currentConfigData: Dict[str, Any] = {}
+_timesSaved: int = 0
 
 
 def createConfig():
@@ -52,7 +57,7 @@ def createConfig():
 		json.dump(default_config, file, indent=3)
 
 
-def load(section: str, default=None) -> Union[str, int, bool, None, dict, list]:  # load a config
+def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, None, dict, list]:  # load a config
 	"""
 	loads a section of the config (json-formatted) and return the data.
 	raise an exception if the config or the requested section doesn't exist
@@ -68,22 +73,32 @@ def load(section: str, default=None) -> Union[str, int, bool, None, dict, list]:
 	if section in overwriteDict.keys():
 		logger.debug('using overwrited data!')
 		return overwriteDict[section]
-	try:
-		with open(configPath, 'r', encoding='utf-8') as file:
-			config = json.load(file)  # load the config
-			readeData = config[section]  # take the requested field
+	# is that section present?
+	if section in currentConfigData.keys() and not useDisk:
 		if '--sayconfig' in argv:
-			logger.info(f'{section}: {readeData}')
-		return readeData  # return the readed data
-	except Exception:
-		if default is not None:
-			return default
-		elif section in default_config:
-			logger.warning(f"can't load {section} from config file, using default")
-			return default_config[section]
-		else:
-			logger.error(f"can't load {section} from config file")
-			raise ConfigError(f'{section} not found')
+			logger.info( f'{section}: {currentConfigData[ section ]}' )
+		return currentConfigData[section]
+	elif useDisk:
+		# the config file exists?
+		if configPath.exists():
+			# yes, use it to load the configs
+			with open( configPath, 'r', encoding='utf-8' ) as file:
+				config = json.load(file)  # load the config
+				readeData = config[section]  # take the requested field
+			if '--sayconfig' in argv:
+				logger.info(f'{section}: {readeData}')
+			return readeData  # return the readed data
+	# if the caller setted a default value, return it
+	if default is not None:
+		return default
+	# if we have the searched section in the default config, return it
+	elif section in default_config:
+		logger.warning(f"can't load {section} from config file, using default")
+		return default_config[section]
+	# nothing worked, raise an error
+	else:
+		logger.error(f"can't load {section} from config file")
+		raise ConfigError(f'{section} not found')
 
 
 def save(data, section):  # save a config
@@ -99,42 +114,24 @@ def save(data, section):  # save a config
 	:param data: the data to save
 	:param section: the section of the config to save the data to
 	"""
-
-	try:
-		with open(configPath, 'r', encoding='utf-8') as file:
-			cfg = json.load(file)  # load the config file
-			cfg[section] = data
-		with open(configPath, 'w', encoding='utf-8') as file:
-			json.dump(cfg, file, indent=3)
-		logger.debug(f'saved {section}')
-		if '--sayconfig' in argv:
-			logger.info(f'{section}: {data}')
-	except:
-		logger.error(f'failed to save {data} to {section}!')
-		raise ConfigError('error while saving the config')
-
-
-def loadAll(overwrite: bool = False) -> dict:
-	"""
-	A function that returns all the configs
-	:param overwrite: if true, act like load() and enable config overwrite
-	:return: the config dict
-	"""
-	try:
-		logger.debug('loading config file')
-		with open(configPath, 'r', encoding='utf-8') as file:
-			cfg = json.load(file)  # load the config file
-			if overwrite:  # only if overwrite is true
-				logger.debug(f'overwriting configs..')
-				for key in overwriteDict:  # cycle in the keys
-					if key in cfg:  # overwrite, not create a key
-						cfg[key] = overwriteDict[key]  # finally, overwrite the value
-		logger.debug('finished config file operations, returning configs as dict')
-		return cfg
-	except:
-		logger.error('no config file found! creating & loading new one')
-		createConfig()  # create new config file and call the function again
-		return loadAll()
+	if '--sayconfig' in argv:
+		logger.info( f'{section}: {data}' )
+	# save
+	currentConfigData[section] = data
+	logger.debug( f'saved {section}' )
+	# save to disk if this is the third save
+	global _timesSaved
+	if _timesSaved == 0 or _timesSaved == 1:
+		_timesSaved += 1
+	else:
+		_timesSaved = 0
+		try:
+			# save to disk
+			with open( configPath, 'w', encoding='utf-8' ) as file:
+				json.dump( currentConfigData, file, indent=4 )
+		except:
+			logger.error( f'failed to save config to disk!' )
+			raise ConfigError( 'error while saving the config' )
 
 
 def saveAll(cfg: dict = None):
@@ -224,7 +221,7 @@ def steamDir() -> str:
 	a function that retrieves the steam installation folder by reading the win registry
 	:return: path to steam folder
 	"""
-	if 'steamDir' not in loadAll().keys():
+	if 'steamDir' not in currentConfigData.keys():
 		save(None, 'steamDir')  # create the config without value in case it doesn't exist
 
 	if not load('steamDir') is None:

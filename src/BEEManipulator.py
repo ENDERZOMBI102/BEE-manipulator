@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import traceback
@@ -21,16 +22,27 @@ class App(wx.App):
 	instanceChecker = wx.SingleInstanceChecker('BM')
 	root: 'root'
 	logger: Logger
-
-	def OnRun(self):
-		if self.instanceChecker.IsAnotherRunning():
-			print('another instace of BM is running, aborting.')
-			return False
+	ShouldRestart: bool = False
+	ShouldExit: bool = False
 
 	def OnPreInit(self):
+		# check if there's another instance running
+		if self.instanceChecker.IsAnotherRunning():
+			wx.MessageBox(
+				message='another instance of BM is running, aborting.',
+				caption='Error!',
+				style=wx.OK | wx.CENTRE | wx.STAY_ON_TOP | wx.ICON_ERROR
+			)
+			self.ShouldExit = True
+			return False
+		# populate the config dict
+		config.currentConfigData = config.default_config
+		with open( config.configPath, 'r' ) as file:
+			for section, value in json.load( file ).items():
+				config.currentConfigData[ section ] = value
 		# initialize logging
-		# custom unhandled exception handler for the "cool" error window
-		srctools.logger.init_logging( './logs/latest.log', on_error=self.OnError )
+		# use a window to show the uncaught exception to the user
+		srctools.logger.init_logging( './logs/latest.log' if utilities.frozen() else './../logs/latest.log', on_error=self.OnError )
 		self.logger = srctools.logger.get_logger('BEE Manipulator')
 		# if we started with --dev parameter, set loglevel to debug
 		if '--dev' in argv:
@@ -52,6 +64,8 @@ class App(wx.App):
 		self.logger.info(f'current lang: {loc("currentLang")}')
 
 	def OnInit(self):
+		if self.ShouldExit:
+			return False
 		# create icon object
 		utilities.__setIcon()
 		# import after localize() object is created so that loc() is already present
@@ -71,10 +85,21 @@ class App(wx.App):
 		return True
 
 	def OnExit(self):
-		return True
+		with open(config.configPath, 'w') as file:
+			json.dump(config.currentConfigData, file, indent=4)
+		if self.ShouldRestart:
+			os.system(sys.executable)
+		return 0
 
 	def OnError( self, etype: Type[BaseException], value: BaseException, tb: TracebackType ):
-		wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
+		try:
+			wx.MessageBox(
+				message=''.join( traceback.format_exception(etype, value, tb) ),
+				caption='BM Error!',
+				style=wx.OK | wx.CENTRE | wx.STAY_ON_TOP | wx.ICON_ERROR
+			)
+		except ():
+			wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
 		if self.root is not None:
 			self.root.Destroy()
 
@@ -82,7 +107,7 @@ class App(wx.App):
 if __name__ == '__main__':
 	# use file dir as working dir
 	path = Path(__file__).resolve()
-	if getattr(sys, 'frozen', False):
+	if utilities.frozen():
 		print(f"BM exe path: {path.parent.resolve()}")
 	else:
 		print(f"BM source path: {path.parent}")
