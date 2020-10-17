@@ -63,7 +63,7 @@ class GeneralPage(wx.PreferencesPage):
 			label=loc('settings.tab.general.buwc.text')
 		)
 		self.BUWC.SetToolTip(wx.ToolTip(loc('settings.tab.general.buwc.tooltip')))
-		if not config.load('noUninstallDialog'):
+		if config.load('showUninstallDialog'):
 			self.BUWC.SetValue(True)
 		leftsizer.Add(
 			self.BUWC,
@@ -77,7 +77,7 @@ class GeneralPage(wx.PreferencesPage):
 			label=loc('settings.tab.general.vgfc.text')
 		)
 		self.VGFC.SetToolTip(wx.ToolTip(loc('settings.tab.general.vgfc.tooltip')))
-		if not config.load('noVerifyDialog'):
+		if config.load('showVerifyDialog'):
 			self.VGFC.SetValue(True)
 		leftsizer.Add(
 			self.VGFC,
@@ -91,7 +91,7 @@ class GeneralPage(wx.PreferencesPage):
 			label=loc('settings.tab.general.succ.text')
 		)
 		self.SUCC.SetToolTip(wx.ToolTip(loc('settings.tab.general.succ.tooltip')))
-		if not config.load('noStartupUpdateCheck'):
+		if config.load('startupUpdateCheck'):
 			self.SUCC.SetValue(True)
 		leftsizer.Add(
 			self.SUCC,
@@ -105,7 +105,7 @@ class GeneralPage(wx.PreferencesPage):
 			label=loc('settings.tab.general.ssc.text')
 		)
 		self.SSC.SetToolTip(wx.ToolTip(loc('settings.tab.general.ssc.tooltip')))
-		if not config.load('noSplashScreen'):
+		if config.load('showSplashScreen'):
 			self.SSC.SetValue(True)
 		leftsizer.Add(
 			self.SSC,
@@ -169,16 +169,16 @@ class GeneralPage(wx.PreferencesPage):
 		return panel
 
 	def save(self, evt: wx.CommandEvent):
-		if evt.EventObject.GetName() == 'BUWC':
-			config.save(not evt.IsChecked(), 'noUninstallDialog')
-		elif evt.EventObject.GetName() == 'VGFC':
-			config.save(not evt.IsChecked(), 'noVerifyDialog')
-		elif evt.EventObject.GetName() == 'SUCC':
-			config.save(not evt.IsChecked(), 'noStartupUpdateCheck')
-		elif evt.EventObject.GetName() == 'SSC':
-			config.save(not evt.IsChecked(), 'noSplashScreen')
-		elif evt.EventObject.GetName() == 'LDDL':
-			config.save(self.LDDL.GetString(evt.Selection), 'lang')
+		if evt.GetEventObject().GetName() == 'BUWC':
+			config.save(not evt.IsChecked(), 'showUninstallDialog')
+		elif evt.GetEventObject().GetName() == 'VGFC':
+			config.save(not evt.IsChecked(), 'showVerifyDialog')
+		elif evt.GetEventObject().GetName() == 'SUCC':
+			config.save(not evt.IsChecked(), 'startupUpdateCheck')
+		elif evt.GetEventObject().GetName() == 'SSC':
+			config.save(not evt.IsChecked(), 'showSplashScreen')
+		elif evt.GetEventObject().GetName() == 'LDDL':
+			config.save(self.LDDL.GetString( evt.GetSelection() ), 'lang')
 
 	@staticmethod
 	def reloadLangFiles(evt: wx.CommandEvent):
@@ -220,8 +220,7 @@ class PathsPage(wx.PreferencesPage):
 			path=config.portalDir()
 		)
 		self.P2PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p2pdp.tooltip')))
-		self.P2PDP.TextCtrl: wx.TextCtrl
-		self.P2PDP.TextCtrl.SetMinSize( wx.Size( 400, self.P2PDP.TextCtrl.GetSize()[1] ) )
+		self.P2PDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.P2PDP.GetTextCtrl().GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.P2PST,
@@ -245,7 +244,7 @@ class PathsPage(wx.PreferencesPage):
 				path=''
 			)
 			self.P1PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p1pdp.tooltip')))
-			self.P1PDP.TextCtrl.SetMinSize(wx.Size(400, self.P1PDP.TextCtrl.GetSize()[1]))
+			self.P1PDP.GetTextCtrl().SetMinSize(wx.Size(400, self.P1PDP.GetTextCtrl().GetSize()[1]))
 			leftsizer.AddMany([
 				(
 					self.P1PST,
@@ -272,7 +271,7 @@ class PathsPage(wx.PreferencesPage):
 			self.BPDP.SetPath('not installed')
 			self.BPDP.Enable(False)
 		self.BPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.bpdp.tooltip')))
-		self.BPDP.TextCtrl.SetMinSize( wx.Size( 400, self.BPDP.TextCtrl.GetSize()[1] ) )
+		self.BPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.BPDP.GetTextCtrl().GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.BPST,
@@ -295,7 +294,7 @@ class PathsPage(wx.PreferencesPage):
 			path=config.load('databasePath')
 		)
 		self.LDBPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.ldbpdp.tooltip')))
-		self.LDBPDP.TextCtrl.SetMinSize( wx.Size( 400, self.LDBPDP.TextCtrl.GetSize()[1] ) )
+		self.LDBPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.LDBPDP.GetTextCtrl().GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.LDBPST,
@@ -318,7 +317,7 @@ class PathsPage(wx.PreferencesPage):
 			path=config.load('pluginsPath')
 		)
 		self.PPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.ppdp.tooltip')))
-		self.PPDP.TextCtrl.SetMinSize( wx.Size( 400, self.PPDP.TextCtrl.GetSize()[1] ) )
+		self.PPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.PPDP.GetTextCtrl().GetSize()[1] ) )
 		leftsizer.AddMany([
 			(
 				self.PPST,
@@ -355,15 +354,15 @@ class PathsPage(wx.PreferencesPage):
 	def save(self, evt: wx.FileDirPickerEvent):
 		if not ( Path( evt.GetPath() ).exists() and Path( evt.GetPath() ).is_dir() ):
 			return
-		if evt.EventObject.GetName() == 'P2PDP':
+		if evt.GetEventObject().GetName() == 'P2PDP':
 			config.save(evt.GetPath(), 'portal2Dir')
-		elif evt.EventObject.GetName() == 'P1PDP' and self.p1:
+		elif evt.GetEventObject().GetName() == 'P1PDP' and self.p1:
 			config.save(evt.GetPath(), 'portal2Dir')
-		elif evt.EventObject.GetName() == 'BPDP':
+		elif evt.GetEventObject().GetName() == 'BPDP':
 			config.save(evt.GetPath(), 'beePath')
-		elif evt.EventObject.GetName() == 'LDBPDP':
+		elif evt.GetEventObject().GetName() == 'LDBPDP':
 			config.save(evt.GetPath(), 'databasePath')
-		elif evt.EventObject.GetName() == 'PPDP':
+		elif evt.GetEventObject().GetName() == 'PPDP':
 			config.save(evt.GetPath(), 'pluginsPath')
 
 
