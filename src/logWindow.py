@@ -71,7 +71,9 @@ class logWindow(wx.Frame):
 		try:
 			pos = config.load('logWindowPos')
 			if pos is not None:
-				self.SetPosition(wx.Point(pos))
+				self.SetPosition( wx.Point( pos ) )
+			else:
+				self.SetPosition( wx.Point( 100, 100 ) )
 		except config.ConfigError as e:
 			logger.warning(e)  # not a problem if it fails
 		self.text = wx.TextCtrl(
