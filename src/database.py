@@ -15,16 +15,11 @@ logger = get_logger()
 
 class PDatabase:
 
-	db: Path
-	path: str
+	url: str = config.load('onlineDatabaseUrl')
 
 	views: List[PackageView] = []
 
-	def __init__(self):
-		self.path = config.load('databasePath')
-		self.db = Path( self.path )
-
-	def checkDatabase(self) -> None:
+	def checkDatabase(self) -> bool:
 		"""
 			check the database, if it doesn't exist or is invalid, re-download it
 		"""
@@ -122,3 +117,6 @@ def makeIconUrl(repo: str) -> str:
 	i = splittedUrl.index('github.com') + 1
 	logger.debug(f'icon url: "https://raw.githubusercontent.com/{splittedUrl[i]}/{splittedUrl[i+1]}/master/icon.png"')
 	return f'https://raw.githubusercontent.com/{splittedUrl[i]}/{splittedUrl[i+1]}/master/icon.png'
+
+
+PDB = PDatabase()

@@ -35,11 +35,6 @@ class App(wx.App):
 			)
 			self.ShouldExit = True
 			return False
-		# populate the config dict
-		config.currentConfigData = config.default_config
-		with open( config.configPath, 'r' ) as file:
-			for section, value in json.load( file ).items():
-				config.currentConfigData[ section ] = value
 		# initialize logging
 		# use a window to show the uncaught exception to the user
 		srctools.logger.init_logging( './logs/latest.log' if utilities.frozen() else './../logs/latest.log', on_error=self.OnError )
@@ -59,6 +54,11 @@ class App(wx.App):
 			self.logger.info('Creating new config file...')
 			config.createConfig()
 			self.logger.info('Config file created!')
+		# populate the config dict
+		config.currentConfigData = config.default_config
+		with open( config.configPath, 'r' ) as file:
+			for section, value in json.load( file ).items():
+				config.currentConfigData[ section ] = value
 		# start localizations
 		localization.Localize()
 		self.logger.info(f'current lang: {loc("currentLang")}')
