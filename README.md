@@ -19,7 +19,7 @@ with BM you can also modify the BEE2.4 splash screen and some aspects of Portal 
 This project is in a experimental alpha state, use at your own risk!
 
 
-i plan to release version 1.0.0 _and_ switch to [Semantic Versioning](https://semver.org/) when the package browser is finished.
+i plan to release version 1.0.0 when the package browser is finished.
 
 Planned & realized features!
 
