@@ -1,7 +1,8 @@
-import socket
 import threading
-import weakref
+from multiprocessing.connection import PipeConnection
 from typing import Callable, List, Dict
+
+import ipc_mngr
 
 from srctools.logger import get_logger
 
@@ -9,118 +10,68 @@ logger = get_logger()
 # TODO: test all this
 
 
-class Connection:
+class Command:
 
-	conn: socket.socket
-	port: int
-	closed: bool = False
-	thread: threading.Thread
-
-	def __init__(self, conn: socket.socket, server: object):
-		self.conn = conn
-		self.server = server
-		# create a thread, it'll make the object permanent until its closed
-		self.thread = threading.Thread( target=self.rcv, daemon=True )
-		# start the thread
-		self.thread.start()
-
-	def rcv(self):
-		# if the connection isn't closed, loop
-		while not self.closed:
-			# wait and receive the header
-			raw_size = self.conn.recv(64)
-			# msg size
-			size = int( raw_size.decode() )
-			# receive the raw data (bytes)
-			raw_data = self.conn.recv(size)
-			# decode the raw data
-			data: str = raw_data.decode()
-			# this will close the connection
-			if data == '!SHUTDOWN_CONNECTION':
-				self.closed = True
-				continue
-			# remove "bm://"
-			data = ''.join( data.split('/')[ 2:len(data) ] )
-			# get the handler key
-			hdlrkey = data.split('/')[0]
-			# check if the hdlrkey is in the handlers
-			if hdlrkey in self.server.handlers.keys():
-				# cycle in the handlers in that key
-				for hdlr in self.server.handlers[hdlrkey]:
-					# execute handler with the data as parameter
-					hdlr(data)
-			else:
-				# no key!
-				logger.warning(f'unknown hdlrkey "{hdlrkey}" in ipc message, aborting processing')
-		# close the connection
-		self.conn.close()
-		# close the thread
-		self.thread.join()
-
-	def shutdown(self):
-		# stop the loop
-		self.closed = True
+	origin: str
+	protocol: str
+	parameters: List[ str ]
 
 
-class ipcServer:
-	"""
-	this class represents an IPC socket server.
-	"""
-	handlers: Dict[str, List[Callable] ]
-	listening: bool
-	port: int = 20306
-	connections: List[ weakref.ref ]
+class ipcManager:
 
-	def __init__(self, port: int = None):
-		# if port is specified, use that port
-		if port is not None:
-			self.port = port
-		logger.info(f'starting IPC server on port {self.port}')
-		logger.debug('binding socket..')
-		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.socket.bind( ('localhost', self.port) )
-		logger.debug('socket')
-		logger.debug('starting listener thread..')
-		self.thread = threading.Thread( target=self.serve_forever )
-		self.thread.start()
-		logger.debug('listener thread started')
-		logger.info('IPC server started!')
+	_handlers: Dict[ str, List[ Callable[ [ PipeConnection, Command ], None ] ] ] = {}
+	_listener: ipc_mngr.Listener = None
+	_thread: threading.Thread
 
-	def serve_forever(self):
+	def __init__( self, port: int = 30206 ):
+		self.port = port
+
+	def _msg_handler( self, sock: PipeConnection, cmd: Command):
 		"""
-		this function starts the IPC server
-		"""
-		self.listening = True
-		while self.listening:
-			conn, addr = self.socket.accept()
-			self.connections.append( weakref.ref( Connection(conn, self) ) )
+		PRIVATE
 
-	def registerHandler(self, handler: Callable, hdlrkey: str):
+		makes sure to manage the call correctly
 		"""
-		register an handler
-		:param handler: the callable that will be called
-		:param hdlrkey: what the handler handle
-		:return:
-		"""
-		if hdlrkey in self.handlers.keys():
-			self.handlers[hdlrkey].append(handler)
+		logger.info(f'Call received from {cmd.origin} on port {self._listener.last_accepted}')
+		if cmd.protocol not in self._handlers.keys():
+			logger.warning(
+				f'{cmd.origin} is trying to use an unregistered protocol "{cmd.protocol}", is it implemented in a plugin?'
+			)
 		else:
-			self.handlers[hdlrkey] = []
-			self.handlers.append(handler)
+			for handler in self._handlers[cmd.protocol]:
+				handler(sock, cmd)
+		sock.close()
 
-	def shutdown(self):
-		self.listening = False
-		self.socket.close()
+	def listen(self):
 
+		if self._listener is None:
+			def run():
+				self._listener = ipc_mngr.Listener( ('127.0.0.1', self.port), authkey='bm-ipc' )
+				self._listener.msg_handler = self._msg_handler
+				self._listener.listen()  # Listen forever
+			self._thread = threading.Thread(target=run)
+			self._thread.run()
+		else:
+			raise SyntaxError( 'called ipcManager.start() when the server is already listening.' )
 
-# ipcServer object
-serverObj: ipcServer
+	def addHandler(self, protocol: str, hdlr: Callable[ [PipeConnection, Command], None ]):
+		# check if the given protocol list exist
+		if self._handlers[ protocol ] is not []:
+			# doesn't exist: create it
+			self._handlers[ protocol ] = []
+		# add the handler
+		self._handlers[ protocol ].append( hdlr )
 
+	def rmHandler(self, name: str, hdlr: Callable[ [PipeConnection, Command], None ] ):
+		i = 0
+		for i in range( len( self._handlers[name] ) ):
+			if self._handlers[ name ][ i ] == hdlr:
+				break
+		del self._handlers[ name ][ i ]
 
-def start(port: int = None):
-	global serverObj
-	if port is None:
-		serverObj = ipcServer()
-	else:
-		serverObj = ipcServer(port)
-
+	def stop(self):
+		if self._listener is ipc_mngr.Listener:
+			self._listener.stop()
+			self._thread.join()
+		else:
+			raise SyntaxError('called ipcManager.stop() before starting it.')
