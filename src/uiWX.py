@@ -121,6 +121,7 @@ class root(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.openDiscord, discordItem)
 		# other events
 		self.Bind(wx.EVT_CLOSE, self.OnClose, self)
+		self.Bind( wx.EVT_SIZING, self.OnResize, self )
 		if config.load('beePath') is None:
 			self.portalMenu.Enable(9, False)
 			self.fileMenu.Enable(1, False)
@@ -134,10 +135,15 @@ class root(wx.Frame):
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
 		"""
-		self.book = wx.Notebook(self, name="Main Menu")
+		self.book = wx.Notebook(
+			self,
+			name="Main Menu",
+			size=wx.Size( self.GetSize().GetWidth(), self.GetSize().GetHeight() )
+		)
 		self.browserTab = PackageBrowserPage(self.book)
 		self.book.AddPage(self.browserTab, "Package Browser")
 
+	# wx event callbacks
 	def OnClose(self, event: wx.CloseEvent):
 		# stop all plugins
 		asyncio.run(pluginSystem.systemObj.unloadAndStop())
@@ -150,10 +156,8 @@ class root(wx.Frame):
 			pass
 		self.Destroy()
 
-	def AddMenu(self, menu: wx.Menu, title: str):
-		menu = self.GetMenuBar()
-		menu.Append(menu, title)
-		menu.Refresh()
+	def OnResize( self, evt: wx.Event ):
+		self.book.SetSize( self.GetSize() )
 
 	# file menu items actions
 	@staticmethod
@@ -314,12 +318,18 @@ class root(wx.Frame):
 	def openDiscord(event):
 		openUrl('https://discord.gg/hnGFJrz')
 
+	# API methods
 	def UnregisterMenu(self, menu: str):
 		index = self.menuBar.FindMenu(menu)
 		if index == wx.NOT_FOUND:
 			raise pluginSystem.Errors.MenuNotFoundException(f'unknown menu "{menu}"')
 		else:
 			self.menuBar.Remove(index)
+
+	def AddMenu(self, menu: wx.Menu, title: str):
+		menu = self.GetMenuBar()
+		menu.Append(menu, title)
+		menu.Refresh()
 
 
 def openUrl(url: str):
