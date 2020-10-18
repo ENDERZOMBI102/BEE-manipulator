@@ -80,6 +80,7 @@ def installBee():
 	this will install/update BEE, when called, the function
 	will download the latest version based on the os is running on and unzip it
 	"""
+	# TODO: make this function accept a version to install
 	# create the progress dialog
 	dialog = wx.ProgressDialog(
 		parent=wx.GetTopLevelWindows()[0],
