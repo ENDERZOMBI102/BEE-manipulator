@@ -364,6 +364,7 @@ class PathsPage(wx.PreferencesPage):
 			config.save(evt.GetPath(), 'databasePath')
 		elif evt.GetEventObject().GetName() == 'PPDP':
 			config.save(evt.GetPath(), 'pluginsPath')
+		# TODO: add onlineDatabaseUrl and a check to see if the url is valid
 
 
 class DevelopmentPage(wx.PreferencesPage):
