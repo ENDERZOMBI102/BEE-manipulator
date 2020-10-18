@@ -98,7 +98,7 @@ class App(wx.App):
 				caption='BM Error!',
 				style=wx.OK | wx.CENTRE | wx.STAY_ON_TOP | wx.ICON_ERROR
 			)
-		except ():
+		except Exception:
 			wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
 		if self.root is not None:
 			self.root.Destroy()
