@@ -9,6 +9,8 @@ import wx
 from requests import get, RequestException
 from semver import VersionInfo
 
+if __name__ == '__main__':
+	from localization import loc
 import config
 from srctools.logger import get_logger
 
@@ -282,8 +284,8 @@ def notimplementedyet():
 	"""
 	wx.GenericMessageDialog(
 		parent=wx.GetActiveWindow(),
-		message='This feature is not yet implemented, return later!',
-		caption='Not implemented',
+		message=loc('popup.notimplemented.text'),
+		caption=loc('popup.notimplemented.title'),
 		style=wx.ICON_INFORMATION | wx.STAY_ON_TOP | wx.OK
 	).ShowModal()
 

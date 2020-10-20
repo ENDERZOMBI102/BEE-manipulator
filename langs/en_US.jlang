@@ -37,6 +37,8 @@
   "menu.help.github.description": "opens the github page",
   "menu.help.discord.name": "Discord",
   "menu.help.discord.description": "invite to the BEEmod server",
+  "popup.notimplemented.title": "Not implemented",
+  "popup.notimplemented.text": "This feature is not yet implemented, come back later!",
   "statusbar.text": "Hi {username}!",
   "tab.packagebrowser.name": "Package Browser",
   "settings.window.text": "Settings",
