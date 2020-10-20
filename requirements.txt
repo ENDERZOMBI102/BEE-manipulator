@@ -5,4 +5,4 @@ requests==2.24.0
 wxPython==4.1.0
 psutil~=5.7.2
 pydantic~=1.6.1
-semver~=2.10.2
+semver~=2.12.0
