@@ -1,5 +1,5 @@
 future==0.18.2
-markdown2==2.3.9
+markdown2==2.3.10
 pypresence==4.0.0
 requests==2.24.0
 wxPython==4.1.0
