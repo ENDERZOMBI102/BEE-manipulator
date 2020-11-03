@@ -51,9 +51,6 @@ class logHandler(logging.Handler):
 
 
 class logWindow(wx.Frame):
-	"""
-	this class make the log window and the log handler
-	"""
 
 	instance: 'logWindow' = None
 
@@ -134,7 +131,6 @@ async def init() -> None:
 
 	"""
 	a function that initiate the log window
-	:return:
 	"""
 	logWindow()
 
@@ -144,7 +140,6 @@ def toggleVisibility(placeHolder=None):
 	"""
 	a function that toggles the visibility of the window
 	:param placeHolder:
-	:return:
 	"""
 	global visible
 	if not visible:
@@ -155,6 +150,9 @@ def toggleVisibility(placeHolder=None):
 
 
 def updateVisibility():
+	"""
+	actually update and save the log window visibility
+	"""
 	global visible
 	# save the visibility
 	config.save(visible, 'logWindowVisibility')
@@ -168,7 +166,6 @@ def updateVisibility():
 
 
 def changeLevel(level: str) -> None:
-
 	"""
 	changes and saves the log level that shows on the window
 	:param level: level to set the window to
@@ -190,7 +187,6 @@ def changeLevel(level: str) -> None:
 
 
 def getLevel() -> int:
-
 	"""
 	gets the level form the config file
 	:return: log level
