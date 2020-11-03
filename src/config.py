@@ -134,21 +134,6 @@ def save(data, section):  # save a config
 			raise ConfigError( 'error while saving the config' )
 
 
-def saveAll(cfg: dict = None):
-
-	"""
-	A function that saves (and overwrites) the config file
-	:param cfg: the config dict
-	"""
-	if ( cfg is None ) or ( 'config_type' != 'BEE2.4 Manipulator Config File' ):
-		raise ValueError("parameter cfg can't be an invalid config!")
-	try:
-		with open(configPath, 'w', encoding='utf-8') as file:
-			json.dump(cfg, file, indent=3)
-	except:
-		logger.error('An error happened while saving config file, probably is now corrupted')
-
-
 def check(cfg: dict = None) -> bool:
 
 	"""
@@ -220,6 +205,7 @@ def steamDir() -> str:
 	"""
 	a function that retrieves the steam installation folder by reading the win registry
 	:return: path to steam folder
+	:raises KeyError:
 	"""
 	if 'steamDir' not in currentConfigData.keys():
 		save(None, 'steamDir')  # create the config without value in case it doesn't exist
@@ -235,7 +221,7 @@ def steamDir() -> str:
 				aKey = OpenKey(reg, r'Software\Valve\Steam')  # open the steam folder in the windows registry
 		except Exception as e:
 			logger.critical("Can't open windows registry! this is *VERY* bad!", exc_info=True)
-			raise Exception(e)
+			raise
 		try:
 			keyValue = QueryValueEx(aKey, 'SteamPath')  # find the steam path
 			save(keyValue[0], 'steamDir')  # save the path, so we don't have to redo all this
@@ -249,6 +235,7 @@ def portalDir() -> str:
 	"""
 	a function that retrives the portal 2 folder by searching in all possible libraries
 	:return: path to p2 folder
+	:raises FileNotFoundError:
 	"""
 	if not load('portal2Dir') is None:
 		return load('portal2Dir')  # check if we already saved the path, in case, return it
@@ -276,7 +263,7 @@ discordToken: str = '655075172767760384'
 def libraryFolders() -> list:
 
 	"""
-	retrives the steam library folders by parsing the libraryfolders.vdf file
+	Retrieves the steam library folders by parsing the libraryfolders.vdf file
 	:return: a list with all library paths
 	"""
 	paths = [steamDir() + '/steamapps/']  # create a list for library paths
@@ -291,9 +278,9 @@ def libraryFolders() -> list:
 		raise Exception(f'Error while reading steam library file: {e}')
 
 	# check for other library paths, if the dict is empty, there's no one
-	if len(library['libraryfolders']) != 0:
-		for i in len(library['libraryfolders']):
-			paths.append(library['libraryfolders'][str(i)] + '/steamapps/')  # append the path
+	if len( library['libraryfolders'] ) != 0:
+		for i in len( library['libraryfolders'] ):
+			paths.append( library['libraryfolders'][ str(i) ] + '/steamapps/' )  # append the path
 
 	# return the "compiled" list of libraries
 	return paths
@@ -318,11 +305,11 @@ def steamUsername():
 
 
 def devMode() -> bool:
-	return utilities.boolcmp( load('devMode') )
+	return load('devMode')
 
 
 class ConfigError(BaseException):
-	r"""
+	"""
 	base error for config operations
 	"""
 
