@@ -1,6 +1,6 @@
-import io
 import os
 import sys
+from io import BytesIO
 from pathlib import Path
 from sys import platform
 from typing import Union
@@ -8,6 +8,8 @@ from typing import Union
 import wx
 from requests import get, RequestException
 from semver import VersionInfo
+
+import uiWX
 
 if __name__ == '__main__':
 	from localization import loc
@@ -40,26 +42,6 @@ def _App__setIcon():
 	icon = wx.Icon(f'{config.assetsPath}icons/icon.png')
 
 
-def boolcmp(value: Union[bool, int, str]) -> bool:
-	"""
-	function to evaluate string or numbers to bool values
-	:param value: the value to compare
-	:return: if the value may represents a false return False, else true
-	"""
-	logger.debug(f'converting "{value}" to boolean!')
-	if value in [True, 'true', 'yes', 1]:
-		return True
-	elif value in [False, 'false', 'no', 0]:
-		return False
-	elif isinstance(value, int):
-		if value > 0:
-			return True
-		else:
-			return False
-	else:
-		raise ValueError('invalid input!')
-
-
 def isonline():
 	"""
 	simple function that checks if the pc is online or not
@@ -72,29 +54,6 @@ def isonline():
 		return True
 	except RequestException:
 		return False
-
-
-def keyExist(data: dict, key: str):
-	"""
-	check if a dictionary has a key
-	:param data: dictionary to check
-	:param key: the key to check
-	:return:
-	"""
-	logger.debug(f'checking key "{key}"')
-	try:
-		data[key]
-		return True
-	except KeyError:
-		return False
-
-
-def toNumbers(arg=None):
-	nums = []
-	for i in arg:
-		if i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.']:
-			nums.append(i)
-	return int(''.join(nums))
 
 
 def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
@@ -176,17 +135,19 @@ def isnegative(value: Union[None, bool]) -> bool:
 		return not value
 
 
-def Downloader(url: str, title: str, message: str, animadots: bool = True) -> bytes:
+def Downloader(url: str, title: str, message: str, animadots: bool = True) -> BytesIO:
 	"""
 
 	:param url: url of the file to download
 	:param title: the title of the popup
 	:param message: the message of the popup
 	:param animadots: if the message has animated dots (defaults to True)
-	:return:
+	:return: a buffer with the downloaded bytes
 	"""
 	dots = 1
 	showProgress = config.dynConfig['logDownloadProgress']
+	if showProgress is None:
+		showProgress = False
 	# create progress dialog
 	dialog = wx.ProgressDialog(
 		parent=wx.GetTopLevelWindows()[0],
@@ -198,11 +159,11 @@ def Downloader(url: str, title: str, message: str, animadots: bool = True) -> by
 	# working variables
 	messageWdots = message  # defaulting to the message
 	request = get(url, stream=True)  # the request
-	bytesdata = io.BytesIO()  # downloaded bytes
+	bytesdata = BytesIO()  # downloaded bytes
 	dl = 0  # how much has been downloaded
 	total_length = int(request.headers.get('content-length'))  # total length of the download (bytes)
 	# download!
-	if (showProgress is True) and (showProgress is not None):
+	if showProgress is True:
 		logger.info(f'downloading {url}!')
 	for data in request.iter_content(chunk_size=1024):
 		dl += len(data)
@@ -220,17 +181,17 @@ def Downloader(url: str, title: str, message: str, animadots: bool = True) -> by
 				dots = 1
 				messageWdots = message + '...'
 		# if showProgress is true, show the progress on the log
-		if (showProgress is True) and (showProgress is not None):
+		if showProgress is True:
 			logger.info(f'total: {total_length}, bytes done: {dl}, done: {done}%')
 		# update with total % done and the message
 		dialog.Update(done, newmsg=messageWdots)
-	return bytesdata.read()
+	return bytesdata
 
 
 def frozen() -> bool:
 	"""
 	if BM is in a frozen state (exe), returns True
-	:return: bool
+	:return: true if it is, otherwise false
 	"""
 	if getattr(sys, 'frozen', False):
 		return True
@@ -241,24 +202,28 @@ def frozen() -> bool:
 def removeDir(path):
 	"""
 	remove a folder, including all the files/folders it contains
-	:param path:
-	:return:
+	:param path: removes a given directory
 	"""
 	try:
 		config.dynConfig['logDeletions']
-	except:
+	except ValueError:
 		config.dynConfig['logDeletions'] = True
+	# cycle in all subfolders/files
 	for file in Path( path ).glob('*'):
 		if file.is_dir():
+			# RECURSION POWA
 			removeDir( file )
 		else:
+			# remove the file
 			os.remove( file )
 			if config.dynConfig['logDeletions']:
 				logger.debug(f'deleting {file.resolve()}')
+	# remove all directories
 	for file in Path( path ).glob('*'):
 		os.rmdir( file )
 		if config.dynConfig['logDeletions']:
 			logger.debug(f'deleting {file.resolve()}')
+	# and finally, remove the given directory
 	os.rmdir( path )
 
 
@@ -274,6 +239,7 @@ def tempDirPath() -> str:
 
 
 def __getbee() -> Union[None, str]:
+	# gets the BEE path
 	if Path(f'{defBeePath}/BEE2/BEE2.exe').exists():
 		return f'{defBeePath}/BEE2/BEE2.exe'  # the exe file exists, bee has been installed, but the BM config was deleted
 	return None
@@ -281,8 +247,7 @@ def __getbee() -> Union[None, str]:
 
 def notimplementedyet():
 	"""
-	not implemented error
-	:return:
+	shows a dialog that says that this feature its not implemented
 	"""
 	wx.GenericMessageDialog(
 		parent=wx.GetActiveWindow(),
@@ -294,11 +259,5 @@ def notimplementedyet():
 
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
 env = 'dev'
-root: wx.Frame = None
-
-
-if __name__ == '__main__':
-	pass
-
-
+mainWindow: 'uiWX.root' = None
 
