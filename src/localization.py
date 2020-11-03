@@ -46,13 +46,26 @@ class Localize:
 		asyncio.run(self.init())
 
 	async def init(self):
+		"""
+		initialize localizations
+		this will load all .jlang files and the current language
+		:return:
+		"""
 		self.lang = config.load('lang')
 		await self.loadLocFiles()
 
 	def install(self):
+		"""
+		makes the loc() function available to everyone
+		"""
 		builtins.loc = self.loc
 
 	def loc(self, textId) -> str:
+		"""
+		returns the localized text from a token
+		:param textId: the text id/token
+		:return: localized text
+		"""
 		try:
 			return self.localizations[self.lang][textId]
 		except KeyError:
@@ -62,6 +75,10 @@ class Localize:
 			return 'OHNO'
 
 	def setLang(self, newLang: str):
+		"""
+		set the current application language
+		:param newLang: the language to set to
+		"""
 		logger.debug(f'checking if language {newLang} is supported..')
 		if newLang in self.localizations.keys():
 			self.lang = newLang
@@ -71,6 +88,9 @@ class Localize:
 			logger.error(LangNotSupportedError(f'unsupported language {newLang}!'))
 
 	async def loadLocFiles(self):
+		"""
+		load all .jlang files
+		"""
 		logger.debug('loading lang folder path..')
 		# create Path obj with the lang file path
 		folder = Path( config.load('l18nFolderPath') )
@@ -93,6 +113,11 @@ class Localize:
 		# repeat for all files
 
 	def dl(self, langToDownload: str):
+		"""
+		downloads a language
+		:param langToDownload: id of the language
+		:return:
+		"""
 		try:
 			# get lang file from github
 			data = requests.get(
@@ -119,4 +144,4 @@ class Localize:
 				logger.error(f'failed to download lang file {langToDownload}')
 
 
-localizeObj = None
+localizeObj: Localize = None
