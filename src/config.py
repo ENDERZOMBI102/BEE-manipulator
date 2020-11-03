@@ -38,9 +38,9 @@ default_config = {
 	'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
 	'onlineDatabaseUrl': 'https://hateitapp.ddns.net:8000/api/',
 	'lang': 'en_US',
-	'showVerifyDialog': False,
-	'showUninstallDialog': False,
-	'startupUpdateCheck': False,
+	'showVerifyDialog': True,
+	'showUninstallDialog': True,
+	'startupUpdateCheck': True,
 	"showSplashScreen": False
 }
 
