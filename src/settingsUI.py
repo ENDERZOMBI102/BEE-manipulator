@@ -60,7 +60,7 @@ class GeneralPage(wx.PreferencesPage):
 			label=loc('settings.tab.general.buwc.text'),
 			pos=wx.Point(0, -60)
 		)
-		self.BUWC.SetToolTip(wx.ToolTip(loc('settings.tab.general.buwc.tooltip')))
+		self.BUWC.SetToolTip( wx.ToolTip( loc('settings.tab.general.buwc.tooltip') ) )
 		self.BUWC.SetValue( config.load('showUninstallDialog', default=True) )
 
 		# Verify Game Cache warning | checkbox
