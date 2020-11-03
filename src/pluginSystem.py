@@ -118,7 +118,7 @@ class BasePlugin(metaclass=ABCMeta):
 		pass
 
 	def getPath(self) -> Path:
-		return Path(systemObj.modules[self.__class__.__base__.__module__].__file__).resolve()
+		return Path( systemObj.modules[self.__class__.__base__.__module__].__file__ ).resolve()
 
 	__state__: str
 
@@ -136,7 +136,6 @@ class system:
 		"""
 		starts the plugin system
 		instantiate and loads the plugins
-		:return: nothing
 		"""
 		logger.info('started loading plugins!')
 		asyncio.run( self.start() )
@@ -149,7 +148,6 @@ class system:
 	async def instantiate(self):
 		"""
 		instantiate all plugins in the plugins folder
-		:return: nothing
 		"""
 		fdr = Path(f'{config.pluginsPath}/')
 		for plg in fdr.glob('*.py'):
@@ -169,31 +167,24 @@ class system:
 		"""
 		trigger the load event/method on every plugin/a specified plugin
 		:param identifier: plugin to trigger load for
-		:return: nothing
 		"""
 		if identifier is not None:
 			if self.plugins[identifier].__state__ == 'loaded':
 				raise Exception('trying to load an already loaded plugin!')
 			try:
 				await self.plugins[identifier].load()
+				self.plugins[ identifier ].__state__ = 'loaded'
 			except Exception as e:
 				logger.error(f'caught exception while loading plugin "{identifier}"')
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
-			self.plugins[identifier].__state__ = 'loaded'
 			return
-		for plg in self.plugins.values():
-			try:
-				await plg.load()
-			except Exception as e:
-				logger.error(f'caught exception while loading plugin "{identifier}"')
-				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
-			plg.__state__ = 'loaded'
+		for plg in self.plugins.keys():
+			await self.load(plg)
 
 	async def unload(self, identifier: str = None):
 		"""
 		trigger the unload event/method on every plugin/a specified plugin
 		:param identifier: plugin to trigger unload for
-		:return: nothing
 		"""
 		if identifier is not None:
 			if self.plugins[identifier].__state__ == 'unloaded':
@@ -205,13 +196,8 @@ class system:
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
 			self.plugins[identifier].__state__ = 'unloaded'
 			return
-		for plg in self.plugins.values():
-			try:
-				await plg.unload()
-			except Exception as e:
-				logger.error(f'caught exception while unloading plugin "{plg.__class__.__name__}"')
-				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
-			plg.__state__ = 'unloaded'
+		for plg in self.plugins.keys():
+			await self.unload(plg)
 		# redraw the menu bar in case a plugin added something
 		wx.GetTopLevelWindows()[0].menuBar.Refresh()
 
@@ -230,8 +216,7 @@ class system:
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
 		- delete a plugin module and reload it from disk
-		:param pluginid: plugin to reload
-		:return: nothing
+		:param ph: placeholder
 		"""
 		# cicle in the plugins
 		logger.info( f'plugins found: {len( self.plugins)}' )
@@ -240,11 +225,15 @@ class system:
 			self.isReloading = True
 			# get data
 			f = 0
+			pluginid = None
 			for key in self.plugins.keys():
 				if f == i:
 					pluginid = key
 					break
 				f += 1
+			# this should happen but this is there to prevent exceptions
+			if pluginid is None:
+				continue
 			module = self.modules[ self.plugins[pluginid].__class__.__base__.__module__ ]
 			# wait for the plugin to unload
 			try:
@@ -276,6 +265,7 @@ class system:
 			self.plugins[pluginid].__state__ = 'loaded'
 			# no mo reloading
 			self.isReloading = False
+		# dispatch events
 		dispatcher.send( Events.RegisterEvent, RegisterHandler=RegisterHandler( wx.GetTopLevelWindows()[0] ) )
 		from logWindow import logWindow
 		dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
