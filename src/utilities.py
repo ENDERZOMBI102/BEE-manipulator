@@ -111,12 +111,14 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 	logger.debug(f'url valid!')
 	logger.debug(f'checking updates on url: {url}')
 	data = get( url ).json()  # get the latest release data
-	if isinstance(data, dict):
+	if not isinstance(data, dict):
 		return UpdateInfo( None, None, None )
 	usePrereleases: bool = config.load('usePrereleases')
 	for ver in data:
-		if ver['draft'] is True: continue
-		if ( ver['prerelease'] is True ) and ( usePrereleases is False ): continue
+		if ver['draft'] is True:
+			continue
+		if ( ver['prerelease'] is True ) and ( usePrereleases is False ):
+			continue
 		data = ver
 		break
 	# variables
