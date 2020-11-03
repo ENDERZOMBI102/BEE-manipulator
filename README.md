@@ -18,20 +18,22 @@ with BM you can also modify the BEE2.4 splash screen and some aspects of Portal 
 
 This project is in a experimental alpha state, use at your own risk!
 
+you can keep track of the progress made on the [public trello](https://trello.com/b/CzRvudQY/bee-manipulator), here you can comment features and things too!
+
 
 i plan to release version 1.0.0 when the package browser is finished.
 
-Planned & realized features!
+Features
 
- - GUI (40% done)
- - BEE 2.4 Installer (done)
- - App (Auto)Updater (90% done)
- - Package Browser & Manager (working on it)
- - Custom Application For BEE2.4 Shortcuts (for the auto update feature) (1% done) 
- - Discord Rich Presence (0% done)
- - Plugin System (done)
- - Custom Installer (10% done)
- - [Open With BM](https://github.com/ENDERZOMBI102/BEE-manipulator/wiki/Open-with-BM)
+ - GUI
+ - BEE 2.4 Installer
+ - App (Auto)Updater
+ - Package Browser & Manager
+ - Custom Application For BEE2.4 Shortcuts (for the auto update feature)
+ - Discord Rich Presence
+ - Plugin System
+ - Custom Installer
+
 
 The Future
 
