@@ -21,6 +21,8 @@ class Events(Enum):
 	RegisterEvent = 'RegisterMenusEvent'
 	LogWindowCreated = 'LogWindowEvent'
 	UnregisterMenu = 'UnregisterMenuEvent'
+	DownloadCompleted = 'DownloadCompleted'
+	DownloadStarted = 'DownloadStarted'
 
 
 class Errors:
@@ -87,11 +89,7 @@ class PluginNotValid(Exception):
 	pass
 
 
-async def placeholder(ph0=None):
-	pass
-
-
-def placeholder2(ph0=None, ph1=0):
+def placeholder(ph0=None, ph1=0):
 	pass
 
 
