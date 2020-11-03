@@ -204,11 +204,7 @@ class configManager:
 		:param name: name of the game that will shows inside BEE game selection menu
 		:param steamid: the game steam id
 		:param overwrite: overwrite if there's a game with the same NAME
-		:return: None
 		"""
-		# the games.cfg file path (its where the games data is stored)
-
-		# the cfg is a ini formatted file so import a std lib that can handle them
 		data = configparser.ConfigParser()
 		# open the cfg for reading
 		file = open(configManager.gamescfgPath, 'r')
@@ -239,13 +235,12 @@ class configManager:
 		:param name: name of the game that will shows inside BEE game selection menu
 		:param path: path to the game (absolute)
 		:param steamid: the game steam id
-		:return:
 		"""
 		if Path(configManager.gamescfgPath).exists():
-			raise FileExistsError("can't create the config file, it already exist!")
+			logger.error("can't create the config file, it already exist!")
 		# create the necessary folders
-		Path(configManager.gamescfgPath + '/../..').resolve().mkdir()
-		Path(configManager.gamescfgPath + '/..').resolve().mkdir()
+		Path(configManager.gamescfgPath + '/../..').resolve().mkdir(exist_ok=True)
+		Path(configManager.gamescfgPath + '/..').resolve().mkdir(exist_ok=True)
 		data = configparser.ConfigParser()
 		# create and open the file for writing
 		file = open(configManager.gamescfgPath, 'x')
@@ -255,6 +250,7 @@ class configManager:
 		data.write(file)
 		# close it
 		file.close()
+		logger.info('config file created')
 
 	@staticmethod
 	def hasGameWithID(steamid):
