@@ -16,7 +16,7 @@ import pluginSystem
 import settingsUI
 import utilities
 from pluginSystem import Events
-from srctools.logger import get_logger, init_logging
+from srctools.logger import get_logger
 
 # init important things
 LOGGER = get_logger()
@@ -145,6 +145,10 @@ class root(wx.Frame):
 
 	# wx event callbacks
 	def OnClose(self, event: wx.CloseEvent):
+		"""
+		called when the window/application is about to close
+		:param event: placeholder
+		"""
 		# stop all plugins
 		asyncio.run(pluginSystem.systemObj.unloadAndStop())
 		# get the window position as wx.Point and convert it to list
@@ -154,22 +158,42 @@ class root(wx.Frame):
 		self.Destroy()
 
 	def OnResize( self, evt: wx.Event ):
+		"""
+		called when resizing the window, this permits to internal windows to resize aswell
+		:param evt: placeholder
+		"""
 		self.book.SetSize( self.GetSize() )
 
 	# file menu items actions
 	@staticmethod
 	def openp2dir(event: wx.CommandEvent):
+		"""
+		opens the Portal 2 directory with the default file explorer
+		:param event: placeholder
+		"""
 		os.startfile( config.portalDir() )
 
 	@staticmethod
 	def openBEEdir(event: wx.CommandEvent):
+		"""
+		opens the BEE2.4 directory with the default file explorer
+		:param event: placeholder
+		"""
 		os.startfile( Path( config.load("beePath") ).parent )
 
 	@staticmethod
 	def syncGames(event: wx.CommandEvent):
+		"""
+		still not know what this does
+		:param event: placeholder
+		"""
 		utilities.notimplementedyet()
 
 	def exit(self, event: wx.CommandEvent):
+		"""
+		called by the exit button, fowards to the root.OnClose() method
+		:param event: placeholder
+		"""
 		self.OnClose( wx.CloseEvent() )  # there's already an handler, so use that
 
 	# options menu items actions
@@ -178,7 +202,7 @@ class root(wx.Frame):
 		this function opens the settings window.
 		when this is called for the first time create an instance of the window, so when
 		called again it will be faster, because it don't have to create everything again
-		:param event: wx.EVT_something
+		:param event: placeholder
 		"""
 
 		if utilities.env == 'dev':
@@ -197,7 +221,6 @@ class root(wx.Frame):
 		"""
 		reloads the plugins
 		:param event: placeholder
-		:return: nothing
 		"""
 		asyncio.run( pluginSystem.systemObj.hardReload('all') )
 
@@ -205,7 +228,6 @@ class root(wx.Frame):
 		"""
 		reloads the package view
 		:param event: placeholder
-		:return:
 		"""
 		self.browserTab.reload()
 		self.book.Refresh()
@@ -216,8 +238,7 @@ class root(wx.Frame):
 	def verifyGameFiles(self, event: wx.CommandEvent):
 		"""
 		triggers the verify game cache dialog + event
-		:param event:
-		:return:
+		:param event: placeholder
 		"""
 		if not config.load("noVerifyDialog"):
 			dialog = wx.RichMessageDialog(
@@ -243,7 +264,6 @@ class root(wx.Frame):
 		"""
 		called when the uninstall bee button is pressed
 		:param event: placeholder
-		:return:
 		"""
 		diag = wx.MessageDialog(
 			parent=self,
@@ -262,7 +282,6 @@ class root(wx.Frame):
 		"""
 		called when the install bee button is pressed
 		:param event: placeholder
-		:return:
 		"""
 		# check if is installed
 		if beeManager.beeIsPresent():
@@ -317,6 +336,11 @@ class root(wx.Frame):
 
 	# API methods
 	def RemoveMenu(self, menu: str):
+		"""
+		Removes a menu from the main menubar
+		:param menu: the name of the menu to remove
+		:raises pluginSystem.Errors.MenuNotFoundException:
+		"""
 		index = self.menuBar.FindMenu(menu)
 		if index == wx.NOT_FOUND:
 			raise pluginSystem.Errors.MenuNotFoundException(f'unknown menu "{menu}"')
@@ -324,20 +348,28 @@ class root(wx.Frame):
 			self.menuBar.Remove(index)
 
 	def AddMenu(self, menu: wx.Menu, title: str):
+		"""
+		Adds a menu to the main menubar
+		:param menu: the menu obejct
+		:param title: the menu name
+		"""
 		menuBar: wx.MenuBar = self.GetMenuBar()
 		menuBar.Append(menu, title)
 		menuBar.Refresh()
 
 
 def openUrl(url: str):
+	"""
+	opens an url with the default browser
+	:param url: the url to open
+	"""
 	LOGGER.info(f'opening "{url}" with default browser')
 	wb.open(url)
 
 
 async def appDateCheck():
 	"""
-	check app updates
-	:return:
+	Checks app updates
 	"""
 	if not utilities.isonline():  # if we're not online return false
 		return False
@@ -367,18 +399,12 @@ class PackageBrowserPage(wx.Window):
 		self.browserObj = browser.Browser(self)
 
 	def reload(self):
+		"""
+		reloads the browser window by creating a new object
+		"""
 		if utilities.env == 'dev':
 			try:
 				importlib.reload(browser)
 			except:
 				pass
 		self.browserObj = browser.Browser
-
-
-if __name__ == "__main__":
-	init_logging("./logs/latest.log")
-	LOGGER = get_logger('BEE Manipulator')
-	app = wx.App()
-	root = root()
-	root.Show()
-	app.MainLoop()
