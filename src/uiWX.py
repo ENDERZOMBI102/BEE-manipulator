@@ -150,8 +150,8 @@ class root(wx.Frame):
 		:param event: placeholder
 		"""
 		# stop all plugins
-		asyncio.run(pluginSystem.systemObj.unloadAndStop())
-		# get the window position as wx.Point and convert it to list
+		asyncio.run( pluginSystem.systemObj.unloadAndStop() )
+		# get the window position and save it
 		pos = list(self.GetPosition().Get())
 		LOGGER.debug(f'saved main window position: {pos}')
 		config.save(pos, 'mainWindowPos')
@@ -207,13 +207,14 @@ class root(wx.Frame):
 
 		if utilities.env == 'dev':
 			try:
+				# reload the settings window
 				importlib.reload( settingsUI )
 				settingsUI.window().Show(self)
 			except:
 				pass
 		else:
-			if self.settingsWindowInstance is None:  # if the window was opened once, this isn't None
-				self.settingsWindowInstance = settingsUI.window()  # set it to the settings window instance
+			if self.settingsWindowInstance is None:  # if the window was opened at least once, this isn't None
+				self.settingsWindowInstance = settingsUI.window()  # create a new settings window instance
 			self.settingsWindowInstance.show()  # show the window
 
 	@staticmethod
@@ -240,13 +241,13 @@ class root(wx.Frame):
 		triggers the verify game cache dialog + event
 		:param event: placeholder
 		"""
-		if not config.load("noVerifyDialog"):
+		if not config.load("showVerifyDialog"):
+			# user really wants to verify the game files?
 			dialog = wx.RichMessageDialog(
-				self,
-				'''This will remove EVERYTHING beemod-related from portal 2!
-				click yes ONLY if you are sure!''',
-				'WARNING!',
-				wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
+				parent=self,
+				message='''This will remove EVERYTHING non stock from portal 2!\nclick yes ONLY if you are sure!''',
+				caption='WARNING!',
+				style=wx.YES_NO | wx.CENTRE | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
 			)
 			dialog.ShowDetailedText(
 				"if you don't want this dialog to show check this checkbox, but be aware, this is here to protect you"
@@ -254,26 +255,30 @@ class root(wx.Frame):
 			dialog.ShowCheckBox("Don't show again")
 			choice = dialog.ShowModal()
 			if dialog.IsCheckBoxChecked():
-				config.save(True, 'noVerifyDialog')
-			if choice == wx.ID_YES:
-				print('yes')
-			else:
-				print('no')
+				config.save(False, 'showVerifyDialog')
+			if choice == wx.ID_NO:
+				return
+		# yes he wants to
+		print('YES')
 
 	def uninstallBee(self, event: wx.CommandEvent):
 		"""
 		called when the uninstall bee button is pressed
 		:param event: placeholder
 		"""
-		diag = wx.MessageDialog(
-			parent=self,
-			message="You're sure to want to uninstall BEE?",
-			caption='Warning!',
-			style=wx.YES_NO | wx.STAY_ON_TOP | wx.CENTRE | wx.ICON_WARNING
-		)
-		if diag.ShowModal() == wx.ID_NO:
-			return
+		if config.load('showUninstallDialog', default=True):
+			# the user really wants to uninstall BEE?
+			diag = wx.MessageDialog(
+				parent=self,
+				message="You're sure to want to uninstall BEE?",
+				caption='Warning!',
+				style=wx.YES_NO | wx.STAY_ON_TOP | wx.CENTRE | wx.ICON_WARNING
+			)
+			if diag.ShowModal() == wx.ID_NO:
+				return
+		# uninstall BEE
 		beeManager.uninstall()
+		# toggle buttons
 		self.portalMenu.Enable(10, True)
 		self.portalMenu.Enable(9, False)
 		self.fileMenu.Enable(1, False)
