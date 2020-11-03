@@ -49,6 +49,7 @@
       <w>loglevel</w>
       <w>logwindow</w>
       <w>ltype</w>
+      <w>missingtranslation</w>
       <w>noconfirm</w>
       <w>nodb</w>
       <w>notimplementedyet</w>
