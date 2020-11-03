@@ -7,6 +7,7 @@ from zipfile import ZipFile
 
 import wx
 from requests import get
+from semver import VersionInfo
 
 import config
 import utilities
@@ -24,16 +25,16 @@ def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 	:return: None
 	"""
 	# load current bee version
-	beeVersion = config.load('beeVersion')
+	beeVersion: str = config.load('beeVersion')
 	logger.info(f'installed BEE version: {beeVersion}')
 	if firstInstall is False:
 		# bee isn't installed, can't update
 		if beeVersion is None:
 			return
 	# check updates
-	data = utilities.checkUpdate(beeRepoUrl, beeVersion if firstInstall is False else '0')
-	logger.info(f'latest BEE version: {data[2]}')
-	if not data[0]:
+	data = utilities.checkUpdate(beeRepoUrl, VersionInfo.parse( beeVersion if firstInstall is False else '0.0.0') )
+	logger.info(f'latest BEE version: {data.version}')
+	if data.version is None:
 		# no update available, can't update
 		logger.info('no update available')
 		return
@@ -41,7 +42,7 @@ def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 		# show bee update available dialog
 		dialog = wx.RichMessageDialog(
 			parent=wx.GetTopLevelWindows()[0],
-			message=f'BEE2.4 {data[3]} is available for download, update now?',
+			message=f'BEE2.4 {data.version} is available for download, update now?\n{data.description}',
 			caption='BEE update available!',
 			style=wx.YES_NO | wx.YES_DEFAULT | wx.STAY_ON_TOP | wx.ICON_INFORMATION
 		)
@@ -75,12 +76,11 @@ def beeIsPresent() -> Union[ bool ]:
 		return False
 
 
-def installBee():
+def installBee(ver: VersionInfo = None, folder: str = None):
 	"""
 	this will install/update BEE, when called, the function
 	will download the latest version based on the os is running on and unzip it
 	"""
-	# TODO: make this function accept a version to install
 	# create the progress dialog
 	dialog = wx.ProgressDialog(
 		parent=wx.GetTopLevelWindows()[0],
@@ -88,10 +88,17 @@ def installBee():
 		message='Downloading application..',
 		maximum=100
 	)
-	if not beeIsPresent():
+	if not beeIsPresent() or ver is not None:
 		logger.info('downloading BEE2...')
 		# get the zip binary data
-		request = get(config.dynConfig['beeUpdateUrl'], stream=True)  # download BEE
+		link: str = None
+		if ver is None:
+			link = config.dynConfig[ 'beeUpdateUrl' ]
+		else:
+			for tag in get( beeApiUrl.replace('/latest', '') ).json():
+				if ver.compare( tag['tag_name'] ) == 0:
+					link = tag['assets'][0]['browser_download_url']
+		request = get( link, stream=True )  # download BEE
 		# working variables
 		zipdata = io.BytesIO()
 		dialog.Update(0)
@@ -107,7 +114,7 @@ def installBee():
 		logger.info('extracting...')
 		dialog.Pulse('Extracting..')
 		# read the data as bytes and then create the zipfile object from it
-		ZipFile(zipdata).extractall(config.load('beePath'))  # extract BEE
+		ZipFile(zipdata).extractall( config.load('beePath') if folder is None else folder )  # extract BEE
 		logger.info('BEE2.4 application installed!')
 	dialog.Close()
 	dialog = wx.ProgressDialog(
@@ -134,13 +141,12 @@ def installBee():
 		done = int(100 * dl / total_length)
 		print(f'total: {total_length}, dl: {dl}, done: {done}')
 		dialog.Update(done)
-
 	logger.info('extracting...')
 	dialog.Pulse('Extracting..')
-	# convert to a byte stream, to a zipfile object and then extract
-	ZipFile(zipdata).extractall(config.load('beePath'))
+	# convert to a byte stream, then zipfile object and then extract
+	ZipFile(zipdata).extractall( config.load('beePath') if folder is None else folder)
 	dialog.Close()
-	logger.info('finished!')
+	logger.info('finished extracting!')
 	logger.info('checking games config file..')
 	if Path( os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg' ).exists():
 		logger.info("config file exist, checking if has P2..")
@@ -151,6 +157,7 @@ def installBee():
 	else:
 		logger.warning("config file doesn't exist!")
 		configManager.createAndAddGame( path=config.portalDir() )
+	logger.info('finished installing BEE!')
 
 
 def uninstall():
