@@ -283,7 +283,6 @@ class system:
 	async def unloadAndStop(self):
 		"""
 		unload all plugins and delete them, used to stop the system
-		:return: nothing
 		"""
 		await self.unload()
 		x = []
