@@ -51,100 +51,70 @@ class GeneralPage(wx.PreferencesPage):
 
 	def CreateWindow(self, parent):
 		panel = wx.Panel(parent)
-		panel.SetMinSize((600, 300))
-
-		rightsizer = wx.BoxSizer(wx.VERTICAL)
-		leftsizer = wx.BoxSizer(wx.VERTICAL)
+		panel.SetMinSize( (600, 300) )
 
 		# BEE Uninstall Warning | checkbox
 		self.BUWC = wx.CheckBox(
 			parent=panel,
 			name='BUWC',
-			label=loc('settings.tab.general.buwc.text')
+			label=loc('settings.tab.general.buwc.text'),
+			pos=wx.Point(0, -60)
 		)
 		self.BUWC.SetToolTip(wx.ToolTip(loc('settings.tab.general.buwc.tooltip')))
-		if config.load('showUninstallDialog'):
-			self.BUWC.SetValue(True)
-		leftsizer.Add(
-			self.BUWC,
-			wx.SizerFlags(1).Left()
-		)
+		self.BUWC.SetValue( config.load('showUninstallDialog', default=True) )
 
 		# Verify Game Cache warning | checkbox
 		self.VGFC = wx.CheckBox(
 			parent=panel,
 			name='VGFC',
-			label=loc('settings.tab.general.vgfc.text')
+			label=loc('settings.tab.general.vgfc.text'),
+			pos=wx.Point(0, -40)
 		)
 		self.VGFC.SetToolTip(wx.ToolTip(loc('settings.tab.general.vgfc.tooltip')))
-		if config.load('showVerifyDialog'):
-			self.VGFC.SetValue(True)
-		leftsizer.Add(
-			self.VGFC,
-			wx.SizerFlags(1).Left()
-		)
+		self.VGFC.SetValue( config.load('showVerifyDialog', default=True) )
 
 		# Startup Update Check | checkbox
 		self.SUCC = wx.CheckBox(
 			parent=panel,
 			name='SUCC',
-			label=loc('settings.tab.general.succ.text')
+			label=loc('settings.tab.general.succ.text'),
+			pos=wx.Point(0, -20)
 		)
 		self.SUCC.SetToolTip(wx.ToolTip(loc('settings.tab.general.succ.tooltip')))
-		if config.load('startupUpdateCheck'):
-			self.SUCC.SetValue(True)
-		leftsizer.Add(
-			self.SUCC,
-			wx.SizerFlags(1).Left()
-		)
+		self.SUCC.SetValue( config.load('startupUpdateCheck', default=True) )
 
 		# splash screen | checkbox
 		self.SSC = wx.CheckBox(
 			parent=panel,
 			name='SSC',
-			label=loc('settings.tab.general.ssc.text')
+			label=loc('settings.tab.general.ssc.text'),
+			pos=wx.Point(0, 0)
 		)
 		self.SSC.SetToolTip(wx.ToolTip(loc('settings.tab.general.ssc.tooltip')))
-		if config.load('showSplashScreen'):
-			self.SSC.SetValue(True)
-		leftsizer.Add(
-			self.SSC,
-			wx.SizerFlags(1).Left()
-		)
+		self.SSC.SetValue( config.load('showSplashScreen', default=True) )
 
 		# language | static text | dropdown list
 		self.LDST = wx.StaticText(
 			parent=panel,
-			label=loc('settings.tab.general.lddl.text')
+			label=loc('settings.tab.general.lddl.text'),
+			pos=wx.Point(300, -60)
 		)
 		self.LDDL = wx.Choice(
 			parent=panel,
 			name='LDDL',
-			choices=list(localizeObj.localizations.keys())
+			choices=list(localizeObj.localizations.keys()),
+			pos=wx.Point(300, -40)
 		)
 		self.LDDL.SetToolTip(wx.ToolTip(loc('settings.tab.general.lddl.tooltip')))
 		self.LDDL.SetSelection(self.LDDL.FindString(localizeObj.lang))
-		rightsizer.AddMany([
-			(
-				self.LDST,
-				wx.SizerFlags(1).Top()
-			),
-			(
-				self.LDDL,
-				wx.SizerFlags(1).Top()
-			)
-		])
 
 		# reload lang files | button
 		self.RLFB = wx.Button(
 			parent=panel,
-			label=loc('settings.tab.general.rlfb.text')
+			label=loc('settings.tab.general.rlfb.text'),
+			pos=wx.Point(299, -10)
 		)
 		self.RLFB.SetToolTip( wx.ToolTip( loc('settings.tab.general.rlfb.tooltip') ) )
-		rightsizer.Add(
-			self.RLFB,
-			wx.SizerFlags(1).Top()
-		)
 
 		# bind everything
 		self.BUWC.Bind(wx.EVT_CHECKBOX, self.save)
@@ -154,18 +124,6 @@ class GeneralPage(wx.PreferencesPage):
 		self.LDDL.Bind(wx.EVT_CHOICE, self.save)
 		self.RLFB.Bind(wx.EVT_BUTTON, self.reloadLangFiles)
 
-		# add the sizers
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(
-			leftsizer,
-			wx.SizerFlags(1).Left()
-		),
-		sizer.Add(
-			rightsizer,
-			wx.SizerFlags(1).Top()
-		)
-		panel.SetSizer(sizer)
-		# return final panel
 		return panel
 
 	def save(self, evt: wx.CommandEvent):
@@ -186,7 +144,6 @@ class GeneralPage(wx.PreferencesPage):
 
 
 class PathsPage(wx.PreferencesPage):
-	p1 = False
 	name: str = loc('settings.tab.paths.name')
 	P2PST: wx.StaticText  # p2 path
 	P2PDP: wx.DirPickerCtrl
@@ -204,151 +161,101 @@ class PathsPage(wx.PreferencesPage):
 
 	def CreateWindow(self, parent):
 		panel = wx.Panel(parent)
-		panel.SetMinSize((600, 300))
-
-		# rightsizer = wx.BoxSizer(wx.VERTICAL)
-		leftsizer = wx.BoxSizer(wx.VERTICAL)
+		panel.SetMinSize( (600, 300) )
 
 		# P2 Path | static text | DirPickerCtrl
 		self.P2PST = wx.StaticText(
 			parent=panel,
-			label=loc('settings.tab.paths.p2pdp.text')
+			label=loc('settings.tab.paths.p2pdp.text'),
+			pos=wx.Point(0, -60)
 		)
 		self.P2PDP = wx.DirPickerCtrl(
 			parent=panel,
 			name='P2PDP',
-			path=config.portalDir()
+			path=config.portalDir(),
+			size=wx.Size(500, 20),
+			pos=wx.Point(0, -45)
 		)
 		self.P2PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p2pdp.tooltip')))
 		self.P2PDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.P2PDP.GetTextCtrl().GetSize()[1] ) )
-		leftsizer.AddMany([
-			(
-				self.P2PST,
-				wx.SizerFlags(1).Left()
-			),
-			(
-				self.P2PDP,
-				wx.SizerFlags(1).Left()
-			)
-		])
 
-		if self.p1:
-			# P1 Path | static text | DirPickerCtrl
-			self.P1PST = wx.StaticText(
-				parent=panel,
-				label=loc('settings.tab.paths.p1pdp.text')
-			)
-			self.P1PDP = wx.DirPickerCtrl(
-				parent=panel,
-				name='P1PDP',
-				path=''
-			)
-			self.P1PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p1pdp.tooltip')))
-			self.P1PDP.GetTextCtrl().SetMinSize(wx.Size(400, self.P1PDP.GetTextCtrl().GetSize()[1]))
-			leftsizer.AddMany([
-				(
-					self.P1PST,
-					wx.SizerFlags(1).Left()
-				),
-				(
-					self.P1PDP,
-					wx.SizerFlags(1).Left()
-				)
-			])
+		# P1 Path | static text | DirPickerCtrl
+		self.P1PST = wx.StaticText(
+			parent=panel,
+			label=loc('settings.tab.paths.p1pdp.text'),
+			pos=wx.Point(0, -20)
+		)
+		self.P1PDP = wx.DirPickerCtrl(
+			parent=panel,
+			name='P1PDP',
+			path='',
+			size=wx.Size(500, 20),
+			pos=wx.Point(0, -4)
+		)
+		self.P1PDP.Enable(False)
+		self.P1PDP.SetPath('Not available')
+		self.P1PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p1pdp.tooltip')))
+		self.P1PDP.GetTextCtrl().SetMinSize(wx.Size(400, self.P1PDP.GetTextCtrl().GetSize()[1]))
 
 		# BEE Path | static text | DirPickerCtrl
 		self.BPST = wx.StaticText(
 			parent=panel,
-			label=loc('settings.tab.paths.bpdp.text')
+			label=loc('settings.tab.paths.bpdp.text'),
+			pos=wx.Point(0, 20)
 		)
 		bp = config.load('beePath')
 		self.BPDP = wx.DirPickerCtrl(
 			parent=panel,
 			name='BPDP',
-			path=bp if bp is not None else ''
+			path=bp if bp is not None else '',
+			size=wx.Size(500, 20),
+			pos=wx.Point(0, 37)
 		)
 		if bp is None:
-			self.BPDP.SetPath('not installed')
+			self.BPDP.SetPath('Not installed')
 			self.BPDP.Enable(False)
 		self.BPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.bpdp.tooltip')))
 		self.BPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.BPDP.GetTextCtrl().GetSize()[1] ) )
-		leftsizer.AddMany([
-			(
-				self.BPST,
-				wx.SizerFlags(1).Left()
-			),
-			(
-				self.BPDP,
-				wx.SizerFlags(1).Left()
-			)
-		])
 
 		# Local Database Path | static text | DirPickerCtrl
 		self.LDBPST = wx.StaticText(
 			parent=panel,
-			label=loc('settings.tab.paths.ldbpdp.text')
+			label=loc('settings.tab.paths.ldbpdp.text'),
+			pos=wx.Point(0, 60)
 		)
 		self.LDBPDP = wx.DirPickerCtrl(
 			parent=panel,
 			name='LDBPDP',
-			path=config.load('databasePath')
+			path=config.load('databasePath'),
+			size=wx.Size(500, 20),
+			pos=wx.Point(0, 78)
 		)
 		self.LDBPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.ldbpdp.tooltip')))
 		self.LDBPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.LDBPDP.GetTextCtrl().GetSize()[1] ) )
-		leftsizer.AddMany([
-			(
-				self.LDBPST,
-				wx.SizerFlags(1).Left()
-			),
-			(
-				self.LDBPDP,
-				wx.SizerFlags(1).Left()
-			)
-		])
 
 		# Plugins Path | static text | DirPickerCtrl
 		self.PPST = wx.StaticText(
 			parent=panel,
-			label=loc('settings.tab.paths.ppdp.text')
+			label=loc('settings.tab.paths.ppdp.text'),
+			pos=wx.Point(0, 100)
 		)
 		self.PPDP = wx.DirPickerCtrl(
 			parent=panel,
 			name='PPDP',
-			path=config.load('pluginsPath')
+			path=config.load('pluginsPath'),
+			size=wx.Size(500, 20),
+			pos=wx.Point(0, 119)
 		)
 		self.PPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.ppdp.tooltip')))
 		self.PPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.PPDP.GetTextCtrl().GetSize()[1] ) )
-		leftsizer.AddMany([
-			(
-				self.PPST,
-				wx.SizerFlags(1).Left()
-			),
-			(
-				self.PPDP,
-				wx.SizerFlags(1).Left()
-			)
-		])
 
 		# bind everything
 		self.P2PDP.Bind(wx.EVT_DIRPICKER_CHANGED, self.save)
-		if self.p1:
-			self.P1PDP.Bind(wx.EVT_DIRPICKER_CHANGED, self.save)
+		self.P1PDP.Bind(wx.EVT_DIRPICKER_CHANGED, self.save)
 		self.BPDP.Bind(wx.EVT_DIRPICKER_CHANGED, self.save)
 		self.LDBPDP.Bind(wx.EVT_DIRPICKER_CHANGED, self.save)
 		self.PPDP.Bind(wx.EVT_DIRPICKER_CHANGED, self.save)
 
-		# add the sizers
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(
-			leftsizer,
-			wx.SizerFlags(1).Left()
-		)
-		# sizer.Add(
-		#	rightsizer,
-		#	wx.SizerFlags(1).Top()
-		# )
-		panel.SetSizer(sizer)
-		# return final panel
 		return panel
 
 	def save(self, evt: wx.FileDirPickerEvent):
