@@ -128,7 +128,7 @@ class root(wx.Frame):
 		else:
 			self.portalMenu.Enable(10, False)
 		# register event handlers
-		dispatcher.connect( receiver=self.UnregisterMenu, signal=Events.UnregisterMenu )
+		dispatcher.connect( receiver=self.RemoveMenu, signal=Events.UnregisterMenu )
 		# trigger the registerMenu event
 		dispatcher.send( Events.RegisterEvent, RegisterHandler=pluginSystem.RegisterHandler(self) )
 		"""
@@ -148,12 +148,9 @@ class root(wx.Frame):
 		# stop all plugins
 		asyncio.run(pluginSystem.systemObj.unloadAndStop())
 		# get the window position as wx.Point and convert it to list
-		try:
-			pos = list(self.GetPosition().Get())
-			LOGGER.debug(f'saved main window position: {pos}')
-			config.save(pos, 'mainWindowPos')
-		except:
-			pass
+		pos = list(self.GetPosition().Get())
+		LOGGER.debug(f'saved main window position: {pos}')
+		config.save(pos, 'mainWindowPos')
 		self.Destroy()
 
 	def OnResize( self, evt: wx.Event ):
@@ -161,22 +158,22 @@ class root(wx.Frame):
 
 	# file menu items actions
 	@staticmethod
-	def openp2dir(event):
+	def openp2dir(event: wx.CommandEvent):
 		os.startfile( config.portalDir() )
 
 	@staticmethod
-	def openBEEdir(event):
+	def openBEEdir(event: wx.CommandEvent):
 		os.startfile( Path( config.load("beePath") ).parent )
 
 	@staticmethod
-	def syncGames(event):
+	def syncGames(event: wx.CommandEvent):
 		utilities.notimplementedyet()
 
-	def exit(self, event):
+	def exit(self, event: wx.CommandEvent):
 		self.OnClose( wx.CloseEvent() )  # there's already an handler, so use that
 
 	# options menu items actions
-	def openSettingsWindow(self, event=None):
+	def openSettingsWindow(self, event: wx.CommandEvent):
 		"""
 		this function opens the settings window.
 		when this is called for the first time create an instance of the window, so when
@@ -196,7 +193,7 @@ class root(wx.Frame):
 			self.settingsWindowInstance.show()  # show the window
 
 	@staticmethod
-	def reloadPlugins(event=None):
+	def reloadPlugins(event: wx.CommandEvent):
 		"""
 		reloads the plugins
 		:param event: placeholder
@@ -204,7 +201,7 @@ class root(wx.Frame):
 		"""
 		asyncio.run( pluginSystem.systemObj.hardReload('all') )
 
-	def reloadPackages(self, event=None):
+	def reloadPackages(self, event: wx.CommandEvent):
 		"""
 		reloads the package view
 		:param event: placeholder
@@ -216,7 +213,7 @@ class root(wx.Frame):
 		self.Refresh()
 
 	# portal 2 items actions
-	def verifyGameFiles(self, event):
+	def verifyGameFiles(self, event: wx.CommandEvent):
 		"""
 		triggers the verify game cache dialog + event
 		:param event:
@@ -242,7 +239,7 @@ class root(wx.Frame):
 			else:
 				print('no')
 
-	def uninstallBee(self, event):
+	def uninstallBee(self, event: wx.CommandEvent):
 		"""
 		called when the uninstall bee button is pressed
 		:param event: placeholder
@@ -261,7 +258,7 @@ class root(wx.Frame):
 		self.portalMenu.Enable(9, False)
 		self.fileMenu.Enable(1, False)
 
-	def installBee(self, event):
+	def installBee(self, event: wx.CommandEvent):
 		"""
 		called when the install bee button is pressed
 		:param event: placeholder
@@ -299,27 +296,27 @@ class root(wx.Frame):
 		self.fileMenu.Enable(1, True)
 
 	# help menu items actions
-	def openAboutWindow(self, event):
+	def openAboutWindow(self, event: wx.CommandEvent):
 		aboutWindow.init(self)
 
 	@staticmethod
-	def checkUpdates(event):
+	def checkUpdates(event: wx.CommandEvent):
 		asyncio.run(appDateCheck())
 
 	@staticmethod
-	def openWiki(event):
+	def openWiki(event: wx.CommandEvent):
 		openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator/wiki')
 
 	@staticmethod
-	def openGithub(event):
+	def openGithub(event: wx.CommandEvent):
 		openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator')
 
 	@staticmethod
-	def openDiscord(event):
+	def openDiscord(event: wx.CommandEvent):
 		openUrl('https://discord.gg/hnGFJrz')
 
 	# API methods
-	def UnregisterMenu(self, menu: str):
+	def RemoveMenu(self, menu: str):
 		index = self.menuBar.FindMenu(menu)
 		if index == wx.NOT_FOUND:
 			raise pluginSystem.Errors.MenuNotFoundException(f'unknown menu "{menu}"')
@@ -327,9 +324,9 @@ class root(wx.Frame):
 			self.menuBar.Remove(index)
 
 	def AddMenu(self, menu: wx.Menu, title: str):
-		menu = self.GetMenuBar()
-		menu.Append(menu, title)
-		menu.Refresh()
+		menuBar: wx.MenuBar = self.GetMenuBar()
+		menuBar.Append(menu, title)
+		menuBar.Refresh()
 
 
 def openUrl(url: str):
