@@ -22,7 +22,6 @@ beePackagesApiUrl: str = 'https://api.github.com/repos/BEEmod/BEE2-items/release
 def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 	"""
 	this function checks if BEE has an update, if so, ask the user if he wants to update it
-	:return: None
 	"""
 	# load current bee version
 	beeVersion: str = config.load('beeVersion')
@@ -32,7 +31,7 @@ def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 		if beeVersion is None:
 			return
 	# check updates
-	data = utilities.checkUpdate(beeRepoUrl, VersionInfo.parse( beeVersion if firstInstall is False else '0.0.0') )
+	data = utilities.checkUpdate(beeRepoUrl, VersionInfo.parse( beeVersion if not firstInstall else '0.0.0') )
 	logger.info(f'latest BEE version: {data.version}')
 	if data.version is None:
 		# no update available, can't update
@@ -52,8 +51,8 @@ def checkAndInstallUpdate(firstInstall: bool = False) -> None:
 			logger.debug('user cancelled install')
 			return
 	# user said yes
-	logger.debug(f'updating from BEE {beeVersion} to BEE {data[2]}!')
-	config.dynConfig['beeUpdateUrl'] = data[1]
+	logger.debug(f'updating from BEE {beeVersion} to BEE {data.version}!')
+	config.dynConfig['beeUpdateUrl'] = data.url
 	installBee()
 
 
@@ -101,6 +100,7 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 		request = get( link, stream=True )  # download BEE
 		# working variables
 		zipdata = io.BytesIO()
+		dialog.Show(True)
 		dialog.Update(0)
 		dl = 0
 		total_length = int( request.headers.get('content-length') )
@@ -111,12 +111,14 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 			done = int(100 * dl / total_length)
 			print(f'total: {total_length}, dl: {dl}, done: {done}')
 			dialog.Update(done)
+
 		logger.info('extracting...')
 		dialog.Pulse('Extracting..')
 		# read the data as bytes and then create the zipfile object from it
 		ZipFile(zipdata).extractall( config.load('beePath') if folder is None else folder )  # extract BEE
 		logger.info('BEE2.4 application installed!')
-	dialog.Close()
+		dialog.Close()
+
 	dialog = wx.ProgressDialog(
 		parent=wx.GetTopLevelWindows()[0],
 		title='Installing BEE2..',
@@ -125,13 +127,14 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 	)
 	# install default package pack
 	# get the url
-	dl_url = get(beePackagesApiUrl).json()['assets'][0]['browser_download_url']
+	link = get(beePackagesApiUrl).json()['assets'][0]['browser_download_url']
 	# get the zip as bytes
 	logger.info('downloading default package pack...')
-	request = get(dl_url, stream=True)
+	request = get(link, stream=True)
 	# working variables
 	zipdata = io.BytesIO()
-	dialog.Update(0, newmsg='Downloading default pack..')
+	dialog.Update(0)
+
 	dl = 0
 	total_length = int(request.headers.get('content-length'))
 	# download!
@@ -141,6 +144,7 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 		done = int(100 * dl / total_length)
 		print(f'total: {total_length}, dl: {dl}, done: {done}')
 		dialog.Update(done)
+
 	logger.info('extracting...')
 	dialog.Pulse('Extracting..')
 	# convert to a byte stream, then zipfile object and then extract
@@ -163,9 +167,8 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 def uninstall():
 	"""
 	uninstall BEE2.4
-	:return: None
 	"""
-	path = config.load('beePath')
+	path = config.load('beePath').replace('/BEE2.exe', '')
 	logger.info('removing BEE2.4!')
 	logger.info('deleting app files..')
 	utilities.removeDir( path )
