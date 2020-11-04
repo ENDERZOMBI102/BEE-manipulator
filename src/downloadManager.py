@@ -43,6 +43,7 @@ class downloadThread(Thread):
 			self.percentDone = int( 100 * self.bytesDone / self.totalLength )
 			self.callback(self)
 			if self.shouldStop:
+				request.close()
 				break
 			self.pauser.wait()
 		else:
@@ -62,7 +63,9 @@ class downloadThread(Thread):
 class downloadManager:
 
 	downloads: Dict[int, downloadThread] = []
-	syncMode: bool = False
+	_syncMode: bool = False
+	_shouldStop: bool = False
+	"""PRIVATE PROPERTY"""
 
 	def __init__(self):
 		pass
@@ -85,7 +88,8 @@ class downloadManager:
 		# setup and start the download thread
 		self.downloads[ downloadId ] = downloadThread(url, callback)
 		self.downloads[ downloadId ].setName(f'DownloadThread-{downloadId}')
-		self.downloads[ downloadId ].start()
+		if not self._syncMode:
+			self.downloads[ downloadId ].start()
 		dispatcher.send( Events.DownloadStarted, url=url, downloadId=downloadId )
 		return downloadId
 
@@ -100,18 +104,32 @@ class downloadManager:
 		self.downloads[ downloadId ].join()
 		del self.downloads[ downloadId ]
 
-	def pauseDownload( self, downloadId: int ):
+	def toggleDownload( self, downloadId: int, enable: bool = None ):
 		"""
-		Pauses or resumes a download
+		Pauses or resumes a download.
+		if enable is present, True will resume the download if it is not,
+		False will pause the download if it is not
 		:param downloadId: the download to pause/unpause
+		:param enable: should enable or disable
 		"""
-		# toggle the download paused state
-		if self.downloads[downloadId].paused:
-			self.downloads[ downloadId ].pauser.release()
-			self.downloads[ downloadId ].paused = False
+		if enable is None:
+			# here the download pause state is toggled
+			if self.downloads[downloadId].paused:
+				self.downloads[ downloadId ].pauser.release()
+				self.downloads[ downloadId ].paused = False
+			else:
+				self.downloads[ downloadId ].pauser.acquire(True)
+				self.downloads[ downloadId ].paused = True
 		else:
-			self.downloads[ downloadId ].pauser.acquire(True)
-			self.downloads[ downloadId ].paused = True
+			# here will resume/pause the download based on the enable parameter
+			if enable:
+				# enable is True, if the download isn't resumed, resume it
+				if self.downloads[ downloadId ].paused:
+					self.toggleDownload( downloadId )
+			else:
+				# enable is False, if the download isn't paused, pause it
+				if not self.downloads[ downloadId ].paused:
+					self.toggleDownload( downloadId )
 
 	def getDownloads( self ) -> List[str]:
 		"""
@@ -120,6 +138,85 @@ class downloadManager:
 		"""
 		dl: downloadThread
 		return [ dl.url for dl in self.downloads ]
+
+	def syncMode( self ):
+		"""
+		Toggles sync mode, by default the manager works in async mode
+		sync mode makes so that only one download is active at time
+		"""
+		self._syncMode = not self.syncMode
+		if self.syncMode:
+			# pause all downloads
+			for downloadId in self.downloads.keys():
+				self.toggleDownload( downloadId )
+			# resume the first download
+			self._resumeFirst()
+		else:
+			# resume all downloads
+			for downloadId in self.downloads.keys():
+				if self.downloads[ downloadId ].paused:
+					self.toggleDownload( downloadId )
+
+	def _resumeFirst( self ):
+		"""
+		Resumes only the first download of the queue
+		"""
+		# HACK: use the "iterator" to get the first item, then break
+		for downloadId in self.downloads.keys():
+			self.toggleDownload( downloadId )
+			break
+
+	def activeCount( self ) -> int:
+		"""
+		Counts all the active downloads at this moment
+		:return: the active download count
+		"""
+		active: int = 0
+		# count the non-paused downloads
+		for download in self.downloads.values():
+			if not download.paused:
+				active += 1
+		return active
+
+	def _tick( self ):
+		"""
+		Internal method used to check things in sync mode, so that
+		a download can resume if one has finished etc, does nothing in async mode
+		"""
+		if self._syncMode:
+			# we're in sync mode
+			toBeDeleted: int = None
+			# there's no active downloads, if there's one paused, resume it
+			if self.activeCount() == 0:
+				self._resumeFirst()
+			else:
+				enableNext: bool = False
+				# cycle in all downloads
+				#
+				# checks all downloads, if the active one finished, enable the next
+				# and remove the one that finished
+				for downloadId in self.downloads.keys():
+					if self.downloads[ downloadId ].finished:
+						enableNext = True
+						toBeDeleted = downloadId
+					elif enableNext:
+						self.toggleDownload( downloadId )
+						break
+			# if there's a download to remove, remove it
+			if toBeDeleted:
+				del self.downloads[ toBeDeleted ]
+		# schedule execution again
+		if not self._shouldStop:
+			wx.CallLater(4, self._tick)
+
+	def stop( self ):
+		"""
+		Stop and cancel all downloadsclose
+		"""
+		for download in self.downloads.values():
+			download.shouldStop = True
+		self._shouldStop = True
+
 
 
 
