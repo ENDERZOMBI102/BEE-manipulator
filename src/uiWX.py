@@ -155,6 +155,7 @@ class root(wx.Frame):
 		pos = list(self.GetPosition().Get())
 		LOGGER.debug(f'saved main window position: {pos}')
 		config.save(pos, 'mainWindowPos')
+		config.save(None, 'placeholderForSaving')
 		self.Destroy()
 
 	def OnResize( self, evt: wx.Event ):
@@ -179,7 +180,11 @@ class root(wx.Frame):
 		opens the BEE2.4 directory with the default file explorer
 		:param event: placeholder
 		"""
-		os.startfile( Path( config.load("beePath") ).parent )
+		os.startfile(
+			Path( config.load('beePath') ).parent
+			if config.load('beePath').lower().endswith('.exe')
+			else Path( config.load('beePath') )
+		)
 
 	@staticmethod
 	def syncGames(event: wx.CommandEvent):
