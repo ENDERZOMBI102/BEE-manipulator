@@ -68,7 +68,7 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 	logger.debug(f'url valid!')
 	logger.debug(f'checking updates on url: {url}')
 	data = get( url ).json()  # get the latest release data
-	if not isinstance(data, dict):
+	if not isinstance(data, list):
 		return UpdateInfo( None, None, None )
 	usePrereleases: bool = config.load('usePrereleases')
 	for ver in data:
@@ -82,12 +82,14 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 	releaseUrl: str = None
 	releaseVer: VersionInfo = None
 	releaseDesc: str = None
+	# special edge-case
+	ov = data['tag_name'] if 'BEEmod' not in url else data['tag_name'].replace('2.4', '4', 1)
 	# if the most recent release is not a greater one,
 	# we just return a UpdateInfo object with every value setted to None
 	# else we return a "complete" UpdateInfo object
-	if VersionInfo.parse( data['tag_name'] ) > curVer:
+	if VersionInfo.parse( ov ) > curVer:
 		releaseUrl = getReleaseUrl(data)
-		releaseVer = VersionInfo.parse( data['tag_name'] )
+		releaseVer = VersionInfo.parse( ov )
 		releaseDesc = data['body']
 	return UpdateInfo( releaseVer, releaseUrl, releaseDesc )
 
