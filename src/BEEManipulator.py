@@ -11,6 +11,7 @@ from typing import Type
 import wx
 
 import config
+import downloadManager
 import localization
 import srctools.logger
 import timeTest
@@ -68,6 +69,7 @@ class App(wx.App):
 			return False
 		# create icon object
 		utilities.__setIcon()
+		downloadManager.manager.init()
 		# import after localize() object is created so that loc() is already present
 		from uiWX import root
 		# set app name
