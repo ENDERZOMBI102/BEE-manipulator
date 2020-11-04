@@ -70,22 +70,24 @@ class root(wx.Frame):
 		# portal 2 menu bar
 		self.portalMenu = wx.Menu()
 		verifyGameFilesItem = self.portalMenu.Append(8, loc('menu.portal.vgf.name'), loc('menu.portal.vgf.description') )
-		uninstallBeeItem = self.portalMenu.Append(9, loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description'))
+		uninstallBeeItem = self.portalMenu.Append(9, loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description') )
 		installBeeItem = self.portalMenu.Append(10, loc('menu.portal.installbee.name'), loc('menu.portal.installbee.description') )
+		openP2Item = self.portalMenu.Append( 11, loc( 'menu.portal.openp2.name' ), loc( 'menu.portal.openp2.description' ) )
+		openBeeItem = self.portalMenu.Append( 12, loc( 'menu.portal.openbee.name' ), loc( 'menu.portal.openbee.description' ) )
 
 		# help menu bar
 		self.helpMenu = wx.Menu()
-		aboutItem = self.helpMenu.Append(11, loc('menu.help.about.name'), loc('menu.help.about.description') )
-		checkUpdatesItem = self.helpMenu.Append(12, loc('menu.help.cupdates.name'), loc('menu.help.cupdates.description') )
-		wikiItem = self.helpMenu.Append(13, loc('menu.help.wiki.name'), loc('menu.help.wiki.description') )
-		githubItem = self.helpMenu.Append(14, loc('menu.help.github.name'), loc('menu.help.github.description') )
-		discordItem = self.helpMenu.Append(15, loc('menu.help.discord.name'), loc('menu.help.discord.description') )
+		aboutItem = self.helpMenu.Append(13, loc('menu.help.about.name'), loc('menu.help.about.description') )
+		checkUpdatesItem = self.helpMenu.Append(14, loc('menu.help.cupdates.name'), loc('menu.help.cupdates.description') )
+		wikiItem = self.helpMenu.Append(15, loc('menu.help.wiki.name'), loc('menu.help.wiki.description') )
+		githubItem = self.helpMenu.Append(16, loc('menu.help.github.name'), loc('menu.help.github.description') )
+		discordItem = self.helpMenu.Append(17, loc('menu.help.discord.name'), loc('menu.help.discord.description') )
 
 		# set menu item icons
-		self.helpMenu.FindItemById(11).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
-		self.helpMenu.FindItemById(13).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
-		self.helpMenu.FindItemById(14).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
-		self.helpMenu.FindItemById(15).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
+		self.helpMenu.FindItemById(13).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
+		self.helpMenu.FindItemById(15).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
+		self.helpMenu.FindItemById(16).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
+		self.helpMenu.FindItemById(17).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
 
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()
@@ -100,25 +102,27 @@ class root(wx.Frame):
 		self.SetStatusText( loc('statusbar.text').replace('{username}', config.steamUsername() ) )
 
 		# file menu
-		self.Bind(wx.EVT_MENU, self.openp2dir, openPortalDirItem)
-		self.Bind(wx.EVT_MENU, self.openBEEdir, openBeeDirItem)
-		self.Bind(wx.EVT_MENU, self.syncGames, syncGamesItem)
-		self.Bind(wx.EVT_MENU, self.exit, exitItem)
+		self.Bind( wx.EVT_MENU, self.openp2dir, openPortalDirItem )
+		self.Bind( wx.EVT_MENU, self.openBEEdir, openBeeDirItem )
+		self.Bind( wx.EVT_MENU, self.syncGames, syncGamesItem )
+		self.Bind( wx.EVT_MENU, self.exit, exitItem )
 		# options menu
-		self.Bind(wx.EVT_MENU, self.openSettingsWindow, settingsItem)
-		self.Bind(wx.EVT_MENU, logWindow.toggleVisibility, toggleLogWindowItem)
-		self.Bind(wx.EVT_MENU, self.reloadPlugins, reloadPluginsItem)
-		self.Bind(wx.EVT_MENU, self.reloadPackages, reloadPackagesItem)
+		self.Bind( wx.EVT_MENU, self.openSettingsWindow, settingsItem )
+		self.Bind( wx.EVT_MENU, logWindow.toggleVisibility, toggleLogWindowItem )
+		self.Bind( wx.EVT_MENU, self.reloadPlugins, reloadPluginsItem )
+		self.Bind( wx.EVT_MENU, self.reloadPackages, reloadPackagesItem )
 		# portal 2 menu
-		self.Bind(wx.EVT_MENU, self.verifyGameFiles, verifyGameFilesItem)
-		self.Bind(wx.EVT_MENU, self.uninstallBee, uninstallBeeItem)
-		self.Bind(wx.EVT_MENU, self.installBee, installBeeItem)
+		self.Bind( wx.EVT_MENU, self.verifyGameFiles, verifyGameFilesItem )
+		self.Bind( wx.EVT_MENU, self.uninstallBee, uninstallBeeItem )
+		self.Bind( wx.EVT_MENU, self.installBee, installBeeItem )
+		self.Bind( wx.EVT_MENU, self.openP2, openP2Item )
+		self.Bind( wx.EVT_MENU, self.openBee, openBeeItem )
 		# help menu
-		self.Bind(wx.EVT_MENU, self.openAboutWindow, aboutItem)
-		self.Bind(wx.EVT_MENU, self.checkUpdates, checkUpdatesItem)
-		self.Bind(wx.EVT_MENU, self.openWiki, wikiItem)
-		self.Bind(wx.EVT_MENU, self.openGithub, githubItem)
-		self.Bind(wx.EVT_MENU, self.openDiscord, discordItem)
+		self.Bind( wx.EVT_MENU, self.openAboutWindow, aboutItem )
+		self.Bind( wx.EVT_MENU, self.checkUpdates, checkUpdatesItem )
+		self.Bind( wx.EVT_MENU, self.openWiki, wikiItem )
+		self.Bind( wx.EVT_MENU, self.openGithub, githubItem )
+		self.Bind( wx.EVT_MENU, self.openDiscord, discordItem )
 		# other events
 		self.Bind(wx.EVT_CLOSE, self.OnClose, self)
 		self.Bind( wx.EVT_SIZING, self.OnResize, self )
@@ -332,6 +336,16 @@ class root(wx.Frame):
 		self.portalMenu.Enable(9, True)
 		self.portalMenu.Enable(10, False)
 		self.fileMenu.Enable(1, True)
+
+	def openP2( self, evt: wx.CommandEvent ):
+		path = f'{config.portalDir()}portal2.exe'
+		LOGGER.info(f'starting Portal 2 ({path})')
+		os.startfile( path )
+
+	def openBee( self, evt: wx.CommandEvent ):
+		path = f'{config.load("beePath")}BEE2.exe'
+		LOGGER.info( f'starting BEE2 ({path})' )
+		os.startfile( path )
 
 	# help menu items actions
 	def openAboutWindow(self, event: wx.CommandEvent):
