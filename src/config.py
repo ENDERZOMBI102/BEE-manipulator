@@ -114,13 +114,16 @@ def save(data, section):  # save a config
 	:param data: the data to save
 	:param section: the section of the config to save the data to
 	"""
+	global _timesSaved
 	if '--sayconfig' in argv:
 		logger.info( f'{section}: {data}' )
 	# save
-	currentConfigData[section] = data
-	logger.debug( f'saved {section}' )
+	if section != 'placeholderForSaving':
+		currentConfigData[section] = data
+		logger.debug( f'saved {section}' )
+	else:
+		_timesSaved = 2
 	# save to disk if this is the third save
-	global _timesSaved
 	if _timesSaved == 0 or _timesSaved == 1:
 		_timesSaved += 1
 	else:
