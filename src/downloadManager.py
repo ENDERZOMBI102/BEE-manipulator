@@ -15,10 +15,12 @@ class downloadThread(Thread):
 	callback: Callable[ ['downloadThread'], None]
 
 	pauser: Condition = Condition()
+	finisher: Condition = Condition()
 	# state properties: those indicate the current state of the thread
 	paused: bool = False
 	finished: bool = False
 	shouldStop: bool = False
+	dataHasBeenRetrieved: bool = False
 	# data: this indicates the data and statistics of the thread
 	bytesDone: int = 0
 	speed: int = 0
@@ -33,7 +35,16 @@ class downloadThread(Thread):
 			raise ValueError('callback have to be a function')
 		self.callback = callback
 
+	def getData( self ) -> BytesIO:
+		"""
+		Returns the downloaded data
+		:return: BytesIO containing the downloaded bytes
+		"""
+		self.dataHasBeenRetrieved = True
+		return self.data
+
 	def run( self ):
+		self.finisher.acquire(True)
 		request = get( self.url, stream=True )
 		self.totalLength = int( request.headers.get( 'content-length' ) )
 		# download!
@@ -49,6 +60,7 @@ class downloadThread(Thread):
 		else:
 			self.finished = True
 			self.callback(self)
+			self.finisher.release()
 			wx.CallAfter(
 				# func to call
 				dispatcher.send,
@@ -67,7 +79,7 @@ class downloadManager:
 	_shouldStop: bool = False
 	"""PRIVATE PROPERTY"""
 
-	def __init__(self):
+	def init(self):
 		wx.CallAfter( self._tick )
 
 	def startDownload( self, url: str, callback: Callable[ [downloadThread], None] ) -> int:
@@ -139,6 +151,13 @@ class downloadManager:
 		dl: downloadThread
 		return [ dl.url for dl in self.downloads ]
 
+	def waitUtilDone( self, downloadId: int ):
+		"""
+		Calling this will result in a block until the download finishes
+		:param downloadId: the download id to wait for
+		"""
+		self.downloads[ downloadId ].finisher.wait()
+
 	def syncMode( self ):
 		"""
 		Toggles sync mode, by default the manager works in async mode
@@ -198,7 +217,8 @@ class downloadManager:
 				for downloadId in self.downloads.keys():
 					if self.downloads[ downloadId ].finished:
 						enableNext = True
-						toBeDeleted = downloadId
+						if self.downloads[downloadId].dataHasBeenRetrieved:
+							toBeDeleted = downloadId
 					elif enableNext:
 						self.toggleDownload( downloadId )
 						break
@@ -218,5 +238,5 @@ class downloadManager:
 		self._shouldStop = True
 
 
-
+manager: downloadManager = downloadManager()
 
