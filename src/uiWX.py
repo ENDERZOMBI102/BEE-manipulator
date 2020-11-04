@@ -294,7 +294,7 @@ class root(wx.Frame):
 		:param event: placeholder
 		"""
 		# check if is installed
-		if beeManager.beeIsPresent():
+		if beeManager.beeIsPresent() and beeManager.packagesAreInstalled():
 			wx.GenericMessageDialog(
 				self,
 				message='BEE2.4 has been found on default install path!\nNo need to install again :D',
@@ -302,6 +302,15 @@ class root(wx.Frame):
 				style=wx.OK | wx.STAY_ON_TOP | wx.CENTRE
 			).ShowModal()
 			config.save(f'{utilities.defBeePath}/BEE2/', 'beePath')
+		elif beeManager.beeIsPresent() and not beeManager.packagesAreInstalled():
+			wx.GenericMessageDialog(
+				self,
+				message='BEE2.4 has been found on default install path, but not the packages.\nThe packages will be downloaded',
+				caption='Notice!',
+				style=wx.OK | wx.STAY_ON_TOP | wx.CENTRE
+			).ShowModal()
+			config.save( f'{utilities.defBeePath}/BEE2/', 'beePath' )
+			beeManager.installDefPackages()
 		else:  # not installed
 			dial = wx.DirDialog(
 				self,
