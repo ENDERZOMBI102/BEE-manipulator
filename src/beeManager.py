@@ -190,6 +190,16 @@ def packageFolder():
 		return f'{beePath}/packages/'
 
 
+@property
+def packagesAreInstalled():
+	inst: bool = True
+	if not Path( packageFolder() ).exists():
+		inst = False
+	if not Path( f'{packageFolder()}clean_style.zip' ).exists():
+		inst = False
+	return inst
+
+
 class configManager:
 	"""
 	BEE2.4 config manager
