@@ -80,14 +80,14 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 	this will install/update BEE, when called, the function
 	will download the latest version based on the os is running on and unzip it
 	"""
-	# create the progress dialog
-	dialog = wx.ProgressDialog(
-		parent=wx.GetTopLevelWindows()[0],
-		title='Installing BEE2..',
-		message='Downloading application..',
-		maximum=100
-	)
 	if not beeIsPresent() or ver is not None:
+		# the progress dialog
+		dialog = wx.ProgressDialog(
+			parent=wx.GetTopLevelWindows()[ 0 ],
+			title='Installing BEE2..',
+			message='Downloading application..',
+			maximum=100
+		)
 		logger.info('downloading BEE2...')
 		# get the zip binary data
 		link: str = None
@@ -111,7 +111,6 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 			done = int(100 * dl / total_length)
 			print(f'total: {total_length}, dl: {dl}, done: {done}')
 			dialog.Update(done)
-
 		logger.info('extracting...')
 		dialog.Pulse('Extracting..')
 		# read the data as bytes and then create the zipfile object from it
@@ -119,13 +118,13 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 		logger.info('BEE2.4 application installed!')
 		dialog.Close()
 
+	# install default package pack
 	dialog = wx.ProgressDialog(
 		parent=wx.GetTopLevelWindows()[0],
 		title='Installing BEE2..',
 		message='Downloading default packages..',
 		maximum=100
 	)
-	# install default package pack
 	# get the url
 	link = get(beePackagesApiUrl).json()['assets'][0]['browser_download_url']
 	# get the zip as bytes
@@ -134,7 +133,6 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 	# working variables
 	zipdata = io.BytesIO()
 	dialog.Update(0)
-
 	dl = 0
 	total_length = int(request.headers.get('content-length'))
 	# download!
@@ -144,13 +142,14 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 		done = int(100 * dl / total_length)
 		print(f'total: {total_length}, dl: {dl}, done: {done}')
 		dialog.Update(done)
-
 	logger.info('extracting...')
 	dialog.Pulse('Extracting..')
 	# convert to a byte stream, then zipfile object and then extract
 	ZipFile(zipdata).extractall( config.load('beePath') if folder is None else folder)
 	dialog.Close()
 	logger.info('finished extracting!')
+
+	# check things
 	logger.info('checking games config file..')
 	if Path( os.getenv('APPDATA').replace('\\', '/') + '/BEEMOD2/config/games.cfg' ).exists():
 		logger.info("config file exist, checking if has P2..")
@@ -162,6 +161,41 @@ def installBee(ver: VersionInfo = None, folder: str = None):
 		logger.warning("config file doesn't exist!")
 		configManager.createAndAddGame( path=config.portalDir() )
 	logger.info('finished installing BEE!')
+
+
+def installDefPackages( ver: VersionInfo = None, folder: str = None ):
+	dialog = wx.ProgressDialog(
+		parent=wx.GetTopLevelWindows()[ 0 ],
+		title='Installing BEE2..',
+		message='Downloading default packages..',
+		maximum=100
+	)
+	# install default package pack
+	# get the url
+	link = get( beePackagesApiUrl ).json()[ 'assets' ][ 0 ][ 'browser_download_url' ]
+	# get the zip as bytes
+	logger.info( 'downloading default package pack...' )
+	request = get( link, stream=True )
+	# working variables
+	zipdata = io.BytesIO()
+	dialog.Update( 0 )
+
+	dl = 0
+	total_length = int( request.headers.get( 'content-length' ) )
+	# download!
+	for data in request.iter_content( chunk_size=1024 ):
+		dl += len( data )
+		zipdata.write( data )
+		done = int( 100 * dl / total_length )
+		print( f'total: {total_length}, dl: {dl}, done: {done}' )
+		dialog.Update( done )
+
+	logger.info( 'extracting...' )
+	dialog.Pulse( 'Extracting..' )
+	# convert to a byte stream, then zipfile object and then extract
+	ZipFile( zipdata ).extractall( config.load( 'beePath' ) if folder is None else folder )
+	dialog.Close()
+	logger.info( 'finished extracting!' )
 
 
 def uninstall():
@@ -181,21 +215,23 @@ def verifyGameCache():
 	pass
 
 
-@property
 def packageFolder():
-	beePath = config.load('beePath')
+	beePath = config.load( 'beePath' )
 	if beePath is None:
 		raise BeeNotInstalledException("can't access beePath!")
 	else:
 		return f'{beePath}/packages/'
 
 
-@property
 def packagesAreInstalled():
+	try:
+		path = packageFolder()
+	except BeeNotInstalledException:
+		path = utilities.defBeePath
 	inst: bool = True
-	if not Path( packageFolder() ).exists():
+	if not Path( path ).exists():
 		inst = False
-	if not Path( f'{packageFolder()}clean_style.zip' ).exists():
+	if not Path( f'{path}clean_style.zip' ).exists():
 		inst = False
 	return inst
 
