@@ -12,6 +12,7 @@ from srctools.logger import get_logger
 
 logger = get_logger()
 loc: Callable
+localizeObj: 'Localize' = None
 
 # check of forced language
 if '--lang' in argv:
@@ -67,11 +68,11 @@ class Localize:
 		:return: localized text
 		"""
 		try:
-			return self.localizations[self.lang][textId]
+			return self.localizations[ self.lang ][ textId ]
 		except KeyError:
 			logger.error(f'missing translation! key: {textId}')
 			if 'missingtranslation' in self.localizations[self.lang].keys():
-				return self.localizations[self.lang]['missingtranslation']
+				return self.localizations[ self.lang ][ 'missingtranslation' ]
 			return 'OHNO'
 
 	def setLang(self, newLang: str):
@@ -142,6 +143,3 @@ class Localize:
 				exit(1)
 			else:
 				logger.error(f'failed to download lang file {langToDownload}')
-
-
-localizeObj: Localize = None

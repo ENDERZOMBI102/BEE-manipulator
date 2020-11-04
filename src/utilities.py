@@ -9,8 +9,6 @@ import wx
 from requests import get, RequestException
 from semver import VersionInfo
 
-import uiWX
-
 if __name__ == '__main__':
 	from localization import loc
 import config
@@ -206,7 +204,7 @@ def removeDir(path):
 	"""
 	try:
 		config.dynConfig['logDeletions']
-	except ValueError:
+	except KeyError:
 		config.dynConfig['logDeletions'] = True
 	# cycle in all subfolders/files
 	for file in Path( path ).glob('*'):
@@ -259,5 +257,4 @@ def notimplementedyet():
 
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
 env = 'dev'
-mainWindow: 'uiWX.root' = None
 
