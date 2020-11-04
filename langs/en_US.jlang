@@ -1,6 +1,8 @@
 {
   "currentLang": "en_US",
   "missingtranslation": "HONO",
+  "window.main.title": "BEE manipulator {ver}",
+  "window.log.title": "Logs",
   "menu.file.name": "File",
   "menu.file.openportaldir.name": "Open Portal 2 Directory",
   "menu.file.openportaldir.description" : "opens the portal 2 directory",
