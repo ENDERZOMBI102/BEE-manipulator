@@ -68,7 +68,7 @@ class downloadManager:
 	"""PRIVATE PROPERTY"""
 
 	def __init__(self):
-		pass
+		wx.CallAfter( self._tick )
 
 	def startDownload( self, url: str, callback: Callable[ [downloadThread], None] ) -> int:
 		"""
