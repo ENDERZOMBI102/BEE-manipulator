@@ -15,7 +15,6 @@ class downloadThread(Thread):
 	callback: Callable[ ['downloadThread'], None]
 
 	pauser: Condition = Condition()
-	finisher: Condition = Condition()
 	# state properties: those indicate the current state of the thread
 	paused: bool = False
 	finished: bool = False
@@ -44,7 +43,6 @@ class downloadThread(Thread):
 		return self.data
 
 	def run( self ):
-		self.finisher.acquire(True)
 		request = get( self.url, stream=True )
 		self.totalLength = int( request.headers.get( 'content-length' ) )
 		# download!
@@ -60,7 +58,6 @@ class downloadThread(Thread):
 		else:
 			self.finished = True
 			self.callback(self)
-			self.finisher.release()
 			wx.CallAfter(
 				# func to call
 				dispatcher.send,
@@ -74,7 +71,7 @@ class downloadThread(Thread):
 
 class downloadManager:
 
-	downloads: Dict[int, downloadThread] = []
+	downloads: Dict[int, downloadThread] = {}
 	_syncMode: bool = False
 	_shouldStop: bool = False
 	"""PRIVATE PROPERTY"""
@@ -156,7 +153,8 @@ class downloadManager:
 		Calling this will result in a block until the download finishes
 		:param downloadId: the download id to wait for
 		"""
-		self.downloads[ downloadId ].finisher.wait()
+		while not self.downloads[ downloadId ].finished:
+			pass
 
 	def syncMode( self ):
 		"""
