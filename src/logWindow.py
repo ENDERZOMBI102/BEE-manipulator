@@ -9,6 +9,9 @@ import utilities
 from pluginSystem import Events
 from utilities import wxStyles
 
+if __name__ == '__main':
+	pass
+
 # the visibility of the log window, is initially setted to the value saved in the config file
 
 visible: bool = config.load('logWindowVisibility')
