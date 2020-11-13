@@ -116,6 +116,7 @@ class logWindow(wx.Frame):
 		self.Bind( wx.EVT_CHOICE, self.OnLevelChoice, self.levelChoice )
 		dispatcher.send(Events.LogWindowCreated, window=self)
 		updateVisibility()
+		self.levelChoice.Refresh()
 
 	def OnClearButtonPressed(self, evt: wx.CommandEvent):
 		self.text.Clear()
