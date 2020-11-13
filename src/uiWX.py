@@ -29,18 +29,20 @@ wx.InitAllImageHandlers()
 
 
 class root(wx.Frame):
+
+	instance: 'root'
 	settingsWindowInstance: settingsUI.window = None
 
 	def __init__(self):
 		# load plugins
-		super().__init__( None, title="BEE Manipulator " + str(config.version) )
+		super().__init__( None, title=f'BEE Manipulator {str(config.version)}' )
 		# sets the app icon
 		self.SetIcon(utilities.icon)
 		# init the logging window
 		asyncio.run( logWindow.init() )
 		asyncio.run( appDateCheck() )
 		# set the utilities.root pointer to the object of this class
-		utilities.root = self
+		root.instance = self
 		try:
 			self.SetPosition(wx.Point(config.load('mainWindowPos')))
 		except config.ConfigError:
@@ -337,12 +339,14 @@ class root(wx.Frame):
 		self.portalMenu.Enable(10, False)
 		self.fileMenu.Enable(1, True)
 
-	def openP2( self, evt: wx.CommandEvent ):
+	@staticmethod
+	def openP2( evt: wx.CommandEvent ):
 		path = f'{config.portalDir()}portal2.exe'
 		LOGGER.info(f'starting Portal 2 ({path})')
 		os.startfile( path )
 
-	def openBee( self, evt: wx.CommandEvent ):
+	@staticmethod
+	def openBee( evt: wx.CommandEvent ):
 		path = f'{config.load("beePath")}BEE2.exe'
 		LOGGER.info( f'starting BEE2 ({path})' )
 		os.startfile( path )
@@ -410,7 +414,7 @@ async def appDateCheck():
 	if data.url is None:
 		return
 	data = wx.GenericMessageDialog(
-		parent=wx.GetTopLevelWindows()[0],
+		parent=root.instance,
 		message=f'An update for the app is available, do you want to update now?\n\n{data.description}',
 		caption=f'Update Available - new version: {data.version}',
 		style=wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
