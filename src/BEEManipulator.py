@@ -102,8 +102,12 @@ class App(wx.App):
 			)
 		except Exception:
 			wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
-		if self.root is not None:
-			self.root.Destroy()
+		try:
+			if self.root is not None:
+				self.root.Destroy()
+		except AttributeError:
+			# the root ui has already been destroyed
+			pass
 
 
 if __name__ == '__main__':
@@ -112,6 +116,7 @@ if __name__ == '__main__':
 	if utilities.frozen():
 		print(f"BM exe path: {path.parent.resolve()}")
 	else:
+		print('BM is running in a developer environment.')
 		print(f"BM source path: {path.parent}")
 	os.chdir(path.parent)
 	timeStartup = '--time' in argv
