@@ -61,37 +61,56 @@ class Plugin:
 		self.name = name
 		self.version = version
 
-	def __call__(self, cls):
+	def __call__( self, cls ):
 		# make a subclass to check for methods
 		class WrappedPlugin(cls):
 			__state__ = 'unloaded'
+			version: VersionInfo = self.version
+			name: str = self.name
 
 			def getPath(self) -> Path:
 				return Path( systemObj.modules[ self.__class__.__base__.__module__ ].__file__ ).resolve()
+
+			def getName( self ) -> str:
+				return self.name
+
+			def getVersion( self ) -> VersionInfo:
+				return self.version
+
+		# a plugin's ID is the name of the class
 		self.pluginid = WrappedPlugin.__base__.__name__
+
+		logger.debug(f'instantiated plugin "{self.pluginid}" from {WrappedPlugin.__base__.__module__}.py')
 		# checks if the plugin has the NEEDED methods
-		logger.debug(f'instantiated plugin {self.pluginid} from {WrappedPlugin.__base__.__module__}')
 		# load
-		if not asyncio.iscoroutinefunction(getattr(WrappedPlugin, 'load', Callable)):
+		if not asyncio.iscoroutinefunction( getattr( WrappedPlugin, 'load', Callable ) ):
 			raise PluginNotValid('missing required coroutine "load"!')
 		# unload
-		if not asyncio.iscoroutinefunction(getattr(WrappedPlugin, 'unload', Callable)):
+		if not asyncio.iscoroutinefunction( getattr( WrappedPlugin, 'unload', Callable ) ):
 			raise PluginNotValid('missing required coroutine "unload"!')
-		# checks the optional methods
 
-		# only check reload if its present
+		# reload
+		# check reload only if its present
 		if getattr(WrappedPlugin, 'reload', None) is not None:
 			# reload check
-			if not asyncio.iscoroutinefunction( getattr( WrappedPlugin, 'reload', placeholder ) ):
+			if not asyncio.iscoroutinefunction( WrappedPlugin.reload ):
 				# its not a coroutine, raise an error
 				err = PluginNotValid('the "reload" method should be a coroutine')
 				# set the plugin id in the exception
 				err.pluginid = self.pluginid
 				raise err
-		#
+		# check if another plugin already registered itself with this plugin's ID
 		if self.pluginid in systemObj.plugins.keys():
 			if not systemObj.isReloading:
-				logger.error(f'Duplicate plugin found! id: {self.pluginid}, duplicate name: {self.name}, it will replace the other plugin')
+				logger.error(f'Duplicate plugin found! id: {self.pluginid}, duplicate name: {self.name}')
+				# only load the most recent one
+				if WrappedPlugin.version <= systemObj.plugins[self.pluginid].getVersion():
+					logger.warning(
+						f'{self.name} from {WrappedPlugin.__class__.__module__} will not be loaded!'
+					)
+					return WrappedPlugin
+
+		# load the new one
 		systemObj.plugins[self.pluginid] = WrappedPlugin()
 		return WrappedPlugin
 
@@ -105,6 +124,8 @@ def placeholder(ph0=None, ph1=0):
 
 
 class BasePlugin(metaclass=ABCMeta):
+
+	version: VersionInfo
 
 	@abstractmethod
 	async def load(self):
@@ -120,23 +141,25 @@ class BasePlugin(metaclass=ABCMeta):
 		"""
 		pass
 
-	@abstractmethod
-	def getVersion( self ) -> VersionInfo:
-		"""
-		returns a `semver.VersionInfo` object with the plugin version
-		"""
-		pass
-
 	async def reload(self):
 		"""
 		called when the plugin is being reloaded
 		"""
 		pass
 
+	def getVersion( self ) -> VersionInfo:
+		"""
+		returns a `semver.VersionInfo` object with the plugin version
+		"""
+		return self.version
+
 	def getPath(self) -> Path:
 		return Path( systemObj.modules[self.__class__.__base__.__module__].__file__ ).resolve()
 
-	__state__: str
+	def __init_subclass__(cls, **kwargs):
+		systemObj.plugins[cls.__class__.__name__] = cls()
+
+	__state__: str = 'unloaded'
 
 
 class system:
@@ -217,7 +240,7 @@ class system:
 		# redraw the menu bar in case a plugin added something
 		wx.GetTopLevelWindows()[0].menuBar.Refresh()
 
-	async def reload(self, ph=None):
+	async def reload( self ):
 		"""
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
@@ -225,8 +248,8 @@ class system:
 		:param ph: placeholder
 		"""
 		# cycle in the plugins
-		logger.info( f'plugins found: {len( self.plugins)}' )
-		for i in range( len( self.plugins) ):
+		logger.info( f'plugins found: {self.plugins.__len__()}' )
+		for i in range( self.plugins.__len__() ):
 			# we're reloading, set isReloading to True
 			self.isReloading = True
 			# get data
@@ -237,7 +260,7 @@ class system:
 					pluginid = key
 					break
 				f += 1
-			# this should happen but this is there to prevent exceptions
+			# this shouldn't happen but this is there to prevent exceptions
 			if pluginid is None:
 				continue
 			module = self.modules[ self.plugins[pluginid].__class__.__base__.__module__ ]
@@ -256,9 +279,11 @@ class system:
 				spec.loader.exec_module(module)
 			except PluginNotValid as e:
 				logger.error(f"can't load a plugin! error:\n{e}")
+				continue
 			except Exception as e:
 				error = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
 				logger.error(f"can't load plugin! error: {error}")
+				continue
 			# reassign the module in the dict
 			self.modules[module.__name__] = module
 			# wait for the plugin to load
@@ -267,8 +292,10 @@ class system:
 			except Exception as e:
 				logger.error(f'caught exception while loading plugin "{pluginid}"')
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
-			# change the plugin's state to loaded
-			self.plugins[pluginid].__state__ = 'loaded'
+				self.plugins[ pluginid ].__state__ = 'errored'
+			else:
+				# change the plugin's state to loaded
+				self.plugins[pluginid].__state__ = 'loaded'
 			# no mo reloading
 			self.isReloading = False
 		# dispatch events
