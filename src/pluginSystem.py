@@ -125,8 +125,6 @@ def placeholder(ph0=None, ph1=0):
 
 class BasePlugin(metaclass=ABCMeta):
 
-	version: VersionInfo
-
 	@abstractmethod
 	async def load(self):
 		"""
@@ -141,23 +139,34 @@ class BasePlugin(metaclass=ABCMeta):
 		"""
 		pass
 
+	@abstractmethod
+	def getName( self ) -> str:
+		"""
+		This method is used to get the plugin's name.
+		This is used by BM to know what name to display in the plugin list.
+		:return: plugin's name
+		"""
+		pass
+
+	@abstractmethod
+	def getVersion( self ) -> VersionInfo:
+		"""
+		returns a `semver.VersionInfo` object with the plugin version
+		"""
+		pass
+
 	async def reload(self):
 		"""
 		called when the plugin is being reloaded
 		"""
 		pass
 
-	def getVersion( self ) -> VersionInfo:
-		"""
-		returns a `semver.VersionInfo` object with the plugin version
-		"""
-		return self.version
-
 	def getPath(self) -> Path:
 		return Path( systemObj.modules[self.__class__.__base__.__module__].__file__ ).resolve()
 
 	def __init_subclass__(cls, **kwargs):
 		systemObj.plugins[cls.__class__.__name__] = cls()
+		logger.debug( f'instantiated plugin "{cls.__name__}" from {cls.__module__}.py' )
 
 	__state__: str = 'unloaded'
 
@@ -245,7 +254,6 @@ class system:
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
 		- delete a plugin module and reload it from disk
-		:param ph: placeholder
 		"""
 		# cycle in the plugins
 		logger.info( f'plugins found: {self.plugins.__len__()}' )
@@ -263,7 +271,11 @@ class system:
 			# this shouldn't happen but this is there to prevent exceptions
 			if pluginid is None:
 				continue
-			module = self.modules[ self.plugins[pluginid].__class__.__base__.__module__ ]
+			# get the right module for a type of plugin
+			if isinstance(self.plugins[pluginid], BasePlugin):
+				module = self.modules[ self.plugins[pluginid].__module__ ]
+			else:
+				module = self.modules[ self.plugins[pluginid].__class__.__base__.__module__ ]
 			# wait for the plugin to unload
 			try:
 				await self.plugins[pluginid].unload()
