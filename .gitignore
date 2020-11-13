@@ -12,8 +12,8 @@ BEEManipulator.7z
 assets/database.json
 assets/about.html
 logs
-/src/.env
+src/.env
 plugins
 docs/console.py
-docs/plugin.py
+plugins/plugin.py
 packages
