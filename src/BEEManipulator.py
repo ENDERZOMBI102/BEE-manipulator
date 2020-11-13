@@ -37,8 +37,15 @@ class App(wx.App):
 			self.ShouldExit = True
 			return False
 		# initialize logging
+		# overwrite stdout log level if on launched from source
+		if not utilities.frozen():
+			os.environ['SRCTOOLS_DEBUG'] = '1'
 		# use a window to show the uncaught exception to the user
-		srctools.logger.init_logging( './logs/latest.log' if utilities.frozen() else './../logs/latest.log', on_error=self.OnError )
+		srctools.logger.init_logging(
+			filename='./logs/latest.log' if utilities.frozen() else './../logs/latest.log',
+			main_logger='BEE Manipulator',
+			on_error=self.OnError
+		)
 		self.logger = srctools.logger.get_logger('BEE Manipulator')
 		# if we started with --dev parameter, set loglevel to debug
 		if '--dev' in argv:
