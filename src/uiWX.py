@@ -352,23 +352,23 @@ class root(wx.Frame):
 		os.startfile( path )
 
 	# help menu items actions
-	def openAboutWindow(self, event: wx.CommandEvent):
-		aboutWindow.init(self)
+	def openAboutWindow(self, evt: wx.CommandEvent):
+		aboutWindow.init()
 
 	@staticmethod
-	def checkUpdates(event: wx.CommandEvent):
+	def checkUpdates(evt: wx.CommandEvent):
 		asyncio.run(appDateCheck())
 
 	@staticmethod
-	def openWiki(event: wx.CommandEvent):
+	def openWiki(evt: wx.CommandEvent):
 		openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator/wiki')
 
 	@staticmethod
-	def openGithub(event: wx.CommandEvent):
+	def openGithub(evt: wx.CommandEvent):
 		openUrl('https://github.com/ENDERZOMBI102/BEE-manipulator')
 
 	@staticmethod
-	def openDiscord(event: wx.CommandEvent):
+	def openDiscord(evt: wx.CommandEvent):
 		openUrl('https://discord.gg/hnGFJrz')
 
 	# API methods
