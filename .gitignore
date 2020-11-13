@@ -15,5 +15,4 @@ logs
 src/.env
 plugins
 docs/console.py
-plugins/plugin.py
 packages
