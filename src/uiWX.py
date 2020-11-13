@@ -234,7 +234,7 @@ class root(wx.Frame):
 		reloads the plugins
 		:param evt: placeholder
 		"""
-		asyncio.run( pluginSystem.systemObj.reload('all') )
+		asyncio.run( pluginSystem.systemObj.reload() )
 
 	def reloadPackages(self, evt: wx.CommandEvent):
 		"""
