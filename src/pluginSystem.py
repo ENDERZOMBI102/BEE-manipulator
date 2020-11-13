@@ -8,6 +8,7 @@ from types import ModuleType
 from typing import Dict, Callable
 
 import wx
+from semver import VersionInfo
 from wx.py import dispatcher
 
 import config
@@ -36,11 +37,13 @@ class Errors:
 
 class RegisterHandler:
 
-	_mainWindow: wx.Frame
+	_mainWindow = None
 	"""PRIVATE ATTRIBUTE"""
 
-	def __init__(self, win: wx.Frame):
-		self._mainWindow = win
+	def __init__(self):
+		import uiWX
+		self._mainWindow: 'uiWX.root'
+		self._mainWindow = uiWX.root.instance
 
 	def RegisterMenu( self, menu: wx.Menu, title: str):
 		index = self._mainWindow.menuBar.FindMenu(title)
@@ -54,7 +57,7 @@ class Plugin:
 	"""
 	this decorator is used to create a plugin for BEE Manipulator
 	"""
-	def __init__(self, name: str, version: str = None ):
+	def __init__(self, name: str, version: VersionInfo = None ):
 		self.name = name
 		self.version = version
 
@@ -75,9 +78,17 @@ class Plugin:
 		if not asyncio.iscoroutinefunction(getattr(WrappedPlugin, 'unload', Callable)):
 			raise PluginNotValid('missing required coroutine "unload"!')
 		# checks the optional methods
-		# reload
-		if not asyncio.iscoroutinefunction(getattr(WrappedPlugin, 'reload', placeholder)):
-			raise PluginNotValid('the "reload" method should be a coroutine')
+
+		# only check reload if its present
+		if getattr(WrappedPlugin, 'reload', None) is not None:
+			# reload check
+			if not asyncio.iscoroutinefunction( getattr( WrappedPlugin, 'reload', placeholder ) ):
+				# its not a coroutine, raise an error
+				err = PluginNotValid('the "reload" method should be a coroutine')
+				# set the plugin id in the exception
+				err.pluginid = self.pluginid
+				raise err
+		#
 		if self.pluginid in systemObj.plugins.keys():
 			if not systemObj.isReloading:
 				logger.error(f'Duplicate plugin found! id: {self.pluginid}, duplicate name: {self.name}, it will replace the other plugin')
@@ -86,7 +97,7 @@ class Plugin:
 
 
 class PluginNotValid(Exception):
-	pass
+	pluginid: str
 
 
 def placeholder(ph0=None, ph1=0):
@@ -106,6 +117,13 @@ class BasePlugin(metaclass=ABCMeta):
 	async def unload(self):
 		"""
 		called when the plugin is being unloaded, do clean up stuff here
+		"""
+		pass
+
+	@abstractmethod
+	def getVersion( self ) -> VersionInfo:
+		"""
+		returns a `semver.VersionInfo` object with the plugin version
 		"""
 		pass
 
@@ -156,7 +174,7 @@ class system:
 			try:
 				spec.loader.exec_module(module)
 			except PluginNotValid as e:
-				logger.error(f"can't load a plugin! error:\n{e}")
+				logger.error(f"can't load {e.pluginid}! error:\n{e}")
 			except Exception as e:
 				error = ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) )
 				logger.error(f"can't load plugin! error: {error}")
@@ -199,24 +217,14 @@ class system:
 		# redraw the menu bar in case a plugin added something
 		wx.GetTopLevelWindows()[0].menuBar.Refresh()
 
-	async def reload(self, identifier: str):
-		"""
-		reload a specified plugin
-		:param identifier: plugin to reload
-		:return: nothing
-		"""
-		getattr(self.plugins[identifier], 'reload', str)()
-		await self.unload(identifier)
-		await self.load(identifier)
-
-	async def hardReload(self, ph=None):
+	async def reload(self, ph=None):
 		"""
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
 		- delete a plugin module and reload it from disk
 		:param ph: placeholder
 		"""
-		# cicle in the plugins
+		# cycle in the plugins
 		logger.info( f'plugins found: {len( self.plugins)}' )
 		for i in range( len( self.plugins) ):
 			# we're reloading, set isReloading to True
@@ -264,7 +272,7 @@ class system:
 			# no mo reloading
 			self.isReloading = False
 		# dispatch events
-		dispatcher.send( Events.RegisterEvent, RegisterHandler=RegisterHandler( wx.GetTopLevelWindows()[0] ) )
+		dispatcher.send( Events.RegisterEvent, RegisterHandler=RegisterHandler() )
 		from logWindow import logWindow
 		dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
 

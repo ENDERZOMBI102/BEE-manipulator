@@ -136,7 +136,7 @@ class root(wx.Frame):
 		# register event handlers
 		dispatcher.connect( receiver=self.RemoveMenu, signal=Events.UnregisterMenu )
 		# trigger the registerMenu event
-		dispatcher.send( Events.RegisterEvent, RegisterHandler=pluginSystem.RegisterHandler(self) )
+		dispatcher.send( Events.RegisterEvent, RegisterHandler=pluginSystem.RegisterHandler() )
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
@@ -150,10 +150,10 @@ class root(wx.Frame):
 		self.book.AddPage(self.browserTab, "Package Browser")
 
 	# wx event callbacks
-	def OnClose(self, event: wx.CloseEvent):
+	def OnClose(self, evt: wx.CloseEvent):
 		"""
 		called when the window/application is about to close
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		# stop all plugins
 		asyncio.run( pluginSystem.systemObj.unloadAndStop() )
@@ -173,18 +173,18 @@ class root(wx.Frame):
 
 	# file menu items actions
 	@staticmethod
-	def openp2dir(event: wx.CommandEvent):
+	def openp2dir(evt: wx.CommandEvent):
 		"""
 		opens the Portal 2 directory with the default file explorer
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		os.startfile( config.portalDir() )
 
 	@staticmethod
-	def openBEEdir(event: wx.CommandEvent):
+	def openBEEdir(evt: wx.CommandEvent):
 		"""
 		opens the BEE2.4 directory with the default file explorer
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		os.startfile(
 			Path( config.load('beePath') ).parent
@@ -193,27 +193,27 @@ class root(wx.Frame):
 		)
 
 	@staticmethod
-	def syncGames(event: wx.CommandEvent):
+	def syncGames(evt: wx.CommandEvent):
 		"""
 		still not know what this does
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		utilities.notimplementedyet()
 
-	def exit(self, event: wx.CommandEvent):
+	def exit(self, evt: wx.CommandEvent):
 		"""
 		called by the exit button, fowards to the root.OnClose() method
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		self.OnClose( wx.CloseEvent() )  # there's already an handler, so use that
 
 	# options menu items actions
-	def openSettingsWindow(self, event: wx.CommandEvent):
+	def openSettingsWindow(self, evt: wx.CommandEvent):
 		"""
 		this function opens the settings window.
 		when this is called for the first time create an instance of the window, so when
 		called again it will be faster, because it don't have to create everything again
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 
 		if utilities.env == 'dev':
@@ -229,17 +229,17 @@ class root(wx.Frame):
 			self.settingsWindowInstance.show()  # show the window
 
 	@staticmethod
-	def reloadPlugins(event: wx.CommandEvent):
+	def reloadPlugins(evt: wx.CommandEvent):
 		"""
 		reloads the plugins
-		:param event: placeholder
+		:param evt: placeholder
 		"""
-		asyncio.run( pluginSystem.systemObj.hardReload('all') )
+		asyncio.run( pluginSystem.systemObj.reload('all') )
 
-	def reloadPackages(self, event: wx.CommandEvent):
+	def reloadPackages(self, evt: wx.CommandEvent):
 		"""
 		reloads the package view
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		self.browserTab.reload()
 		self.book.Refresh()
@@ -247,10 +247,10 @@ class root(wx.Frame):
 		self.Refresh()
 
 	# portal 2 items actions
-	def verifyGameFiles(self, event: wx.CommandEvent):
+	def verifyGameFiles(self, evt: wx.CommandEvent):
 		"""
 		triggers the verify game cache dialog + event
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		if not config.load("showVerifyDialog"):
 			# user really wants to verify the game files?
@@ -272,10 +272,10 @@ class root(wx.Frame):
 		# yes he wants to
 		print('YES')
 
-	def uninstallBee(self, event: wx.CommandEvent):
+	def uninstallBee(self, evt: wx.CommandEvent):
 		"""
 		called when the uninstall bee button is pressed
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		if config.load('showUninstallDialog', default=True):
 			# the user really wants to uninstall BEE?
@@ -294,10 +294,10 @@ class root(wx.Frame):
 		self.portalMenu.Enable(9, False)
 		self.fileMenu.Enable(1, False)
 
-	def installBee(self, event: wx.CommandEvent):
+	def installBee(self, evt: wx.CommandEvent):
 		"""
 		called when the install bee button is pressed
-		:param event: placeholder
+		:param evt: placeholder
 		"""
 		# check if is installed
 		if beeManager.beeIsPresent() and beeManager.packagesAreInstalled():
