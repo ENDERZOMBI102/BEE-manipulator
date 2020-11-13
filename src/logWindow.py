@@ -60,14 +60,14 @@ class logWindow(wx.Frame):
 	def __init__(self):
 		super().__init__(
 			wx.GetTopLevelWindows()[0],  # parent
-			title='Logs',  # window title
-			# those styles make so that the window can't minizime, maximize, resize and show on the taskbar
+			title=f'Logs - {str(config.version)}',  # window title
+			# those styles make so that the window can't minimize, maximize, resize and show on the taskbar
 			style=wx.FRAME_NO_TASKBAR | wxStyles.TITLEBAR_ONLY_BUTTON_CLOSE ^ wx.RESIZE_BORDER
 		)  # init the window
 		logWindow.instance = self
 		self.SetIcon( utilities.icon )
 		self.SetSize(0, 0, 500, 365)
-		sizer = wx.FlexGridSizer(rows=2, cols=1, gap=wx.Size(0, 0))
+		sizer = wx.FlexGridSizer( rows=2, cols=1, gap=wx.Size(0, 0) )
 		try:
 			pos = config.load('logWindowPos')
 			if pos is not None:
@@ -79,48 +79,63 @@ class logWindow(wx.Frame):
 		self.text = wx.TextCtrl(
 			self,
 			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.VSCROLL | wx.TE_RICH,
-			size=wx.Size(self.GetSize()[0], 300)
+			size=wx.Size( self.GetSize()[0], 300 )
 		)  # make the textbox
 		self.logHandler = logHandler()
 		# set the log message format
-		self.logHandler.setFormatter(logging.Formatter(
-			# One letter for level name
-			'[{levelname[0]}] {module}.{funcName}(): {message}\n',
-			style='{',
-		))
+		self.logHandler.setFormatter(
+			logging.Formatter(
+				# One letter for level name
+				'[{levelname[0]}] {module}.{funcName}(): {message}\n',
+				style='{',
+			)
+		)
 		self.logHandler.setLevel(getLevel())
 		logging.getLogger().addHandler(self.logHandler)
 		# create bottom bar
-		self.bottomBar = wx.Panel(self, size=wx.Size(500, 25))  # makes the bottom "menu" bar
-		BBsizer = wx.GridBagSizer()
+		self.bottomBar = wx.Panel( self, size=wx.Size( self.GetSize()[0], 30) )  # makes the bottom "menu" bar
 		self.clearBtn = wx.Button(  # makes the clear button
 			self.bottomBar,
 			label='Clear',
-			size=wx.Size(50, 20)
+			size=wx.Size(52, 22),
+			pos=wx.Point(10, 3)
 		)
-		BBsizer.Add(  # add the clear button to the sizer
-			self.clearBtn,
-			wx.GBPosition(0, 1)
+		self.levelChoice = wx.Choice(
+			parent=self.bottomBar,
+			size=wx.Size(80, 22),
+			pos=wx.Point(self.GetSize()[0]-100, 3),
+			choices=['Debug', 'Info', 'Warning', 'Error']
 		)
-		self.bottomBar.SetSizer(BBsizer)
+		self.levelChoice.SetSelection( ( getLevel() / 10 ) - 1 )
 		sizer.Add(self.text, border=wx.Bottom)
 		sizer.Add(self.bottomBar)
 		self.SetSizer(sizer)
-		self.Bind(wx.EVT_CLOSE, self.OnClose, self)
-		self.Bind(wx.EVT_MOVE_END, self.OnMoveEnd, self)
-		self.Bind(wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn)
-		dispatcher.send(Events.LogWindowCreated, None, window=self)
+		self.Bind( wx.EVT_CLOSE, self.OnClose, self )
+		self.Bind( wx.EVT_MOVE_END, self.OnMoveEnd, self )
+		self.Bind( wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn )
+		self.Bind( wx.EVT_CHOICE, self.OnLevelChoice, self.levelChoice )
+		dispatcher.send(Events.LogWindowCreated, window=self)
 		updateVisibility()
 
-	def OnClearButtonPressed(self, event):
+	def OnClearButtonPressed(self, evt: wx.CommandEvent):
 		self.text.Clear()
 
+	def OnLevelChoice( self, evt: wx.CommandEvent ):
+		if evt.GetSelection() == 0:
+			changeLevel('debug')
+		elif evt.GetSelection() == 1:
+			changeLevel('info')
+		elif evt.GetSelection() == 2:
+			changeLevel('warning')
+		else:
+			changeLevel('error')
+
 	@staticmethod
-	def OnClose(event):
+	def OnClose(evt: wx.CloseEvent):
 		logger.debug(f'hidden log window')
 		toggleVisibility()
 
-	def OnMoveEnd(self, event):
+	def OnMoveEnd(self, evt: wx.Event):
 		# get the window position as wx.Point and convert it to list
 		pos = list(self.GetPosition().Get())
 		logger.debug(f'saved logwindow position: {pos}')
@@ -172,14 +187,12 @@ def changeLevel(level: str) -> None:
 	"""
 	changes and saves the log level that shows on the window
 	:param level: level to set the window to
-	:return: none
 	"""
-	level = level.upper()
-	if level == 'INFO':
+	if level == 'info':
 		data = logging.INFO
-	elif level == 'WARNING':
+	elif level == 'warning':
 		data = logging.WARNING
-	elif level == 'ERROR':
+	elif level == 'error':
 		data = logging.ERROR
 	else:
 		data = logging.DEBUG
@@ -195,13 +208,13 @@ def getLevel() -> int:
 	:return: log level
 	"""
 	# check for the level
-	savedLevel = str(config.load("logLevel")).upper()
+	savedLevel = str( config.load("logLevel") ).lower()
 	logger.info(f'loaded log level {savedLevel} from config!')
-	if savedLevel == "INFO":
+	if savedLevel == "info":
 		level = logging.INFO
-	elif savedLevel == "WARNING":
+	elif savedLevel == "warning":
 		level = logging.WARNING
-	elif savedLevel == "ERROR":
+	elif savedLevel == "error":
 		level = logging.ERROR
 	else:
 		level = logging.DEBUG
