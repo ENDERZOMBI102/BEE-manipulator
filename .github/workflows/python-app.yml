@@ -29,8 +29,8 @@ jobs:
         pip install pyinstaller --no-input
     - name: Build bm
       run: |
-        dir C:\ProgramData\chocolatey\lib\upx\tools
-        pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir="C:\ProgramData\chocolatey\lib\upx\tools"
+        dir C:\ProgramData\chocolatey\lib\upx\tools\upx-3.96-win64
+        pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir="C:\ProgramData\chocolatey\lib\upx\tools\upx-3.96-win64"
         C:\ProgramData\chocolatey\lib\7zip.portable\tools\7z-extra\7za.exe a -r BEEManipulator ./dist/"BEE Manipulator"/*
     - name: Upload release
       run: |
