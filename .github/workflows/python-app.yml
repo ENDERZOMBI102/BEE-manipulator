@@ -24,7 +24,6 @@ jobs:
         python-version: 3.7
     - name: Install dependencies
       run: |
-        cd BEE-manipulator
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip uninstall pyinstaller --no-input
@@ -32,7 +31,6 @@ jobs:
     - name: Build bm
       run: |
         dir %upx%
-        cd BEE-manipulator
         pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir=%upx%
         %7z% a -r BEEManipulator ./dist/"BEE Manipulator"/*
       env:
