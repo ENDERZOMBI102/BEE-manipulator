@@ -24,9 +24,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip uninstall pyinstaller --no-input
-        pip install git+https://github.com/htgoebel/pyinstaller/tree/issue-4158-pydantic --no-input
+        pip install wheel --no-input
+        pip install -r requirements.txt --no-input
+        # pip install git+https://github.com/htgoebel/pyinstaller/tree/issue-4158-pydantic --no-input
+        pip install pyinstaller --no-input
     - name: Build bm
       run: |
         dir %upx%
