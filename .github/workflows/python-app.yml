@@ -51,7 +51,7 @@ jobs:
         pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir="C:\ProgramData\chocolatey\lib\upx\tools\upx-3.96-win64"
         C:\ProgramData\chocolatey\lib\7zip.portable\tools\7z-extra\7za.exe a -r BEEManipulator ./dist/"BEE Manipulator"/*
     # upload a release!
-    - name: Create GitHub release
+    - name: Upload GitHub release
       run: |
-        echo ${{ secrets.GIHUB_TOKEN }}
+        python upload_release.py ${{ secrets.GIHUB_TOKEN }}
       
