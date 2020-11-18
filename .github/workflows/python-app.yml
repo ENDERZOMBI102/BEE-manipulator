@@ -29,17 +29,6 @@ jobs:
         key: progs
         # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
         restore-keys: progs
-    - name: Get pip cache dir
-      id: pip-cache-dir
-      run: |
-        echo "::set-output name=dir::$(pip cache dir)"
-    - name: cache-pip
-      id: cache-pip
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.pip-cache.outputs.dir }}
-        key: windows-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: windows-pip-
     # install
     - name: install 7zip and UPX
       # install the progs only if the cache doesn't exist
@@ -50,7 +39,6 @@ jobs:
       with:
         python-version: 3.7
     - name: Install dependencies
-      if: steps.cache-pip.outputs.cache-hit != 'true'
       run: |
         python -m pip install --upgrade pip
         pip install wheel --no-input
