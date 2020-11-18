@@ -53,5 +53,5 @@ jobs:
     # upload a release!
     - name: Upload GitHub release
       run: |
-        python upload_release.py ${{ secrets.GIHUB_TOKEN }}
+        python upload_release.py ${{ secrets.GITHUB_TOKEN }}
       
