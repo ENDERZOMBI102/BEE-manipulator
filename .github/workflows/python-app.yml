@@ -52,9 +52,6 @@ jobs:
         C:\ProgramData\chocolatey\lib\7zip.portable\tools\7z-extra\7za.exe a -r BEEManipulator ./dist/"BEE Manipulator"/*
     # upload a release!
     - name: Create GitHub release
-      uses: Roang-zero1/github-upload-release-artifacts-action@master
-      with:
-        args: BEEManipulator.7z
-        created_tag: ${{ secrets.GITHUB_REF }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo ${{ secrets.GIHUB_TOKEN }}
+      
