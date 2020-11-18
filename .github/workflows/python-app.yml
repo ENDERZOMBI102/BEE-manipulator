@@ -16,6 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      # cache!
     - name: Cache
       id: cache
       uses: actions/cache@v2.1.3
@@ -28,13 +29,18 @@ jobs:
         key: progs
         # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
         restore-keys: progs
+    - name: Get pip cache dir
+      id: pip-cache-dir
+      run: |
+        echo "::set-output name=dir::$(pip cache dir)"
     - name: cache-pip
       id: cache-pip
       uses: actions/cache@v2
       with:
-        path: ${{ appdata }}\pip\Cache
+        path: ${{ steps.pip-cache.outputs.dir }}
         key: windows-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: windows-pip-
+    # install
     - name: install 7zip and UPX
       # install the progs only if the cache doesn't exist
       if: steps.cache.outputs.cache-hit != 'true'
@@ -51,6 +57,7 @@ jobs:
         pip install -r requirements.txt --no-input
         # pip install git+https://github.com/htgoebel/pyinstaller/tree/issue-4158-pydantic --no-input
         pip install pyinstaller --no-input
+    # build
     - name: Build bm
       run: |
         pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir="C:\ProgramData\chocolatey\lib\upx\tools\upx-3.96-win64"
