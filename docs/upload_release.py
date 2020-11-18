@@ -8,7 +8,7 @@ uploadUrl = get('https://api.github.com/repos/ENDERZOMBI102/BEE-manipulator/rele
 
 
 files = {
-	'file': open('./BEEManipulator.7z', 'rb')
+	'file': open( '../BEEManipulator.7z', 'rb' )
 }
 
 
