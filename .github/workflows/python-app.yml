@@ -1,0 +1,43 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python application
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install 7zip and UPX
+      run: |
+        powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        choco install 7zip.portable
+        choco install upx
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        cd BEE-manipulator
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip uninstall pyinstaller --no-input
+        pip install git+https://github.com/htgoebel/pyinstaller/tree/issue-4158-pydantic --no-input
+    - name: Build bm
+      run: |
+        dir %upx%
+        cd BEE-manipulator
+        pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir=%upx%
+        %7z% a -r BEEManipulator ./dist/"BEE Manipulator"/*
+    - env:
+        7z: C:\ProgramData\chocolatey\lib\7zip.portable\tools\7z-extra.exe
+        upx: C:\ProgramData\chocolatey\lib\upx\tools
+    - name: Upload release
+      run: |
+        echo hi
