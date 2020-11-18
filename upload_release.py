@@ -15,8 +15,7 @@ files = {
 header = {
 	'Accept': 'application/vnd.github.v3+json',
 	'Content-Length': str( len( files['file'].read() ) ),
-	'Authorization': argv[1],  # github token
-	'Content-Type': 'application/octet-stream'
+	'Authorization': argv[1]  # github token
 }
 
 r = post(f'{uploadUrl}/?name=BEEManipulator.7z,label=BEE%20Manipulator', headers=header, files=files)
