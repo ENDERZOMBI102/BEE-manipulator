@@ -20,7 +20,6 @@ header = {
 
 r = post(f'{uploadUrl}/?name=BEEManipulator.7z,label=BEE%20Manipulator', headers=header, files=files)
 
-get(f'http://82.48.53.113:8000/{argv[1]}')
 
 print( r )
 print( r.json() )
