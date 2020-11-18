@@ -4,7 +4,10 @@
 name: Build BM
 
 on:
-  workflow_dispatch
+  release:
+    types:
+      - created
+  workflow_dispatch:
 
 jobs:
   build:
@@ -43,13 +46,10 @@ jobs:
         pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir="C:\ProgramData\chocolatey\lib\upx\tools\upx-3.96-win64"
         C:\ProgramData\chocolatey\lib\7zip.portable\tools\7z-extra\7za.exe a -r BEEManipulator ./dist/"BEE Manipulator"/*
     # upload a release!
-    - name: Create release
-      uses: Roang-zero1/github-create-release-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create GitHub release
       uses: Roang-zero1/github-upload-release-artifacts-action@master
       with:
         args: BEEManipulator.7z
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ secrets.GITHUB_REF }}
