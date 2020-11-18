@@ -50,6 +50,6 @@ jobs:
       uses: Roang-zero1/github-upload-release-artifacts-action@master
       with:
         args: BEEManipulator.7z
+        created_tag: ${{ secrets.GITHUB_REF }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG: ${{ secrets.GITHUB_REF }}
