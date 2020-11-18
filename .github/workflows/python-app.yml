@@ -35,7 +35,7 @@ jobs:
         cd BEE-manipulator
         pyinstaller src/BEEManipulator_release.spec --noconfirm --upx-dir=%upx%
         %7z% a -r BEEManipulator ./dist/"BEE Manipulator"/*
-    - env:
+      env:
         7z: C:\ProgramData\chocolatey\lib\7zip.portable\tools\7z-extra.exe
         upx: C:\ProgramData\chocolatey\lib\upx\tools
     - name: Upload release
