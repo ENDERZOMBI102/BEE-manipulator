@@ -229,7 +229,7 @@ class downloadManager:
 
 	def stop( self ):
 		"""
-		Stop and cancel all downloadsclose
+		Stop and cancel all downloads
 		"""
 		for download in self.downloads.values():
 			download.shouldStop = True
