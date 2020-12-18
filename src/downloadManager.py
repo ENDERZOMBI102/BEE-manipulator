@@ -13,6 +13,7 @@ class downloadThread(Thread):
 
 	url: str = None
 	callback: Callable[ ['downloadThread'], None]
+	maxSpeed: int
 
 	pauser: Condition = Condition()
 	# state properties: those indicate the current state of the thread
@@ -27,12 +28,14 @@ class downloadThread(Thread):
 	totalLength: int = 0
 	data: BytesIO
 
-	def __init__( self, url: str, callback: Callable[ ['downloadThread'], None] ):
+	def __init__( self, url: str, callback: Callable[ ['downloadThread'], None], maxSpeed: int = 1024 ):
 		super().__init__()
 		self.url = url
-		if callback is None:
+		self.data = BytesIO()
+		if isinstance(callback, Callable):
 			raise ValueError('callback have to be a function')
 		self.callback = callback
+		self.maxSpeed = maxSpeed
 
 	def getData( self ) -> BytesIO:
 		"""
@@ -46,15 +49,17 @@ class downloadThread(Thread):
 		request = get( self.url, stream=True )
 		self.totalLength = int( request.headers.get( 'content-length' ) )
 		# download!
-		for data in request.iter_content( chunk_size=1024 ):
+		for data in request.iter_content( chunk_size=self.maxSpeed ):
 			self.bytesDone += len( data )
+			self.speed = len( data )
 			self.data.write( data )
 			self.percentDone = int( 100 * self.bytesDone / self.totalLength )
 			self.callback(self)
 			if self.shouldStop:
 				request.close()
 				break
-			self.pauser.wait()
+			if self.paused:
+				self.pauser.wait()
 		else:
 			self.finished = True
 			self.callback(self)
@@ -79,11 +84,12 @@ class downloadManager:
 	def init(self):
 		wx.CallAfter( self._tick )
 
-	def startDownload( self, url: str, callback: Callable[ [downloadThread], None] ) -> int:
+	def startDownload( self, url: str, callback: Callable[ [downloadThread], None], maxSpeed: int = 1024 ) -> int:
 		"""
 		This method starts a new download
 		:param url: the url of the file to download
 		:param callback: the callback that will be called every time the download progresses or finishes
+		:param maxSpeed: maximum chunk size
 		:return: the id of the download
 		"""
 		downloadId = len( self.downloads )
@@ -95,7 +101,7 @@ class downloadManager:
 			else:
 				downloadId += 1
 		# setup and start the download thread
-		self.downloads[ downloadId ] = downloadThread(url, callback)
+		self.downloads[ downloadId ] = downloadThread(url, callback, maxSpeed)
 		self.downloads[ downloadId ].setName(f'DownloadThread-{downloadId}')
 		if not self._syncMode:
 			self.downloads[ downloadId ].start()
@@ -146,7 +152,7 @@ class downloadManager:
 		:return: List[str]
 		"""
 		dl: downloadThread
-		return [ dl.url for dl in self.downloads ]
+		return [ dl.url for dl in self.downloads.values() ]
 
 	def waitUtilDone( self, downloadId: int ):
 		"""
@@ -233,6 +239,7 @@ class downloadManager:
 		"""
 		for download in self.downloads.values():
 			download.shouldStop = True
+		self.downloads.clear()
 		self._shouldStop = True
 
 
