@@ -12,6 +12,7 @@ import wx
 
 import config
 import downloadManager
+import ipc
 import localization
 import srctools.logger
 import timeTest
@@ -29,13 +30,16 @@ class App(wx.App):
 	def OnPreInit(self):
 		# check if there's another instance running
 		if self.instanceChecker.IsAnotherRunning():
-			wx.MessageBox(
-				message='another instance of BM is running, aborting.',
-				caption='Error!',
-				style=wx.OK | wx.CENTRE | wx.STAY_ON_TOP | wx.ICON_ERROR
-			)
+			if '--bmurl' in argv:
+				ipc.sendToServer( ('127.0.0.1', 30206), argv[ argv.index( '--bmurl' ) + 1 ] )
+			else:
+				wx.MessageBox(
+					message='another instance of BM is running, aborting.',
+					caption='Error!',
+					style=wx.OK | wx.CENTRE | wx.STAY_ON_TOP | wx.ICON_ERROR
+				)
 			self.ShouldExit = True
-			return False
+			return
 		# initialize logging
 		# overwrite stdout log level if on launched from source
 		if not utilities.frozen():
@@ -50,9 +54,9 @@ class App(wx.App):
 		# if we started with --dev parameter, set loglevel to debug
 		if '--dev' in argv:
 			config.overwrite('logLevel', 'DEBUG')
-		config.overwrite('logWindowVisibility', True)
-		config.overwrite('l18nFolderPath', './../langs')
-		utilities.env = 'dev'
+			config.overwrite('logWindowVisibility', True)
+			config.overwrite('l18nFolderPath', './../langs')
+			utilities.env = 'dev'
 		# check configs
 		self.logger.info('Checking config file..')
 		if config.check():
@@ -77,6 +81,7 @@ class App(wx.App):
 		# create icon object
 		utilities.__setIcon()
 		downloadManager.manager.init()
+		ipc.manager.init()
 		# import after localize() object is created so that loc() is already present
 		from uiWX import root
 		# set app name
@@ -94,6 +99,7 @@ class App(wx.App):
 		return True
 
 	def OnExit(self):
+		ipc.manager.stop()
 		with open(config.configPath, 'w') as file:
 			json.dump(config.currentConfigData, file, indent=4)
 		if self.ShouldRestart:
