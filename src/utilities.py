@@ -67,7 +67,7 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 		url = genReleasesApiUrl(url)  # convert normal github repo url to github api url
 	logger.debug(f'url valid!')
 	logger.debug(f'checking updates on url: {url}')
-	data = get( url ).json()  # get the latest release data
+	data: dict = get( url ).json()  # get the latest release data
 	if not isinstance(data, list):
 		return UpdateInfo( None, None, None )
 	usePrereleases: bool = config.load('usePrereleases')
