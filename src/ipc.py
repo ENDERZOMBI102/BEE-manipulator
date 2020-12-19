@@ -69,16 +69,14 @@ class ipcManager:
 			for handler in self._handlers[cmd.protocol]:
 				handler(sock, cmd)
 
+	def init( self ):
+		self._thread = threading.Thread(target=self.listen)
+		self._thread.start()
+
 	def listen(self):
-		if self._listener is None:
-			def run():
-				self._listener = ipc_mngr.Listener( ('127.0.0.1', self.port), authkey='bm-ipc' )
-				self._listener.msg_handler = self._msg_handler
-				self._listener.listen()  # Listen forever
-			self._thread = threading.Thread(target=run)
-			self._thread.run()
-		else:
-			raise RuntimeError( 'called ipcManager.start() when the server is already listening.' )
+		self._listener = ipc_mngr.Listener( ('127.0.0.1', self.port), authkey='bm-ipc' )
+		self._listener.msg_handler = self._msg_handler
+		self._listener.listen()  # Listen forever
 
 	def addHandler(self, protocol: str, hdlr: Callable[ [PipeConnection, Command], None ]):
 		# check if the given protocol list exist
@@ -96,8 +94,12 @@ class ipcManager:
 		del self._handlers[ protocol ][ i ]
 
 	def stop(self):
-		if self._listener is ipc_mngr.Listener:
+		if isinstance(self._listener, ipc_mngr.Listener):
+			self._listener.close()
 			self._listener.stop()
 			self._thread.join()
 		else:
 			raise RuntimeError('called ipcManager.stop() before starting it.')
+
+
+manager: ipcManager = ipcManager()
