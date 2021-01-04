@@ -95,11 +95,11 @@ class Localize:
 		logger.debug('loading lang folder path..')
 		# create Path obj with the lang file path
 		folder = Path( config.load('l18nFolderPath') )
-		# if it doesn't exist, download the default lang file: EN_us.jlang
+		# if it doesn't exist, download the default lang file: en_US.jlang
 		if not folder.exists():
 			logger.error(f'NO LANG FOLDER FOUND!')
 			folder.mkdir()
-			logger.info('downloading english lang from github!')
+			logger.info('downloading english translation from github!')
 			self.dl('en_US')
 		logger.info(f'langs folder path is "{folder.absolute()}"')
 		langFile: Path
@@ -139,7 +139,7 @@ class Localize:
 		except Exception as e:
 			# en_US is the base/essential lang file, without it, we can't continue
 			if langToDownload == 'en_US':
-				logger.fatal(f' Failed to download lang file!', exc_info=True)
+				logger.fatal( f' Failed to download lang file!', exc_info=e )
 				exit(1)
 			else:
 				logger.error(f'failed to download lang file {langToDownload}')
