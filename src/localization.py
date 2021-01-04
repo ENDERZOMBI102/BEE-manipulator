@@ -124,7 +124,6 @@ class Localize:
 			data = requests.get(
 				f'https://github.com/ENDERZOMBI102/BEE-manipulator/raw/master/langs/{langToDownload}.jlang'
 			).json()
-			# TODO: substitute with chained version
 			# create a Path object with the lang file path
 			langFile = Path(f'{config.load("l18nFolderPath")}/{langToDownload}.jlang')
 			# mode to open the file with
