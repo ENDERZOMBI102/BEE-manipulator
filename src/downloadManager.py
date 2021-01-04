@@ -6,6 +6,7 @@ import wx
 import wx.py.dispatcher as dispatcher
 from requests import get
 
+from config import dynConfig
 from pluginSystem import Events
 
 
@@ -33,7 +34,7 @@ class downloadThread(Thread):
 		self.url = url
 		self.data = BytesIO()
 		if isinstance(callback, Callable):
-			raise ValueError('callback have to be a function')
+			raise ValueError('callback must be a function')
 		self.callback = callback
 		self.maxSpeed = maxSpeed
 
@@ -71,7 +72,8 @@ class downloadThread(Thread):
 				url=self.url,  # event args
 				downloadID=self.getName().replace('DownloadThread-', '')
 			)
-			# print( f'total: {self.totalLength}, dl: {self.bytesDone}, done: {self.percentDone}' )
+			if dynConfig['printDownloadProgress']:
+				print( f'total: {self.totalLength}, dl: {self.bytesDone}, done: {self.percentDone}' )
 
 
 class downloadManager:
