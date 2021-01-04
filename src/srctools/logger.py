@@ -310,7 +310,11 @@ def init_logging(
             args=(),
             exc_info=(exc_type, exc_value, exc_tb),
         )
-        logging.shutdown()
+        # BEGIN ENDER's edit
+        import config
+        if not config.dynConfig['continueLoggingOnUncaughtException']:
+            logging.shutdown()
+        # END
         if on_error is not None:
             on_error(exc_type, exc_value, exc_tb)
         # Call the original handler - that prints to the normal console.
