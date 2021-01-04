@@ -98,14 +98,17 @@ class App(wx.App):
 		self.logger.info('starting ui!')
 		# start the main loop
 		root = root()
-		root.Show()
 		self.SetTopWindow(root)
+		root.Show()
 		return True
 
 	def OnExit(self):
+		import logging
 		ipc.manager.stop()
 		with open(config.configPath, 'w') as file:
 			json.dump(config.currentConfigData, file, indent=4)
+		if config.dynConfig['continueLoggingOnUncaughtException']:
+			logging.shutdown()
 		if self.ShouldRestart:
 			os.system(sys.executable)
 		return 0
