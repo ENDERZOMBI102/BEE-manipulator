@@ -14,7 +14,7 @@ logger = get_logger()
 loc: Callable
 localizeObj: 'Localize' = None
 
-# check of forced language
+# check if a language is forced
 if '--lang' in argv:
 	try:
 		lang = argv[argv.index('--lang') + 1]
@@ -86,7 +86,7 @@ class Localize:
 			config.save(newLang, 'lang')
 			logger.info(f'changed lang to {newLang}')
 		else:
-			logger.error(LangNotSupportedError(f'unsupported language {newLang}!'))
+			logger.error( LangNotSupportedError(f'unsupported language {newLang}!') )
 
 	async def loadLocFiles(self):
 		"""
