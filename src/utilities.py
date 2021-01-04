@@ -257,6 +257,20 @@ def notimplementedyet():
 	).ShowModal()
 
 
+def parseValue( param: str ) -> Union[str, int, float, None, bool]:
+	if ( param == '' ) or ( param in ['none', 'None'] ):
+		return None
+	elif param.isdecimal():
+		return int( param )
+	elif param in 'trueTrueyesYes':
+		return True
+	elif param in 'falseFalsenoNo':
+		return False
+	for char in param:
+		if char not in '0123456789.':
+			return param
+	return float( param )
+
+
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
 env = 'dev'
-
