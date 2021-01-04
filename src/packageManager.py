@@ -25,9 +25,8 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 	install software from url
 	:param DLtype: the type of the download, defaults to BEE package
 	:param url: direct download link to the package/application zip
-	:return:
 	"""
-	path = Path(config.load('beePath'))
+	path = Path( config.load('beePath') )
 	if not path.exists():
 		logger.error(f"BEE install path doesn't exist!")
 		path.mkdir()
@@ -74,7 +73,6 @@ def installBeePackage(identifier: str, url: str, service: str, filename: str):
 	:param url: file direct download url
 	:param service: file's service (github, gdrive, dropbox)
 	:param filename: downloaded file name
-	:return: none
 	"""
 	packagesPath: str = beeManager.packageFolder()
 	filebytes: bytes  # the file content in bytes
