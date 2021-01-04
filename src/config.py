@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from sys import argv
-from typing import Dict, Union, Any
+from typing import Dict, Union, Any, List
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
 from semver import VersionInfo
@@ -182,23 +182,25 @@ class __dynConfig:
 	THIS IS NEVER SAVED TO DISK
 	"""
 
-	__configs: Dict[str, any] = {}
+	__configs: Dict[str, Any] = {}
 
 	def __init__(self):
 		pass
 
+	def parseFlags( self, rawFlags: str ):
+		flags: List[ List[str] ] = [ flag.split('=') for flag in rawFlags.split( ';' ) ]
+		for flag in flags:
+			self[ flags[0] ] = utilities.parseValue( flag[1] )
+
 	def __getitem__(self, item):
-		if self.__configs[item]:
-			return self.__configs[item]
-		else:
-			return None
+		return self.__configs.get(item, None)
 
 	def __setitem__(self, key, value):
 		self.__configs[key] = value
 
 
 dynConfig: __dynConfig = __dynConfig()
-"""contains fast-access, volatile data"""
+""" contains fast-access, volatile data """
 
 # dynamic/static configs
 
