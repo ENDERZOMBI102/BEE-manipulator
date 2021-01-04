@@ -18,7 +18,7 @@ with BM you can also modify the BEE2.4 splash screen and some aspects of Portal 
 
 This project is in a experimental alpha state, use at your own risk!
 
-you can keep track of the progress made on the [public trello](https://trello.com/b/CzRvudQY/bee-manipulator), here you can comment features and things too!
+you can keep track of the progress made on the [public project](https://github.com/ENDERZOMBI102/BEE-manipulator/projects/1?fullscreen=true), here you can comment features and things too!
 
 
 i plan to release version 1.0.0 when the package browser is finished.
