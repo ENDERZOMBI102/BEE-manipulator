@@ -1,10 +1,11 @@
 import wx
 import wx.py.dispatcher as dispatcher
+from semver import VersionInfo
 
 from pluginSystem import Plugin, Events, RegisterHandler as RegisterHandlerType
 
 
-@Plugin(name='MenuBar Menu Example', version='1.0.0')
+@Plugin(name='MenuBar Menu Example', version=VersionInfo(1, 0, 0) )
 class MenuExample:
 
 	exampleMenu: wx.Menu
@@ -13,7 +14,7 @@ class MenuExample:
 		# create a menu object
 		self.exampleMenu = wx.Menu()
 		# add an item to it, and save it
-		exampleItem = self.exampleMenu.Append(16, 'Example Item', 'This is the example item description')
+		exampleItem = self.exampleMenu.Append(18, 'Example Item', 'This is the example item description')
 
 		# bind the press of that item to a function
 		self.exampleMenu.Bind(wx.EVT_MENU, self.pressed, exampleItem)
