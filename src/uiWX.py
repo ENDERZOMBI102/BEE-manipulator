@@ -87,6 +87,7 @@ class root(wx.Frame):
 
 		# set menu item icons
 		self.helpMenu.FindItemById(13).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
+		self.helpMenu.FindItemById(14).SetBitmap( wx.Bitmap( f'{config.assetsPath}icons/materialdesign/menu_update_black.png' ) )
 		self.helpMenu.FindItemById(15).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
 		self.helpMenu.FindItemById(16).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
 		self.helpMenu.FindItemById(17).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
@@ -126,8 +127,10 @@ class root(wx.Frame):
 		self.Bind( wx.EVT_MENU, self.openGithub, githubItem )
 		self.Bind( wx.EVT_MENU, self.openDiscord, discordItem )
 		# other events
-		self.Bind(wx.EVT_CLOSE, self.OnClose, self)
+		self.Bind( wx.EVT_CLOSE, self.OnClose, self )
 		self.Bind( wx.EVT_SIZING, self.OnResize, self )
+		self.Bind( wx.EVT_MAXIMIZE, self.OnMaximize, self )
+
 		if config.load('beePath') is None:
 			self.portalMenu.Enable(9, False)
 			self.fileMenu.Enable(1, False)
@@ -170,6 +173,10 @@ class root(wx.Frame):
 		:param evt: placeholder
 		"""
 		self.book.SetSize( self.GetSize() )
+		self.browserTab.browserObj.OnResize( self.GetSize() )
+
+	def OnMaximize( self, evt: wx.MaximizeEvent ):
+		self.browserTab.browserObj.OnResize( self.GetSize() )
 
 	# file menu items actions
 	@staticmethod
@@ -357,7 +364,7 @@ class root(wx.Frame):
 
 	@staticmethod
 	def checkUpdates(evt: wx.CommandEvent):
-		asyncio.run(appDateCheck())
+		asyncio.run( appDateCheck() )
 
 	@staticmethod
 	def openWiki(evt: wx.CommandEvent):
@@ -412,9 +419,15 @@ async def appDateCheck():
 		return False
 	data = utilities.checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', config.version )
 	if data.url is None:
+		if getattr(root, 'instance', False):
+			wx.MessageBox(
+				parent=root.instance,
+				message='No updates found!',
+				caption='BEE Manipulator'
+			)
 		return
 	data = wx.GenericMessageDialog(
-		parent=root.instance,
+		parent=getattr(root, 'instance', None),
 		message=f'An update for the app is available, do you want to update now?\n\n{data.description}',
 		caption=f'Update Available - new version: {data.version}',
 		style=wx.YES_NO | wx.ICON_WARNING | wx.STAY_ON_TOP | wx.NO_DEFAULT
@@ -424,14 +437,15 @@ async def appDateCheck():
 	utilities.update()
 
 
-class PackageBrowserPage(wx.Window):
+class PackageBrowserPage(wx.Panel):
 
 	loadingGif: wx.adv.AnimationCtrl
 	browserObj: browser.Browser
 
 	def __init__(self, master: wx.Notebook):
 		super().__init__(
-			parent=master
+			parent=master,
+			size=master.GetSize()
 		)
 		self.browserObj = browser.Browser(self)
 
@@ -444,4 +458,4 @@ class PackageBrowserPage(wx.Window):
 				importlib.reload(browser)
 			except:
 				pass
-		self.browserObj = browser.Browser
+		self.browserObj = browser.Browser(self)
