@@ -57,9 +57,10 @@ class Plugin:
 	"""
 	this decorator is used to create a plugin for BEE Manipulator
 	"""
-	def __init__(self, name: str, version: VersionInfo = None ):
+	def __init__(self, name: str, version: VersionInfo = None, pluginid: str = None ):
 		self.name = name
 		self.version = version
+		self.pluginid = pluginid
 
 	def __call__( self, cls ):
 		# make a subclass to check for methods
@@ -78,7 +79,8 @@ class Plugin:
 				return self.version
 
 		# a plugin's ID is the name of the class
-		self.pluginid = WrappedPlugin.__base__.__name__
+		if self.pluginid is None:
+			self.pluginid = WrappedPlugin.__base__.__name__
 
 		logger.debug(f'instantiated plugin "{self.pluginid}" from {WrappedPlugin.__base__.__module__}.py')
 		# checks if the plugin has the NEEDED methods
