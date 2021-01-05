@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from sys import argv
 from typing import Dict, Union, Any, List
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
@@ -36,7 +35,7 @@ default_config = {
 	'l18nFolderPath': './langs' if utilities.frozen() else './../langs',
 	'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
 	'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
-	'onlineDatabaseUrl': 'https://hateitapp.ddns.net:8000/api/',
+	'onlineDatabaseUrl': 'https://beeapi.ddns.net:7090/api/',
 	'lang': 'en_US',
 	'showVerifyDialog': True,
 	'showUninstallDialog': True,
@@ -64,7 +63,7 @@ def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, Non
 	example::
 
 		>>> import config
-		>>> print(config.load('version'))
+		>>> print( config.load('version') )
 		2.6
 	:param default: if no value is found, return this value
 	:param section: section of the config to read
@@ -75,8 +74,8 @@ def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, Non
 		return overwriteDict[section]
 	# is that section present?
 	if section in currentConfigData.keys() and not useDisk:
-		if '--sayconfig' in argv:
-			logger.info( f'{section}: {currentConfigData[ section ]}' )
+		if dynConfig['logConfigActions']:
+			logger.info( f'loading {section}: {currentConfigData[ section ]}' )
 		return currentConfigData[section]
 	elif useDisk:
 		# the config file exists?
@@ -85,8 +84,8 @@ def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, Non
 			with open( configPath, 'r', encoding='utf-8' ) as file:
 				config = json.load(file)  # load the config
 				readeData = config[section]  # take the requested field
-			if '--sayconfig' in argv:
-				logger.info(f'{section}: {readeData}')
+			if dynConfig['logConfigActions']:
+				logger.info(f'loading {section}: {readeData}')
 			return readeData  # return the readed data
 	# if the caller setted a default value, return it
 	if default is not None:
@@ -115,8 +114,8 @@ def save(data, section):  # save a config
 	:param section: the section of the config to save the data to
 	"""
 	global _timesSaved
-	if '--sayconfig' in argv:
-		logger.info( f'{section}: {data}' )
+	if dynConfig['logConfigActions']:
+		logger.info( f'saving {section}: {data}' )
 	# save
 	if section != 'placeholderForSaving':
 		currentConfigData[section] = data
