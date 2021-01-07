@@ -272,5 +272,27 @@ def parseValue( param: str ) -> Union[str, int, float, None, bool]:
 	return float( param )
 
 
+def registerProtocol():
+	txt = r"""
+		Windows Registry Editor Version 5.00
+
+		[HKEY_CLASSES_ROOT\bm]
+		@="URL:bm"
+		"URL Protocol"=""
+
+		[HKEY_CLASSES_ROOT\bm\shell]
+
+		[HKEY_CLASSES_ROOT\bm\shell\open]
+
+		[HKEY_CLASSES_ROOT\bm\shell\open\command]
+		@="\"{}\" \"%1\""
+	""".replace( '\t', '' ).replace( '\n', '', 1 ).replace( '{}', sys.executable.replace( '\\', '\\\\' ), 1 )
+	Path( config.tmpFolderPath ).mkdir( exist_ok=True )
+	regfile = Path( config.tmpFolderPath + 'protocol.reg' )
+	regfile.touch( exist_ok=True )
+	regfile.write_text( txt )
+	os.system( f'{str( regfile )}' )
+
+
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
 env = 'dev'
