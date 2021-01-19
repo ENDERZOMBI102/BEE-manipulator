@@ -55,7 +55,6 @@ class App(wx.App):
 		if '--dev' in argv:
 			config.overwrite('logLevel', 'DEBUG')
 			config.overwrite('logWindowVisibility', True)
-			config.overwrite('l18nFolderPath', './../langs')
 			utilities.env = 'dev'
 		if '--flags' in argv:
 			flagIndex = argv.index('--flags') + 1
