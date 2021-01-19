@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-a = Analysis(['BEEManipulator.py'],
+a = Analysis(['BEEManipulator.pyw'],
              pathex=['./'],
              binaries=[],
              datas=[ ('../assets/about.md', 'assets'),

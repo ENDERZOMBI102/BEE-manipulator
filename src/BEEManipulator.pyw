@@ -61,6 +61,8 @@ class App(wx.App):
 			flagIndex = argv.index('--flags') + 1
 			if not argv[flagIndex].startswith('--'):
 				config.dynConfig.parseFlags( argv[flagIndex] )
+		if '--bmurl' in argv:
+			pass
 		# check configs
 		self.logger.info('Checking config file..')
 		if config.check():
@@ -74,7 +76,15 @@ class App(wx.App):
 		config.currentConfigData = config.default_config
 		with open( config.configPath, 'r' ) as file:
 			for section, value in json.load( file ).items():
-				config.currentConfigData[ section ] = value
+				if section != 'nextLaunch':
+					config.currentConfigData[ section ] = value
+				else:
+					if len( value.keys() ) > 0:
+						self.logger.info('Seems that we may have crashed last time, lets overwrite things!')
+						config.currentConfigData = { **config.currentConfigData, **value }
+					else:
+						self.logger.info('Nothing to overwrite for this launch!')
+					config.currentConfigData[ 'nextLaunch' ] = {}
 		# start localizations
 		localization.Localize()
 		self.logger.info(f'current lang: {loc("currentLang")}')
@@ -122,6 +132,11 @@ class App(wx.App):
 			)
 		except Exception:
 			wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception(etype, value, tb) ) )
+		# try to set logWindowVisibility to True for next time
+		try:
+			config.overwriteOnNextLaunch(logWindowVisibility=True)
+		except Exception:
+			pass
 		try:
 			if self.root is not None:
 				self.root.Destroy()
@@ -132,10 +147,12 @@ class App(wx.App):
 
 if __name__ == '__main__':
 	# use file dir as working dir
-	path = Path(__file__).resolve()
+	path: Path = None
 	if utilities.frozen():
+		path = Path(sys.executable).resolve()
 		print(f"BM exe path: {path.parent.resolve()}")
 	else:
+		path = Path(__file__).resolve()
 		print('BM is running in a developer environment.')
 		print(f"BM source path: {path.parent}")
 	os.chdir(path.parent)

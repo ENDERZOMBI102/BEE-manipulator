@@ -394,7 +394,7 @@ class root(wx.Frame):
 	def AddMenu(self, menu: wx.Menu, title: str):
 		"""
 		Adds a menu to the main menubar
-		:param menu: the menu obejct
+		:param menu: the menu object
 		:param title: the menu name
 		"""
 		menuBar: wx.MenuBar = self.GetMenuBar()

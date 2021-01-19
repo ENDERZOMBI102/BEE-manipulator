@@ -102,3 +102,4 @@ class ipcManager:
 
 
 manager: ipcManager = ipcManager()
+manager.addHandler('view', lambda sock, cmd: logger.info( cmd.__dict__ ) )

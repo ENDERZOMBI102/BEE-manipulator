@@ -13,7 +13,9 @@ logger = get_logger()
 overwriteDict: dict = {}
 configPath: Path = Path( './config.cfg' if utilities.frozen() else './../config.cfg' )
 assetsPath: str = './assets/' if utilities.frozen() else './../assets/'
-"""the path to the assets folder (finishes with /)"""
+""" The path to the assets folder (finishes with /) """
+tmpFolderPath: str = './tmp/' if utilities.frozen() else './../tmp/'
+""" The path to the tmp folder (finishes with /) """
 pluginsPath: str = './plugins' if utilities.frozen() else './../plugins'
 version: VersionInfo = VersionInfo(
 	major=1,
@@ -40,7 +42,8 @@ default_config = {
 	'showVerifyDialog': True,
 	'showUninstallDialog': True,
 	'startupUpdateCheck': True,
-	"showSplashScreen": False
+	'showSplashScreen': False,
+	'nextLaunch': {}
 }
 
 
@@ -201,6 +204,13 @@ class __dynConfig:
 dynConfig: __dynConfig = __dynConfig()
 """ contains fast-access, volatile data """
 
+
+def overwriteOnNextLaunch(**kwargs) -> None:
+	overwrites = config.load('nextLaunch')
+	overwrites = { **overwrites, **kwargs }
+	config.save('nextLaunch', overwrites)
+
+
 # dynamic/static configs
 
 
@@ -283,8 +293,8 @@ def libraryFolders() -> list:
 
 	# check for other library paths, if the dict is empty, there's no one
 	if len( library['libraryfolders'] ) != 0:
-		for i in len( library['libraryfolders'] ):
-			paths.append( library['libraryfolders'][ str(i) ] + '/steamapps/' )  # append the path
+		for i in range( len( library['libraryfolders'] ) ):
+			paths.append( library['libraryfolders'][ i ] + '/steamapps/' )  # append the path
 
 	# return the "compiled" list of libraries
 	return paths
@@ -300,7 +310,7 @@ def steamUsername():
 		with ConnectRegistry(None, HKEY_CURRENT_USER) as reg:
 			aKey = OpenKey(reg, r'Software\Valve\Steam')
 	except Exception as e:
-		raise Exception(e)
+		raise e
 	try:
 		keyValue = QueryValueEx(aKey, 'LastGameNameUsed')
 		return keyValue[0]

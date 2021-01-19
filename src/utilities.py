@@ -59,7 +59,7 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 	A function that check for updates, this doesn't include prereleases
 	:param url: the api/repo github url
 	:param curVer: current version
-	:return: true or false
+	:return: an object of class VersionInfo
 	"""
 	logger.debug(f'checking url..')
 	if 'api.github' not in url:
@@ -78,6 +78,8 @@ def checkUpdate(url: str, curVer: VersionInfo) -> UpdateInfo:
 			continue
 		data = ver
 		break
+	if isinstance(data, list):
+		return UpdateInfo( None, None, None )
 	# variables
 	releaseUrl: str = None
 	releaseVer: VersionInfo = None
@@ -285,7 +287,7 @@ def registerProtocol():
 		[HKEY_CLASSES_ROOT\bm\shell\open]
 
 		[HKEY_CLASSES_ROOT\bm\shell\open\command]
-		@="\"{}\" \"%1\""
+		@="\"{} --bmurl\" \"%1\""
 	""".replace( '\t', '' ).replace( '\n', '', 1 ).replace( '{}', sys.executable.replace( '\\', '\\\\' ), 1 )
 	Path( config.tmpFolderPath ).mkdir( exist_ok=True )
 	regfile = Path( config.tmpFolderPath + 'protocol.reg' )

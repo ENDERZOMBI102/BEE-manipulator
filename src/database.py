@@ -1,9 +1,11 @@
 import json
+from abc import ABCMeta, abstractmethod
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
 from requests import get
+from sqlalchemy import create_engine
 
 import config
 import utilities
@@ -16,7 +18,6 @@ logger = get_logger()
 class PDatabase:
 
 	url: str = config.load('onlineDatabaseUrl')
-
 	views: List[PackageView] = []
 
 	def checkDatabase(self) -> bool:
@@ -26,7 +27,7 @@ class PDatabase:
 		# the db exist?
 		if not self.db.exists():
 			# no, download it first
-			self.downloadDatabase()
+			self.setupDatabase()
 		try:
 			logger.debug('checking database..')
 			with self.db.open('r') as file:
@@ -37,7 +38,7 @@ class PDatabase:
 			if not utilities.isonline():
 				logger.warning("can't download database while offline, aborting")
 				return False
-			self.downloadDatabase()
+			self.setupDatabase()
 			# RECURSION
 			return self.checkDatabase()
 		logger.debug('checking packages assets dir..')
@@ -47,7 +48,7 @@ class PDatabase:
 			logger.info('packages folder created!')
 		return True
 
-	def downloadDatabase(self) -> None:
+	def setupDatabase(self) -> None:
 		"""
 			download the database
 		"""
@@ -60,7 +61,7 @@ class PDatabase:
 			logger.info(f'database saved to {self.path}')
 			logger.fatal("FATAL ERROR, can' download database while offline, why the checks didn't worked?")
 
-	async def loadObjects(self, master) -> list:
+	async def loadObjects(self) -> None:
 		"""
 			create the correct package object for each one of the packages in the json
 		"""
