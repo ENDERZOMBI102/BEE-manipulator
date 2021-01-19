@@ -21,7 +21,8 @@ version: VersionInfo = VersionInfo(
 	major=1,
 	minor=0,
 	patch=0,
-	prerelease='pre3'
+	prerelease='pre2',
+	build='beta4'
 )
 """current app version"""
 
