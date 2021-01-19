@@ -149,12 +149,13 @@ if __name__ == '__main__':
 	# use file dir as working dir
 	path: Path = None
 	if utilities.frozen():
-		path = Path(sys.executable).resolve()
-		print(f"BM exe path: {path.parent.resolve()}")
+		path = Path( sys.executable ).resolve()
+		print( f"BM exe path: {path.parent.resolve()}" )
 	else:
-		path = Path(__file__).resolve()
-		print('BM is running in a developer environment.')
-		print(f"BM source path: {path.parent}")
+		path = Path( __file__ ).resolve()
+		print( 'BM is running in a developer environment.' )
+		print( f"BM source path: {path.parent}" )
+	os.chdir( path.parent )
 	os.chdir(path.parent)
 	timeStartup = '--time' in argv
 	if timeStartup:
