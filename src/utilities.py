@@ -243,7 +243,7 @@ def tempDirPath() -> str:
 def __getbee() -> Union[None, str]:
 	# gets the BEE path
 	if Path(f'{defBeePath}/BEE2/BEE2.exe').exists():
-		return f'{defBeePath}/BEE2/BEE2.exe'  # the exe file exists, bee has been installed, but the BM config was deleted
+		return f'{defBeePath}/BEE2/'  # the exe file exists, bee has been installed, but the BM config was deleted
 	return None
 
 
