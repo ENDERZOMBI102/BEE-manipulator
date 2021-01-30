@@ -2,6 +2,7 @@ import asyncio
 import os
 import webbrowser as wb
 from pathlib import Path
+from typing import Dict
 
 import wx
 import wx.adv
@@ -18,33 +19,41 @@ import utilities
 from pluginSystem import Events
 from srctools.logger import get_logger
 
-# init important things
-LOGGER = get_logger()
-
 if utilities.env == 'dev':
 	import importlib
 
 
 wx.InitAllImageHandlers()
 
+# global variables
+LOGGER = get_logger()
+_menuIndex: int = 0
+
+
+def newMenuIndex() -> int:
+	global _menuIndex
+	_menuIndex += 1
+	return _menuIndex - 1
+
 
 class root(wx.Frame):
 
 	instance: 'root'
 	settingsWindowInstance: settingsUI.window = None
+	menus: Dict[str, wx.MenuItem] = {}
 
 	def __init__(self):
 		# load plugins
 		super().__init__( None, title=f'BEE Manipulator {str(config.version)}' )
 		# sets the app icon
-		self.SetIcon(utilities.icon)
+		self.SetIcon( utilities.icon )
 		# init the logging window
 		asyncio.run( logWindow.init() )
 		asyncio.run( appDateCheck() )
 		# set the utilities.root pointer to the object of this class
 		root.instance = self
 		try:
-			self.SetPosition(wx.Point(config.load('mainWindowPos')))
+			self.SetPosition( wx.Point( config.load('mainWindowPos') ) )
 		except config.ConfigError:
 			self.CenterOnScreen()
 		self.SetSize(width=600, height=500)
@@ -57,85 +66,86 @@ class root(wx.Frame):
 		"""
 		# file menu bar
 		self.fileMenu = wx.Menu()
-		openPortalDirItem = self.fileMenu.Append(0, loc('menu.file.openportaldir.name')+'\tCtrl-P', loc('menu.file.openportaldir.description') )
-		openBeeDirItem = self.fileMenu.Append(1, loc('menu.file.openbeedir.name')+"\tCtrl-B", loc('menu.file.openbeedir.description') )
-		syncGamesItem = self.fileMenu.Append(2, loc('menu.file.syncgames.name'), loc('menu.file.syncgames.description') )
-		exitItem = self.fileMenu.Append(3, loc('menu.file.exit.name'), loc('menu.file.exit.description') )
+		self.menus['openPortalDir'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.openportaldir.name')+'\tCtrl-P', loc('menu.file.openportaldir.description') )
+		self.menus['openBeeDir'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.openbeedir.name')+"\tCtrl-B", loc('menu.file.openbeedir.description') )
+		self.menus['syncGames'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.syncgames.name'), loc('menu.file.syncgames.description') )
+		self.menus['exit'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.exit.name'), loc('menu.file.exit.description') )
 
 		# options menu bar
 		self.optionsMenu = wx.Menu()
-		settingsItem = self.optionsMenu.Append(4, loc('menu.options.settings.name')+'\tCtrl-S', loc('menu.options.settings.description') )
-		toggleLogWindowItem = self.optionsMenu.Append(5, loc('menu.options.logtoggle.name')+'\tCtrl-L', loc('menu.options.logtoggle.description') )
-		reloadPluginsItem = self.optionsMenu.Append(6, loc('menu.options.reloadplugins.name'), loc('menu.options.reloadplugins.description') )
-		reloadPackagesItem = self.optionsMenu.Append(7, loc('menu.options.reloadpackages.name'), loc('menu.options.reloadpackages.description') )
+		self.menus['settings'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.settings.name')+'\tCtrl-S', loc('menu.options.settings.description') )
+		self.menus['toggleLogWindow'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.logtoggle.name')+'\tCtrl-L', loc('menu.options.logtoggle.description') )
+		self.menus['reloadPlugins'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadplugins.name'), loc('menu.options.reloadplugins.description') )
+		self.menus['reloadPackages'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadpackages.name'), loc('menu.options.reloadpackages.description') )
 
 		# portal 2 menu bar
 		self.portalMenu = wx.Menu()
-		verifyGameFilesItem = self.portalMenu.Append(8, loc('menu.portal.vgf.name'), loc('menu.portal.vgf.description') )
-		uninstallBeeItem = self.portalMenu.Append(9, loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description') )
-		installBeeItem = self.portalMenu.Append(10, loc('menu.portal.installbee.name'), loc('menu.portal.installbee.description') )
-		openP2Item = self.portalMenu.Append( 11, loc( 'menu.portal.openp2.name' ), loc( 'menu.portal.openp2.description' ) )
-		openBeeItem = self.portalMenu.Append( 12, loc( 'menu.portal.openbee.name' ), loc( 'menu.portal.openbee.description' ) )
+		self.menus['verifyGameFiles'] = self.portalMenu.Append( newMenuIndex(), loc('menu.portal.vgf.name'), loc('menu.portal.vgf.description') )
+		self.menus['uninstallBee'] = self.portalMenu.Append( newMenuIndex(), loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description') )
+		self.menus['installBee'] = self.portalMenu.Append( newMenuIndex(), loc('menu.portal.installbee.name'), loc('menu.portal.installbee.description') )
+		self.menus['openP2'] = self.portalMenu.Append( newMenuIndex(), loc( 'menu.portal.openp2.name' ), loc( 'menu.portal.openp2.description' ) )
+		self.menus['openBee'] = self.portalMenu.Append( newMenuIndex(), loc( 'menu.portal.openbee.name' ), loc( 'menu.portal.openbee.description' ) )
 
 		# help menu bar
 		self.helpMenu = wx.Menu()
-		aboutItem = self.helpMenu.Append(13, loc('menu.help.about.name'), loc('menu.help.about.description') )
-		checkUpdatesItem = self.helpMenu.Append(14, loc('menu.help.cupdates.name'), loc('menu.help.cupdates.description') )
-		wikiItem = self.helpMenu.Append(15, loc('menu.help.wiki.name'), loc('menu.help.wiki.description') )
-		githubItem = self.helpMenu.Append(16, loc('menu.help.github.name'), loc('menu.help.github.description') )
-		discordItem = self.helpMenu.Append(17, loc('menu.help.discord.name'), loc('menu.help.discord.description') )
+		self.menus['about'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.about.name'), loc('menu.help.about.description') )
+		self.menus['checkUpdates'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.cupdates.name'), loc('menu.help.cupdates.description') )
+		self.menus['wiki'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.wiki.name'), loc('menu.help.wiki.description') )
+		self.menus['github'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.github.name'), loc('menu.help.github.description') )
+		self.menus['discord'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.discord.name'), loc('menu.help.discord.description') )
 
 		# set menu item icons
-		self.helpMenu.FindItemById(13).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
-		self.helpMenu.FindItemById(14).SetBitmap( wx.Bitmap( f'{config.assetsPath}icons/materialdesign/menu_update_black.png' ) )
-		self.helpMenu.FindItemById(15).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
-		self.helpMenu.FindItemById(16).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
-		self.helpMenu.FindItemById(17).SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
+		self.menus['about'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
+		self.menus['checkUpdates'].SetBitmap( wx.Bitmap( f'{config.assetsPath}icons/materialdesign/menu_update_black.png' ) )
+		self.menus['wiki'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
+		self.menus['github'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
+		self.menus['discord'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
 
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()
-		self.menuBar.Append(self.fileMenu, loc('menu.file.name') )
-		self.menuBar.Append(self.optionsMenu, loc('menu.options.name') )
-		self.menuBar.Append(self.portalMenu, loc('menu.portal.name') )
-		self.menuBar.Append(self.helpMenu, loc('menu.help.name') )
+		self.menuBar.Append( self.fileMenu, loc('menu.file.name') )
+		self.menuBar.Append( self.optionsMenu, loc('menu.options.name') )
+		self.menuBar.Append( self.portalMenu, loc('menu.portal.name') )
+		self.menuBar.Append( self.helpMenu, loc('menu.help.name') )
 
 		# Give the menu bar to the frame
 		self.SetMenuBar(self.menuBar)
 		self.CreateStatusBar()
-		self.SetStatusText( loc('statusbar.text').replace('{username}', config.steamUsername() ) )
+		self.SetStatusText( loc('statusbar.text', username=config.steamUsername() ) )
 
 		# file menu
-		self.Bind( wx.EVT_MENU, self.openp2dir, openPortalDirItem )
-		self.Bind( wx.EVT_MENU, self.openBEEdir, openBeeDirItem )
-		self.Bind( wx.EVT_MENU, self.syncGames, syncGamesItem )
-		self.Bind( wx.EVT_MENU, self.exit, exitItem )
+		self.Bind( wx.EVT_MENU, self.openp2dir, self.menus['openPortalDir'] )
+		self.Bind( wx.EVT_MENU, self.openBEEdir, self.menus['openBeeDir'] )
+		self.Bind( wx.EVT_MENU, self.syncGames, self.menus['syncGames'] )
+		self.Bind( wx.EVT_MENU, self.exit, self.menus['exit'] )
 		# options menu
-		self.Bind( wx.EVT_MENU, self.openSettingsWindow, settingsItem )
-		self.Bind( wx.EVT_MENU, logWindow.toggleVisibility, toggleLogWindowItem )
-		self.Bind( wx.EVT_MENU, self.reloadPlugins, reloadPluginsItem )
-		self.Bind( wx.EVT_MENU, self.reloadPackages, reloadPackagesItem )
+		self.Bind( wx.EVT_MENU, self.openSettingsWindow, self.menus['settings'] )
+		self.Bind( wx.EVT_MENU, logWindow.toggleVisibility, self.menus['toggleLogWindow'] )
+		self.Bind( wx.EVT_MENU, self.reloadPlugins, self.menus['reloadPlugins'] )
+		self.Bind( wx.EVT_MENU, self.reloadPackages, self.menus['reloadPackages'] )
 		# portal 2 menu
-		self.Bind( wx.EVT_MENU, self.verifyGameFiles, verifyGameFilesItem )
-		self.Bind( wx.EVT_MENU, self.uninstallBee, uninstallBeeItem )
-		self.Bind( wx.EVT_MENU, self.installBee, installBeeItem )
-		self.Bind( wx.EVT_MENU, self.openP2, openP2Item )
-		self.Bind( wx.EVT_MENU, self.openBee, openBeeItem )
+		self.Bind( wx.EVT_MENU, self.verifyGameFiles, self.menus['verifyGameFiles'] )
+		self.Bind( wx.EVT_MENU, self.uninstallBee, self.menus['uninstallBee'] )
+		self.Bind( wx.EVT_MENU, self.installBee, self.menus['installBee'] )
+		self.Bind( wx.EVT_MENU, self.openP2, self.menus['openP2'] )
+		self.Bind( wx.EVT_MENU, self.openBee, self.menus['openBee'] )
 		# help menu
-		self.Bind( wx.EVT_MENU, self.openAboutWindow, aboutItem )
-		self.Bind( wx.EVT_MENU, self.checkUpdates, checkUpdatesItem )
-		self.Bind( wx.EVT_MENU, self.openWiki, wikiItem )
-		self.Bind( wx.EVT_MENU, self.openGithub, githubItem )
-		self.Bind( wx.EVT_MENU, self.openDiscord, discordItem )
+		self.Bind( wx.EVT_MENU, self.openAboutWindow, self.menus['about'] )
+		self.Bind( wx.EVT_MENU, self.checkUpdates, self.menus['checkUpdates'] )
+		self.Bind( wx.EVT_MENU, self.openWiki, self.menus['wiki'] )
+		self.Bind( wx.EVT_MENU, self.openGithub, self.menus['github'] )
+		self.Bind( wx.EVT_MENU, self.openDiscord, self.menus['discord'] )
 		# other events
 		self.Bind( wx.EVT_CLOSE, self.OnClose, self )
 		self.Bind( wx.EVT_SIZING, self.OnResize, self )
 		self.Bind( wx.EVT_MAXIMIZE, self.OnMaximize, self )
 
 		if config.load('beePath') is None:
-			self.portalMenu.Enable(9, False)
-			self.fileMenu.Enable(1, False)
+			self.menus['uninstallBee'].Enable(False)
+			self.menus['openBeeDir'].Enable(False)
 		else:
-			self.portalMenu.Enable(10, False)
+			self.menus['installBee'].Enable(False)
+
 		# register event handlers
 		dispatcher.connect( receiver=self.RemoveMenu, signal=Events.UnregisterMenu )
 		# trigger the registerMenu event
@@ -146,11 +156,11 @@ class root(wx.Frame):
 		"""
 		self.book = wx.Notebook(
 			self,
-			name="Main Menu",
+			name='Main Menu',
 			size=wx.Size( self.GetSize().GetWidth(), self.GetSize().GetHeight() )
 		)
 		self.browserTab = PackageBrowserPage(self.book)
-		self.book.AddPage(self.browserTab, "Package Browser")
+		self.book.AddPage( self.browserTab, 'Package Browser' )
 
 	# wx event callbacks
 	def OnClose(self, evt: wx.CloseEvent):
@@ -162,9 +172,9 @@ class root(wx.Frame):
 		asyncio.run( pluginSystem.systemObj.unloadAndStop() )
 		# get the window position and save it
 		pos = list(self.GetPosition().Get())
-		LOGGER.debug(f'saved main window position: {pos}')
-		config.save(pos, 'mainWindowPos')
-		config.save(None, 'placeholderForSaving')
+		LOGGER.debug( f'saved main window position: {pos}' )
+		config.save( pos, 'mainWindowPos' )
+		config.save( None, 'placeholderForSaving' )
 		self.Destroy()
 
 	def OnResize( self, evt: wx.Event ):
@@ -237,17 +247,11 @@ class root(wx.Frame):
 
 	@staticmethod
 	def reloadPlugins(evt: wx.CommandEvent):
-		"""
-		reloads the plugins
-		:param evt: placeholder
-		"""
+		""" reloads the plugins """
 		asyncio.run( pluginSystem.systemObj.reload() )
 
 	def reloadPackages(self, evt: wx.CommandEvent):
-		"""
-		reloads the package view
-		:param evt: placeholder
-		"""
+		""" reloads the package view """
 		self.browserTab.reload()
 		self.book.Refresh()
 		self.Update()
@@ -255,11 +259,8 @@ class root(wx.Frame):
 
 	# portal 2 items actions
 	def verifyGameFiles(self, evt: wx.CommandEvent):
-		"""
-		triggers the verify game cache dialog + event
-		:param evt: placeholder
-		"""
-		if not config.load("showVerifyDialog"):
+		""" triggers the verify game cache dialog + event """
+		if not config.load('showVerifyDialog'):
 			# user really wants to verify the game files?
 			dialog = wx.RichMessageDialog(
 				parent=self,
@@ -273,17 +274,15 @@ class root(wx.Frame):
 			dialog.ShowCheckBox("Don't show again")
 			choice = dialog.ShowModal()
 			if dialog.IsCheckBoxChecked():
-				config.save(False, 'showVerifyDialog')
+				config.save( False, 'showVerifyDialog' )
 			if choice == wx.ID_NO:
 				return
 		# yes he wants to
 		print('YES')
+		utilities.notimplementedyet()
 
 	def uninstallBee(self, evt: wx.CommandEvent):
-		"""
-		called when the uninstall bee button is pressed
-		:param evt: placeholder
-		"""
+		""" called when the uninstall bee button is pressed """
 		if config.load('showUninstallDialog', default=True):
 			# the user really wants to uninstall BEE?
 			diag = wx.MessageDialog(
@@ -297,15 +296,12 @@ class root(wx.Frame):
 		# uninstall BEE
 		beeManager.uninstall()
 		# toggle buttons
-		self.portalMenu.Enable(10, True)
-		self.portalMenu.Enable(9, False)
-		self.fileMenu.Enable(1, False)
+		self.menus['installBee'].Enable(True)
+		self.menus['uninstallBee'].Enable(False)
+		self.menus['openBeeDir'].Enable(False)
 
 	def installBee(self, evt: wx.CommandEvent):
-		"""
-		called when the install bee button is pressed
-		:param evt: placeholder
-		"""
+		""" called when the install bee button is pressed """
 		# check if is installed
 		if beeManager.beeIsPresent() and beeManager.packagesAreInstalled():
 			wx.GenericMessageDialog(
@@ -342,9 +338,9 @@ class root(wx.Frame):
 			config.save(str(path.resolve()).replace(r'\\', '/'), 'beePath')
 			# install BEE without messages
 			beeManager.checkAndInstallUpdate(True)
-		self.portalMenu.Enable(9, True)
-		self.portalMenu.Enable(10, False)
-		self.fileMenu.Enable(1, True)
+		self.menus['installBee'].Enable(True)
+		self.menus['uninstallBee'].Enable(False)
+		self.menus['openBeeDir'].Enable(True)
 
 	@staticmethod
 	def openP2( evt: wx.CommandEvent ):
@@ -359,7 +355,8 @@ class root(wx.Frame):
 		os.startfile( path )
 
 	# help menu items actions
-	def openAboutWindow(self, evt: wx.CommandEvent):
+	@staticmethod
+	def openAboutWindow(evt: wx.CommandEvent):
 		aboutWindow.init()
 
 	@staticmethod
@@ -412,9 +409,7 @@ def openUrl(url: str):
 
 
 async def appDateCheck():
-	"""
-	Checks app updates
-	"""
+	"""	Checks app updates """
 	if not utilities.isonline():  # if we're not online return false
 		return False
 	data = utilities.checkUpdate( 'https://github.com/ENDERZOMBI102/BEE-manipulator', config.version )
@@ -450,9 +445,7 @@ class PackageBrowserPage(wx.Panel):
 		self.browserObj = browser.Browser(self)
 
 	def reload(self):
-		"""
-		reloads the browser window by creating a new object
-		"""
+		""" Reloads the browser window by creating a new object """
 		if utilities.env == 'dev':
 			try:
 				importlib.reload(browser)
