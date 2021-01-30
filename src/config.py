@@ -206,9 +206,9 @@ dynConfig: __dynConfig = __dynConfig()
 
 
 def overwriteOnNextLaunch(**kwargs) -> None:
-	overwrites = config.load('nextLaunch')
+	overwrites = load('nextLaunch')
 	overwrites = { **overwrites, **kwargs }
-	config.save('nextLaunch', overwrites)
+	save('nextLaunch', overwrites)
 
 
 # dynamic/static configs
