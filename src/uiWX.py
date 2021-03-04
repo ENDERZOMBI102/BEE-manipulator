@@ -75,7 +75,7 @@ class root(wx.Frame):
 		self.optionsMenu = wx.Menu()
 		self.menus['settings'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.settings.name')+'\tCtrl-S', loc('menu.options.settings.description') )
 		self.menus['toggleLogWindow'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.logtoggle.name')+'\tCtrl-L', loc('menu.options.logtoggle.description') )
-		self.menus['reloadPlugins'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadplugins.name'), loc('menu.options.reloadplugins.description') )
+		self.menus['reloadPlugins'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadplugins.name')+'\tCtrl-R', loc('menu.options.reloadplugins.description') )
 		self.menus['reloadPackages'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadpackages.name'), loc('menu.options.reloadpackages.description') )
 
 		# portal 2 menu bar
@@ -149,7 +149,7 @@ class root(wx.Frame):
 		# register event handlers
 		dispatcher.connect( receiver=self.RemoveMenu, signal=Events.UnregisterMenu )
 		# trigger the registerMenu event
-		dispatcher.send( Events.RegisterEvent, RegisterHandler=pluginSystem.RegisterHandler() )
+		dispatcher.send( Events.RegisterEvent, handler=pluginSystem.RegisterHandler() )
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
