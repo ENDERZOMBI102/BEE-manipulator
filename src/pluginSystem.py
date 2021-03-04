@@ -31,7 +31,7 @@ class Errors:
 	class MenuNotFoundException(Exception):
 		pass
 
-	class DupeMenuFoundException(Exception):
+	class DupeMenuFoundException(RuntimeError):
 		pass
 
 
@@ -50,7 +50,7 @@ class RegisterHandler:
 		if index == wx.NOT_FOUND:
 			self._mainWindow.menuBar.Append( menu, title )
 		else:
-			raise Errors.DupeMenuFoundException(f'duplicate menu "{menu}"')
+			raise Errors.DupeMenuFoundException(f'duplicate menu "{menu.GetTitle()}"')
 
 
 class Plugin:
@@ -313,9 +313,16 @@ class system:
 			# no mo reloading
 			self.isReloading = False
 		# dispatch events
-		dispatcher.send( Events.RegisterEvent, RegisterHandler=RegisterHandler() )
-		from logWindow import logWindow
-		dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
+		try:
+			dispatcher.send( Events.RegisterEvent, handler=RegisterHandler() )
+			from logWindow import logWindow
+			dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
+		except Errors.DupeMenuFoundException as e:
+			logger.error( 'Found duplicate menus while registering! reload can\'t countinue!' )
+			logger.error( ''.join( traceback.format_exception( type( e ), e, e.__traceback__ ) ) )
+		except Exception as e:
+			logger.error( 'caught exception while processing reload events "RegisterEvent", reload can\'t countinue!' )
+			logger.error( ''.join( traceback.format_exception( type( e ), e, e.__traceback__ ) ) )
 
 	async def unloadAndStop(self):
 		"""
