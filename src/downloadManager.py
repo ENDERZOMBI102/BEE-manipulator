@@ -79,12 +79,16 @@ class downloadThread(Thread):
 class downloadManager:
 
 	downloads: Dict[int, downloadThread] = {}
+	_timer: wx.Timer
 	_syncMode: bool = False
 	_shouldStop: bool = False
 	"""PRIVATE PROPERTY"""
 
 	def init(self):
-		wx.CallAfter( self._tick )
+		self._timer = wx.Timer()
+		self._timer.Notify = lambda: self._tick()
+		# schedule ticking every 5 milliseconds
+		self._timer.Start(5)
 
 	def startDownload( self, url: str, callback: Callable[ [downloadThread], None], maxSpeed: int = 1024 ) -> int:
 		"""
@@ -222,18 +226,17 @@ class downloadManager:
 				# and remove the one that finished
 				for downloadId in self.downloads.keys():
 					if self.downloads[ downloadId ].finished:
-						enableNext = True
+						# enable the next download and remove the current one only if the
+						# current download's data has been retrieved
 						if self.downloads[downloadId].dataHasBeenRetrieved:
 							toBeDeleted = downloadId
+							enableNext = True
 					elif enableNext:
 						self.toggleDownload( downloadId )
 						break
 			# if there's a download to remove, remove it
 			if toBeDeleted:
 				del self.downloads[ toBeDeleted ]
-		# schedule execution again
-		if not self._shouldStop:
-			wx.CallLater(4, self._tick)
 
 	def stop( self ):
 		"""
@@ -243,6 +246,7 @@ class downloadManager:
 			download.shouldStop = True
 		self.downloads.clear()
 		self._shouldStop = True
+		self._timer.Stop()
 
 
 manager: downloadManager = downloadManager()
