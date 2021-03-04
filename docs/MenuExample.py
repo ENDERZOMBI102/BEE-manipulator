@@ -2,7 +2,7 @@ import wx
 import wx.py.dispatcher as dispatcher
 from semver import VersionInfo
 
-from pluginSystem import Plugin, Events, RegisterHandler as RegisterHandlerType
+from pluginSystem import Plugin, Events, RegisterHandler
 
 
 @Plugin(name='MenuBar Menu Example', version=VersionInfo(1, 0, 0) )
@@ -35,5 +35,5 @@ class MenuExample:
 		# remove the menu
 		self.exampleMenu.Destroy()
 
-	def registerHandler( self, RegisterHandler: RegisterHandlerType ):
-		RegisterHandler.RegisterMenu( self.exampleMenu, 'Example Menu' )
+	def registerHandler( self, handler: RegisterHandler ):
+		handler.RegisterMenu( self.exampleMenu, 'Example Menu' )
