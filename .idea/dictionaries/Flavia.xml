@@ -82,7 +82,9 @@
       <w>titlebar</w>
       <w>togglable</w>
       <w>upsizer</w>
+      <w>vbsp</w>
       <w>versioncmp</w>
+      <w>vrad</w>
       <w>wdots</w>
       <w>zipdata</w>
     </words>
