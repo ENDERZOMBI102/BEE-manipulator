@@ -247,7 +247,7 @@ def steamDir() -> str:
 def portalDir() -> str:
 
 	"""
-	a function that retrives the portal 2 folder by searching in all possible libraries
+	a function that retrieves the portal 2 folder by searching in all possible libraries
 	:return: path to p2 folder
 	:raises FileNotFoundError:
 	"""
