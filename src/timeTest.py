@@ -1,16 +1,18 @@
-from datetime import datetime
+import wx
 
-starTime: datetime
+
+stopwatch = wx.StopWatch()
 
 
 def start():
 	# starts the timer
-	global starTime
-	starTime = datetime.now()
+	stopwatch.Start()
 
 
 def stop():
-	#stops the timer
-	global starTime
-	print(f'time taken to start: { datetime.now() - starTime }')
+	# stops the timer
+	global stopwatch
+	stopwatch.Pause()
+	print(f'time taken to start: { stopwatch.Time() // 1000 }.{stopwatch.Time() % 1000}s')
+	del stopwatch
 
