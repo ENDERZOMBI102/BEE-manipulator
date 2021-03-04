@@ -107,6 +107,7 @@ class logWindow(wx.Frame):
 			choices=['Debug', 'Info', 'Warning', 'Error']
 		)
 		self.levelChoice.SetSelection( ( getLevel() / 10 ) - 1 )
+		self.levelChoice.Refresh()
 		sizer.Add(self.text, border=wx.Bottom)
 		sizer.Add(self.bottomBar)
 		self.SetSizer(sizer)
