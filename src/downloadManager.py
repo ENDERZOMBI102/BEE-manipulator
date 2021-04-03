@@ -133,9 +133,10 @@ class downloadManager:
 		:param downloadId: the download to pause/unpause
 		:param enable: should enable or disable
 		"""
+		# TODO: REFACTOR THIS
 		if enable is None:
 			# here the download pause state is toggled
-			if self.downloads[downloadId].paused:
+			if self.downloads[ downloadId ].paused:
 				self.downloads[ downloadId ].pauser.release()
 				self.downloads[ downloadId ].paused = False
 			else:
@@ -235,7 +236,7 @@ class downloadManager:
 						self.toggleDownload( downloadId )
 						break
 			# if there's a download to remove, remove it
-			if toBeDeleted:
+			if toBeDeleted is not None:
 				del self.downloads[ toBeDeleted ]
 
 	def stop( self ):
@@ -244,6 +245,7 @@ class downloadManager:
 		"""
 		for download in self.downloads.values():
 			download.shouldStop = True
+			download.join()
 		self.downloads.clear()
 		self._shouldStop = True
 		self._timer.Stop()
