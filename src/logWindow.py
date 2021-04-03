@@ -180,6 +180,7 @@ def updateVisibility():
 	if visible:
 		logWindow.instance.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
 		logWindow.instance.Raise()
+		logWindow.instance.levelChoice.Refresh()
 		wx.GetTopLevelWindows()[0].Raise()
 	else:
 		logWindow.instance.HideWithEffect(wx.SHOW_EFFECT_BLEND)
