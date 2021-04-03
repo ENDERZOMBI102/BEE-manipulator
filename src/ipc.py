@@ -4,6 +4,7 @@ from multiprocessing.connection import PipeConnection
 from typing import Callable, List, Dict, Tuple
 
 import ipc_mngr
+from wx.py import dispatcher
 
 from srctools.logger import get_logger
 
@@ -30,7 +31,7 @@ class Command:
 def sendToServer( origin: Tuple[ str, int ], url: str ):
 	"""
 	Very simple function to send a bmurl to another instance of BM
-	:param origin: origin's ip
+	:param origin: origin's socket (ip, port)
 	:param url: the url to send
 	"""
 	# create client
@@ -65,12 +66,20 @@ class ipcManager:
 				f'{cmd.origin} is trying to use an unregistered protocol "{cmd.protocol}", is it implemented in a plugin?'
 			)
 		else:
-			for handler in self._handlers[cmd.protocol]:
-				handler(sock, cmd)
+			if len( self._handlers ) > 0:
+				for handler in self._handlers[cmd.protocol]:
+					handler(sock, cmd)
+			else:
+				logger.warning(
+					f'{cmd.origin} is trying to use a previously registered protocol "{cmd.protocol}" (implemented by a plugin).'
+				)
 
 	def init( self ):
 		self._thread = threading.Thread(target=self.listen)
 		self._thread.start()
+		from pluginSystem import Events
+		# use a lambda for security
+		dispatcher.connect(lambda protocol, hdlr: self.rmHandler(protocol, hdlr), Events.UnregisterIpcHandler)
 
 	def listen(self):
 		self._listener = ipc_mngr.Listener( ('127.0.0.1', self.port), authkey='bm-ipc' )
@@ -86,11 +95,12 @@ class ipcManager:
 		self._handlers[ protocol ].append( hdlr )
 
 	def rmHandler(self, protocol: str, hdlr: Callable[ [PipeConnection, Command], None ] ):
-		i = 0
-		for i in range( len( self._handlers[ protocol ] ) ):
-			if self._handlers[ protocol ][ i ] == hdlr:
-				break
-		del self._handlers[ protocol ][ i ]
+		# i = 0
+		# for i in range( len( self._handlers[ protocol ] ) ):
+		# 	if self._handlers[ protocol ][ i ] == hdlr:
+		# 		break
+		# del self._handlers[ protocol ][ i ]
+		self._handlers[protocol].remove(hdlr)
 
 	def stop(self):
 		if isinstance(self._listener, ipc_mngr.Listener):
