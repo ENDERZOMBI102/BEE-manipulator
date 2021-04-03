@@ -148,8 +148,7 @@ class root(wx.Frame):
 
 		# register event handlers
 		dispatcher.connect( receiver=self.RemoveMenu, signal=Events.UnregisterMenu )
-		# trigger the registerMenu event
-		dispatcher.send( Events.RegisterEvent, handler=pluginSystem.RegisterHandler() )
+		dispatcher.connect( receiver=self.RemoveBookPage, signal=Events.UnregisterBookPage )
 		"""
 		A notebook is a controller which manages multiple windows with associated tabs.
 		This section makes the notebook
@@ -161,6 +160,8 @@ class root(wx.Frame):
 		)
 		self.browserTab = PackageBrowserPage(self.book)
 		self.book.AddPage( self.browserTab, 'Package Browser' )
+		# trigger the register event
+		dispatcher.send( Events.RegisterEvent, handler=pluginSystem.RegisterHandler() )
 
 	# wx event callbacks
 	def OnClose(self, evt: wx.CloseEvent):
@@ -376,6 +377,13 @@ class root(wx.Frame):
 		openUrl('https://discord.gg/hnGFJrz')
 
 	# API methods
+	def RemoveBookPage( self, page: wx.Panel ):
+		index: int = self.book.FindPage(page)
+		if index == wx.NOT_FOUND:
+			raise pluginSystem.Errors.PageNotFoundException( f'unknown page "{page.GetName()}"' )
+		else:
+			self.book.RemovePage( index )
+
 	def RemoveMenu(self, menu: str):
 		"""
 		Removes a menu from the main menubar
