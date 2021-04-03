@@ -11,6 +11,7 @@ from typing import Type
 
 import wx
 
+import cefManager
 import config
 import downloadManager
 import ipc
@@ -133,7 +134,10 @@ class App( wx.App ):
 		if self.ShouldExit:
 			return False
 		# create icon object
+		# noinspection PyUnresolvedReferences
 		utilities.__setIcon()
+		# initialize modules
+		cefManager.manager.init()
 		downloadManager.manager.init()
 		ipc.manager.init()
 		# import after localize() object is created so that loc() is already present
@@ -154,7 +158,10 @@ class App( wx.App ):
 
 	def OnExit( self ):
 		import logging
+		# shutdown modules
 		ipc.manager.stop()
+		downloadManager.manager.stop()
+		cefManager.manager.stop()
 		with open( config.configPath, 'w' ) as file:
 			json.dump( config.currentConfigData, file, indent=4 )
 		if config.dynConfig[ 'continueLoggingOnUncaughtException' ]:
