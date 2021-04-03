@@ -3,6 +3,7 @@ import importlib.util
 import traceback
 from abc import ABCMeta, abstractmethod
 from enum import Enum
+from multiprocessing.connection import PipeConnection
 from pathlib import Path
 from types import ModuleType
 from typing import Dict, Callable
@@ -12,6 +13,7 @@ from semver import VersionInfo
 from wx.py import dispatcher
 
 import config
+import ipc
 from srctools.logger import get_logger
 
 logger = get_logger()
@@ -22,11 +24,17 @@ class Events(Enum):
 	RegisterEvent = 'RegisterMenusEvent'
 	LogWindowCreated = 'LogWindowEvent'
 	UnregisterMenu = 'UnregisterMenuEvent'
-	DownloadCompleted = 'DownloadCompleted'
-	DownloadStarted = 'DownloadStarted'
+	DownloadCompleted = 'DownloadCompletedEvent'
+	DownloadStarted = 'DownloadStartedEvent'
+	UnregisterIpcHandler = 'UnregisterIpcHandlerEvent'
+	UnregisterBookPage = 'UnregisterBookPage'
+	ReloadModuleEvent = 'ReloadModuleEvent'
 
 
 class Errors:
+
+	class PageNotFoundException(Exception):
+		pass
 
 	class MenuNotFoundException(Exception):
 		pass
@@ -38,12 +46,14 @@ class Errors:
 class RegisterHandler:
 
 	_mainWindow = None
+	_ipcManager: ipc.ipcManager = None
 	"""PRIVATE ATTRIBUTE"""
 
 	def __init__(self):
 		import uiWX
 		self._mainWindow: 'uiWX.root'
 		self._mainWindow = uiWX.root.instance
+		self._ipcManager = ipc.manager
 
 	def RegisterMenu( self, menu: wx.Menu, title: str):
 		index = self._mainWindow.menuBar.FindMenu(title)
@@ -51,6 +61,15 @@ class RegisterHandler:
 			self._mainWindow.menuBar.Append( menu, title )
 		else:
 			raise Errors.DupeMenuFoundException(f'duplicate menu "{menu.GetTitle()}"')
+
+	def RegisterIpcHandler( self, protocol: str, hdlr: Callable[ [ PipeConnection, ipc.Command ], None ] ):
+		self._ipcManager.addHandler(protocol, hdlr)
+
+	def RegisterBookPage( self, page: wx.Panel, title: str ):
+		if page.GetParent() != self._mainWindow.book:
+			logger.error(f'page parent isnt the main book')
+		else:
+			self._mainWindow.book.AddPage(page, title)
 
 
 class Plugin:
@@ -121,7 +140,7 @@ class PluginNotValid(Exception):
 	pluginid: str
 
 
-def placeholder(ph0=None, ph1=0):
+def placeholder(*args, **kwargs):
 	pass
 
 
