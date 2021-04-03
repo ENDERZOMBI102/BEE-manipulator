@@ -1,4 +1,3 @@
-from enum import Enum
 from pathlib import Path
 from typing import Dict
 
@@ -13,17 +12,9 @@ from srctools.logger import get_logger
 logger = get_logger()
 
 
-class dltype(Enum):
-	beepackage = 0
-	bmpackage = 1
-	bee24_app = 2
-	bee24_items = 3
-
-
-def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
+def installBeeFromUrl(url: str):
 	"""
-	install software from url
-	:param DLtype: the type of the download, defaults to BEE package
+	install a BEE package from url
 	:param url: direct download link to the package/application zip
 	"""
 	path = Path( config.load('beePath') )
@@ -33,12 +24,6 @@ def installFromUrl(url: str, DLtype: dltype = dltype.beepackage):
 		logger.info('the folder has been created, please install BEE')
 		return
 	# tempFolder = config.temp
-	if DLtype == dltype.beepackage:
-		pass
-	elif DLtype == dltype.bmpackage:
-		pass
-	else:
-		logger.error(f'unknown dl type "{DLtype}"!')
 
 
 class PackageManager:

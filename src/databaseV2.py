@@ -5,7 +5,7 @@ from srctools.logger import get_logger
 
 logger = get_logger()
 
-engine: sqla.engine.Engine = create_engine("sqlite+pysqlite:///:memory:", echo=True, future=True)
+engine: sqla.engine.Engine = create_engine('sqlite+pysqlite:///:memory:', echo=True, future=True)
 
 
 class Database:

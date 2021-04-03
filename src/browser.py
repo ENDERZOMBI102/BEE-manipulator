@@ -36,7 +36,6 @@ class Browser(wx.ScrolledWindow):
 
 	def OnResize( self, size: wx.Size ):
 		self.SetSize( size )
-		self.child.SetSize(size.GetWidth(), 100)
 
 	def loadPackages( self ):
 		pass
