@@ -37,7 +37,7 @@ default_config = {
 	'l18nFolderPath': './langs' if utilities.frozen() else './../langs',
 	'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
 	'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
-	'onlineDatabaseUrl': 'https://beeapi.ddns.net:7090/api/',
+	'onlineDatabaseUrl': '',
 	'lang': 'en_US',
 	'showVerifyDialog': True,
 	'showUninstallDialog': True,
@@ -316,10 +316,6 @@ def steamUsername():
 		return keyValue[0]
 	except:
 		return None
-
-
-def devMode() -> bool:
-	return load('devMode')
 
 
 class ConfigError(BaseException):
