@@ -219,6 +219,7 @@ class system:
 		instantiate all plugins in the plugins folder
 		"""
 		fdr = Path(f'{config.pluginsPath}/')
+		fdr.mkdir(exist_ok=True)
 		for plg in fdr.glob('*.py'):
 			name = plg.name.replace('.py', '')
 			spec = importlib.util.spec_from_file_location(name, plg)
