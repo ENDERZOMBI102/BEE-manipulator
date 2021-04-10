@@ -63,7 +63,7 @@ if '--startexe' in argv:
     else:
         if Path('./BEE Manipulator.exe').exists():
             if '--pass' in argv:
-                args = argv[ argv.index('--pass')+1 ]
+                args = argv[ argv.index('--pass') + 1 ]
                 system('"BEE Manipulator.exe" ' + args )
             else:
                 system('"BEE Manipulator.exe"')
