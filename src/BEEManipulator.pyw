@@ -12,7 +12,7 @@ from typing import Type
 import wx
 
 import cefManager
-import config
+import config  # must be first import
 import downloadManager
 import ipc
 import localization
@@ -97,7 +97,7 @@ class App( wx.App ):
 		if '--dev' in argv:
 			config.overwrite( 'logLevel', 'DEBUG' )
 			config.overwrite( 'logWindowVisibility', True )
-			utilities.env = 'dev'
+			utilities.devEnv = True
 		if '--flags' in argv:
 			flagIndex = argv.index( '--flags' ) + 1
 			if not argv[ flagIndex ].startswith( '--' ):

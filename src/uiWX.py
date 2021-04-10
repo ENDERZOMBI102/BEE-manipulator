@@ -19,7 +19,7 @@ import utilities
 from pluginSystem import Events
 from srctools.logger import get_logger
 
-if utilities.env == 'dev':
+if utilities.devEnv == 'dev':
 	import importlib
 
 

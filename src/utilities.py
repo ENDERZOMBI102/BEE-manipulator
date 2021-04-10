@@ -297,4 +297,4 @@ def registerProtocol():
 
 
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
-env = 'dev'
+devEnv: bool = False
