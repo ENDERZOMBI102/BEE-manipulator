@@ -14,8 +14,6 @@ overwriteDict: dict = {}
 configPath: Path = Path( './config.cfg' if utilities.frozen() else './../config.cfg' )
 resourcesPath: str = './resources/' if utilities.frozen() else './../resources/'
 """ The path to the assets folder (finishes with /) """
-tmpFolderPath: str = './tmp/' if utilities.frozen() else './../tmp/'
-""" The path to the tmp folder (finishes with /) """
 version: VersionInfo = VersionInfo(
 	major=1,
 	minor=0,
@@ -71,6 +69,7 @@ def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, Non
 		2.6
 	:param default: if no value is found, return this value
 	:param section: section of the config to read
+	:param useDisk: force to read config from disk
 	:returns: the readed data
 	"""
 	if section in overwriteDict.keys():
