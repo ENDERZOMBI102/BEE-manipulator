@@ -20,24 +20,24 @@ import srctools.logger
 import timeTest
 import utilities
 
-# Convert WX log levels to stdlib equivalents.
-wxLevelLookupTable = {
-	wx.LOG_Debug: logging.DEBUG,
-	wx.LOG_Error: logging.ERROR,
-	wx.LOG_FatalError: logging.FATAL,
-	wx.LOG_Info: logging.INFO,
-	wx.LOG_Max: logging.DEBUG,
-	wx.LOG_Message: logging.INFO,
-	wx.LOG_Progress: logging.DEBUG,
-	wx.LOG_Status: logging.INFO,
-	wx.LOG_Trace: logging.DEBUG,
-	wx.LOG_User: logging.DEBUG,
-	wx.LOG_Warning: logging.WARNING,
-}
-
 
 class WxLogHandler( wx.Log ):
 	"""Handle WX logging, and redirect it to Python's log system."""
+
+	# lookup table to convert WX log levels to stdlib equivalents.
+	levelLookupTable = {
+		wx.LOG_Debug: logging.DEBUG,
+		wx.LOG_Error: logging.ERROR,
+		wx.LOG_FatalError: logging.FATAL,
+		wx.LOG_Info: logging.INFO,
+		wx.LOG_Max: logging.DEBUG,
+		wx.LOG_Message: logging.INFO,
+		wx.LOG_Progress: logging.DEBUG,
+		wx.LOG_Status: logging.INFO,
+		wx.LOG_Trace: logging.DEBUG,
+		wx.LOG_User: logging.DEBUG,
+		wx.LOG_Warning: logging.WARNING,
+	}
 
 	def __init__( self ) -> None:
 		super().__init__()
@@ -49,7 +49,7 @@ class WxLogHandler( wx.Log ):
 		self.logger.handle(
 			self.logger.makeRecord(
 				'wxPython',
-				wxLevelLookupTable.get( level, logging.INFO ),
+				self.levelLookupTable.get( level, logging.INFO ),
 				info.filename.decode( 'utf8', 'ignore' ),
 				info.line,
 				msg,
@@ -74,7 +74,7 @@ class App( wx.App ):
 				ipc.sendToServer( ('127.0.0.1', 30206), argv[ argv.index( '--bmurl' ) + 1 ] )
 			else:
 				wx.MessageBox(
-					message='another instance of BM is running, aborting.',
+					message='Another instance of BEE Manipulator is running, aborting.',
 					caption='Error!',
 					style=wx.OK | wx.CENTRE | wx.STAY_ON_TOP | wx.ICON_ERROR
 				)
@@ -99,11 +99,10 @@ class App( wx.App ):
 			config.overwrite( 'logWindowVisibility', True )
 			utilities.devEnv = True
 		if '--flags' in argv:
+			# add all flags
 			flagIndex = argv.index( '--flags' ) + 1
 			if not argv[ flagIndex ].startswith( '--' ):
 				config.dynConfig.parseFlags( argv[ flagIndex ] )
-		if '--bmurl' in argv:
-			pass
 		# check configs
 		self.logger.info( 'Checking config file..' )
 		if config.check():
@@ -133,6 +132,9 @@ class App( wx.App ):
 	def OnInit( self ):
 		if self.ShouldExit:
 			return False
+		# create all folders
+		for folder in ( config.load('cachePath') ):
+			Path( folder ).mkdir(exist_ok=True)
 		# create icon object
 		# noinspection PyUnresolvedReferences
 		utilities.__setIcon()
@@ -146,7 +148,7 @@ class App( wx.App ):
 		self.logger.debug( "setting application name.." )
 		self.SetAppName( "BEE Manipulator" )
 		self.SetAppDisplayName( "BEE Manipulator" )
-		self.logger.debug( "setted app name" )
+		self.logger.info( "setted app name" )
 		# start ui
 		self.logger.info( f'Starting BEE Manipulator v{config.version}!' )
 		self.logger.info( 'starting ui!' )
@@ -171,6 +173,7 @@ class App( wx.App ):
 		return 0
 
 	def OnError( self, etype: Type[ BaseException ], value: BaseException, tb: TracebackType ):
+		# in an errored state, wx.MessageBox may not be available, so in case, use wx.SafeShowMessage
 		try:
 			wx.MessageBox(
 				message=''.join( traceback.format_exception( etype, value, tb ) ),
@@ -179,7 +182,7 @@ class App( wx.App ):
 			)
 		except Exception:
 			wx.SafeShowMessage( title='BM Error!', text=''.join( traceback.format_exception( etype, value, tb ) ) )
-		# try to set logWindowVisibility to True for next time
+		# try to set logWindowVisibility to True for next time, if it fails, its not a big deal
 		try:
 			config.overwriteOnNextLaunch( logWindowVisibility=True )
 		except Exception:
@@ -194,15 +197,15 @@ class App( wx.App ):
 
 if __name__ == '__main__':
 	# use file dir as working dir
-	path: Path = None
+	path: [Path, None] = None
 	if utilities.frozen():
 		path = Path( sys.executable ).resolve()
+		print( 'BM is running in a packed environment.' )
 		print( f'BM exe path: {path.parent.resolve()}' )
 	else:
 		path = Path( __file__ ).resolve()
 		print( 'BM is running in a developer environment.' )
 		print( f'BM source path: {path.parent}' )
-	os.chdir( path.parent )
 	os.chdir( path.parent )
 	timeStartup = '--time' in argv
 	if timeStartup:
