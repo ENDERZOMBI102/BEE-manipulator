@@ -21,9 +21,10 @@ version: VersionInfo = VersionInfo(
 	major=1,
 	minor=0,
 	patch=0,
-	prerelease='pre3'
+	prerelease='pre2',
+	build='build6'
 )
-"""current app version"""
+""" current app version """
 
 default_config = {
 	'config_type': 'BEE2.4 Manipulator Config File',
