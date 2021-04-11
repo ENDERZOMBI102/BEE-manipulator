@@ -19,7 +19,7 @@ import utilities
 from pluginSystem import Events
 from srctools.logger import get_logger
 
-if utilities.devEnv == 'dev':
+if utilities.devEnv:
 	import importlib
 
 
@@ -234,7 +234,7 @@ class root(wx.Frame):
 		:param evt: placeholder
 		"""
 
-		if utilities.env == 'dev':
+		if utilities.devEnv:
 			try:
 				# reload the settings window
 				importlib.reload( settingsUI )
@@ -336,7 +336,7 @@ class root(wx.Frame):
 			if not path.exists():
 				path.mkdir()
 			# save the BEE path
-			config.save(str(path.resolve()).replace(r'\\', '/'), 'beePath')
+			config.save( str( path.resolve() ).replace(r'\\', '/'), 'beePath' )
 			# install BEE without messages
 			beeManager.checkAndInstallUpdate(True)
 		self.menus['installBee'].Enable(True)
@@ -437,7 +437,7 @@ async def appDateCheck():
 	)
 	if data.ShowModal() == wx.ID_NO:
 		return  # user don't want to update
-	utilities.update()
+	# utilities.update()
 
 
 class PackageBrowserPage(wx.Panel):
@@ -454,7 +454,7 @@ class PackageBrowserPage(wx.Panel):
 
 	def reload(self):
 		""" Reloads the browser window by creating a new object """
-		if utilities.env == 'dev':
+		if utilities.devEnv:
 			try:
 				importlib.reload(browser)
 			except:
