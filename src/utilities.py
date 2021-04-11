@@ -275,7 +275,7 @@ def parseValue( param: str ) -> Union[str, int, float, None, bool]:
 
 
 def registerProtocol():
-	txt = r"""
+	regCode = r"""
 		Windows Registry Editor Version 5.00
 
 		[HKEY_CLASSES_ROOT\bm]
@@ -287,13 +287,13 @@ def registerProtocol():
 		[HKEY_CLASSES_ROOT\bm\shell\open]
 
 		[HKEY_CLASSES_ROOT\bm\shell\open\command]
-		@="\"{} --bmurl\" \"%1\""
-	""".replace( '\t', '' ).replace( '\n', '', 1 ).replace( '{}', sys.executable.replace( '\\', '\\\\' ), 1 )
-	Path( config.tmpFolderPath ).mkdir( exist_ok=True )
-	regfile = Path( config.tmpFolderPath + 'protocol.reg' )
-	regfile.touch( exist_ok=True )
-	regfile.write_text( txt )
-	os.system( f'{str( regfile )}' )
+		@="\"{exe} --bmurl\" \"%1\""
+	""".replace( '\t', '' ).replace( '\n', '', 1 ).format( exe=sys.executable.replace( '\\', '\\\\' ) )
+	Path( config.load('cachePath') ).mkdir( exist_ok=True )
+	regFile = Path( f'{config.load( "cachePath" )}/protocol.reg' )
+	regFile.touch( exist_ok=True )
+	regFile.write_text( regCode )
+	os.system( f'{str( regFile )}' )
 
 
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
