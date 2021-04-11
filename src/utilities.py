@@ -37,7 +37,7 @@ class UpdateInfo:
 
 def _App__setIcon():
 	global icon
-	icon = wx.Icon(f'{config.assetsPath}icons/icon.png')
+	icon = wx.Icon(f'{config.resourcesPath}icons/icon.png' )
 
 
 def isonline():

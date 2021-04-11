@@ -86,7 +86,7 @@ class PlaceHolderView(PackageView):
 		super().__init__( master )
 		self.image = wx.StaticBitmap(
 			parent=self,
-			bitmap=wx.Bitmap(f'{config.assetsPath}nodb.png'),
+			bitmap=wx.Bitmap(f'{config.resourcesPath}nodb.png' ),
 			pos=wx.Point(100, 100),
 			size=wx.Size(200, 200)
 		)
@@ -94,7 +94,7 @@ class PlaceHolderView(PackageView):
 
 
 def getIcon(pid: str) -> wx.Bitmap:
-	path = Path( f'{config.assetsPath}packages/{pid}/icon.png' )
+	path = Path( f'{config.resourcesPath}packages/{pid}/icon.png' )
 	if path.exists():
 		return wx.Bitmap( str( path ) )
 	else:

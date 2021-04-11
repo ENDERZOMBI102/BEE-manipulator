@@ -9,8 +9,8 @@ docs/~$BM_ui.pptx
 Pipfile
 config.cfg
 BEEManipulator.7z
-assets/database.json
-assets/about.html
+resources/database.json
+resources/about.html
 logs
 src/.env
 plugins

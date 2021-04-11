@@ -32,17 +32,17 @@ class aboutWindow(wx.Frame):
 		self.box = wx.html.HtmlWindow( self )
 		try:
 			self.logger.debug('trying to open about.html..')
-			with open(f'{config.assetsPath}/about.html', 'r') as file:
+			with open(f'{config.resourcesPath}/about.html', 'r' ) as file:
 				self.logger.debug('opened about.html!')
 				data = file.read().replace( r'{0}', config.version.__str__() )
 		except FileNotFoundError:
 			self.logger.warning('failed to load about.html! falling back to about.md')
 			self.logger.debug('opening about.md..')
 			# set the page to the converted markdown text
-			with open(f'{config.assetsPath}/about.md', 'r') as file:
+			with open(f'{config.resourcesPath}/about.md', 'r' ) as file:
 				self.logger.debug('converting markdown to html..')
 				data = markdown(file.read())
-			with open(f'{config.assetsPath}/about.html', 'w') as file:
+			with open(f'{config.resourcesPath}/about.html', 'w' ) as file:
 				file.write(data)
 			data = data.replace(r'{0}', config.version.__str__() )
 		self.box.SetPage(data)

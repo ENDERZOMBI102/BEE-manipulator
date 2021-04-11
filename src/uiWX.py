@@ -95,11 +95,11 @@ class root(wx.Frame):
 		self.menus['discord'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.discord.name'), loc('menu.help.discord.description') )
 
 		# set menu item icons
-		self.menus['about'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_bm.png') )
-		self.menus['checkUpdates'].SetBitmap( wx.Bitmap( f'{config.assetsPath}icons/materialdesign/menu_update_black.png' ) )
-		self.menus['wiki'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
-		self.menus['github'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_github.png') )
-		self.menus['discord'].SetBitmap( wx.Bitmap(f'{config.assetsPath}icons/menu_discord.png') )
+		self.menus['about'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_bm.png' ) )
+		self.menus['checkUpdates'].SetBitmap( wx.Bitmap( f'{config.resourcesPath}icons/materialdesign/menu_update_black.png' ) )
+		self.menus['wiki'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_github.png' ) )
+		self.menus['github'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_github.png' ) )
+		self.menus['discord'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_discord.png' ) )
 
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()

@@ -1,11 +1,9 @@
 import json
-from abc import ABCMeta, abstractmethod
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
 from requests import get
-from sqlalchemy import create_engine
 
 import config
 import utilities
@@ -42,9 +40,9 @@ class PDatabase:
 			# RECURSION
 			return self.checkDatabase()
 		logger.debug('checking packages assets dir..')
-		if not Path( config.assetsPath + '/packages' ).exists():
+		if not Path( config.resourcesPath + '/packages' ).exists():
 			logger.warning("the packages folder doesn't exist! creating one..")
-			Path( config.assetsPath + '/packages' ).mkdir()
+			Path( config.resourcesPath + '/packages' ).mkdir()
 			logger.info('packages folder created!')
 		return True
 
@@ -65,7 +63,7 @@ class PDatabase:
 		"""
 			create the correct package object for each one of the packages in the json
 		"""
-		packageFolderPath = f'{config.assetsPath}packages'
+		packageFolderPath = f'{config.resourcesPath}packages'
 
 		with self.db.open('r') as file:
 			logger.debug(f'loading database from {self.path}..')

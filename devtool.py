@@ -89,14 +89,14 @@ if '--clean' in argv:
     if Path('./logs').exists():
         system('rmdir logs /S /Q')
     print('removing "assets/packages"')
-    if Path('./assets/packages').exists():
+    if Path( 'resources/packages' ).exists():
         system('rmdir assets/packages /S /Q')
     print('removing "assets/about.html"')
-    if Path('./assets/about.html').exists():
-        remove('assets/about.html')
+    if Path( 'resources/about.html' ).exists():
+        remove( 'resources/about.html' )
     print('removing "assets/database.json"')
-    if Path('./assets/database.json').exists():
-        remove('assets/database.json')
+    if Path( 'resources/database.json' ).exists():
+        remove( 'resources/database.json' )
     print('removing "config.cfg"')
     if Path('./config.cfg').exists():
         remove('config.cfg')

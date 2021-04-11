@@ -218,7 +218,7 @@ class system:
 		"""
 		instantiate all plugins in the plugins folder
 		"""
-		fdr = Path(f'{config.pluginsPath}/')
+		fdr = Path(f'{config.load("pluginsPath")}/')
 		fdr.mkdir(exist_ok=True)
 		for plg in fdr.glob('*.py'):
 			name = plg.name.replace('.py', '')

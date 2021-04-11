@@ -12,11 +12,10 @@ from srctools.logger import get_logger
 logger = get_logger()
 overwriteDict: dict = {}
 configPath: Path = Path( './config.cfg' if utilities.frozen() else './../config.cfg' )
-assetsPath: str = './assets/' if utilities.frozen() else './../assets/'
+resourcesPath: str = './resources/' if utilities.frozen() else './../resources/'
 """ The path to the assets folder (finishes with /) """
 tmpFolderPath: str = './tmp/' if utilities.frozen() else './../tmp/'
 """ The path to the tmp folder (finishes with /) """
-pluginsPath: str = './plugins' if utilities.frozen() else './../plugins'
 version: VersionInfo = VersionInfo(
 	major=1,
 	minor=0,
@@ -38,6 +37,7 @@ default_config = {
 	'l18nFolderPath': './langs' if utilities.frozen() else './../langs',
 	'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
 	'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
+	'cachePath': f'{resourcesPath}/cache',
 	'onlineDatabaseUrl': '',
 	'lang': 'en_US',
 	'showVerifyDialog': True,
