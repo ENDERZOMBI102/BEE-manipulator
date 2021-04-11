@@ -357,3 +357,8 @@ class system:
 
 
 systemObj: system = system()
+
+
+def getCacheFolder(plugin: str, relative: bool = True) -> str:
+	path: str = f'{config.load("cachePath")}/plugins/{plugin}'
+	return path if relative else str( Path(path).absolute() )
