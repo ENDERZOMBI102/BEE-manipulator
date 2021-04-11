@@ -1,6 +1,7 @@
 {
   "currentLang": "en_US",
   "missingtranslation": "HONO",
+  "generic.notinstalled": "Not installed",
   "window.main.title": "BEE manipulator {ver}",
   "window.log.title": "Logs",
   "menu.file.name": "File",

@@ -174,9 +174,9 @@ class PathsPage(wx.PreferencesPage):
 			name='P2PDP',
 			path=config.portalDir(),
 			size=wx.Size(500, 20),
-			pos=wx.Point(0, -45)
+			pos=wx.Point(0, -44)
 		)
-		self.P2PDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.p2pdp.tooltip')))
+		self.P2PDP.SetToolTip( wx.ToolTip( loc('settings.tab.paths.p2pdp.tooltip') ) )
 		self.P2PDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.P2PDP.GetTextCtrl().GetSize()[1] ) )
 
 		# P1 Path | static text | DirPickerCtrl
@@ -212,9 +212,9 @@ class PathsPage(wx.PreferencesPage):
 			pos=wx.Point(0, 37)
 		)
 		if bp is None:
-			self.BPDP.SetPath('Not installed')
+			self.BPDP.SetPath( loc('generic.notinstalled') )
 			self.BPDP.Enable(False)
-		self.BPDP.SetToolTip(wx.ToolTip(loc('settings.tab.paths.bpdp.tooltip')))
+		self.BPDP.SetToolTip( wx.ToolTip( loc('settings.tab.paths.bpdp.tooltip') ) )
 		self.BPDP.GetTextCtrl().SetMinSize( wx.Size( 400, self.BPDP.GetTextCtrl().GetSize()[1] ) )
 
 		# Local Database Path | static text | DirPickerCtrl
