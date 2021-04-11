@@ -1,6 +1,7 @@
 import threading
 import time
 from multiprocessing.connection import PipeConnection
+from types import FunctionType
 from typing import Callable, List, Dict, Tuple
 
 import ipc_mngr
@@ -61,13 +62,15 @@ class ipcManager:
 		makes sure to manage the call correctly
 		"""
 		logger.info(f'Call received from {cmd.origin} on port {self._listener.last_accepted}')
-		if cmd.protocol not in self._handlers.keys():
+		if cmd.protocol not in self._handlers:
 			logger.warning(
 				f'{cmd.origin} is trying to use an unregistered protocol "{cmd.protocol}", is it implemented in a plugin?'
 			)
 		else:
 			if len( self._handlers ) > 0:
 				for handler in self._handlers[cmd.protocol]:
+					handler: FunctionType
+					logger.debug(f'{handler.__name__} by {handler.__module__} is handling {cmd.parameters}')
 					handler(sock, cmd)
 			else:
 				logger.warning(
@@ -88,18 +91,13 @@ class ipcManager:
 
 	def addHandler(self, protocol: str, hdlr: Callable[ [PipeConnection, Command], None ]):
 		# check if the given protocol list exist
-		if protocol not in self._handlers.keys():
+		if protocol not in self._handlers:
 			# doesn't exist: create it
 			self._handlers[ protocol ] = []
 		# add the handler
 		self._handlers[ protocol ].append( hdlr )
 
 	def rmHandler(self, protocol: str, hdlr: Callable[ [PipeConnection, Command], None ] ):
-		# i = 0
-		# for i in range( len( self._handlers[ protocol ] ) ):
-		# 	if self._handlers[ protocol ][ i ] == hdlr:
-		# 		break
-		# del self._handlers[ protocol ][ i ]
 		self._handlers[protocol].remove(hdlr)
 
 	def stop(self):
