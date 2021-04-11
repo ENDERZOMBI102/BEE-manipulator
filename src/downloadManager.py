@@ -10,10 +10,10 @@ from config import dynConfig
 from pluginSystem import Events
 
 
-class downloadThread(Thread):
+class DownloadThread( Thread ):
 
 	url: str = None
-	callback: Callable[ ['downloadThread'], None]
+	callback: Callable[ [ 'DownloadThread' ], None ]
 	maxSpeed: int
 
 	pauser: Condition = Condition()
@@ -29,11 +29,11 @@ class downloadThread(Thread):
 	totalLength: int = 0
 	data: BytesIO
 
-	def __init__( self, url: str, callback: Callable[ ['downloadThread'], None], maxSpeed: int = 1024 ):
+	def __init__( self, url: str, callback: Callable[ [ 'DownloadThread' ], None ], maxSpeed: int = 1024 ):
 		super().__init__()
 		self.url = url
 		self.data = BytesIO()
-		if isinstance(callback, Callable):
+		if not isinstance(callback, Callable):
 			raise ValueError('callback must be a function')
 		self.callback = callback
 		self.maxSpeed = maxSpeed
@@ -78,7 +78,7 @@ class downloadThread(Thread):
 
 class downloadManager:
 
-	downloads: Dict[int, downloadThread] = {}
+	downloads: Dict[ int, DownloadThread ] = {}
 	_timer: wx.Timer
 	_syncMode: bool = False
 	_shouldStop: bool = False
@@ -90,7 +90,7 @@ class downloadManager:
 		# schedule ticking every 5 milliseconds
 		self._timer.Start(5)
 
-	def startDownload( self, url: str, callback: Callable[ [downloadThread], None], maxSpeed: int = 1024 ) -> int:
+	def startDownload( self, url: str, callback: Callable[ [ DownloadThread ], None ], maxSpeed: int = 1024 ) -> int:
 		"""
 		This method starts a new download
 		:param url: the url of the file to download
@@ -107,7 +107,7 @@ class downloadManager:
 			else:
 				downloadId += 1
 		# setup and start the download thread
-		self.downloads[ downloadId ] = downloadThread(url, callback, maxSpeed)
+		self.downloads[ downloadId ] = DownloadThread( url, callback, maxSpeed )
 		self.downloads[ downloadId ].setName(f'DownloadThread-{downloadId}')
 		if not self._syncMode:
 			self.downloads[ downloadId ].start()
@@ -158,7 +158,7 @@ class downloadManager:
 		Returns a list with all download urls
 		:return: List[str]
 		"""
-		dl: downloadThread
+		dl: DownloadThread
 		return [ dl.url for dl in self.downloads.values() ]
 
 	def waitUtilDone( self, downloadId: int ):
