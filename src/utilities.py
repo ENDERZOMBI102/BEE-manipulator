@@ -229,15 +229,19 @@ def removeDir(path):
 	os.rmdir( path )
 
 
-def tempDirPath() -> str:
+def cacheDirPath() -> str:
 	if frozen():
-		path = './../temp/'  # frozen
+		path = './../resources/cache'  # frozen
 	else:
-		path = './temp/'  # not frozen
+		path = './resources/cache'  # not frozen
 	fdr = Path(path)
 	if not fdr.exists():
 		fdr.mkdir()
 	return path
+
+
+def getCorrectPath(path: str) -> str:
+	return path if frozen() else f'{path[:2]}../{path[2:]}'
 
 
 def __getbee() -> Union[None, str]:
