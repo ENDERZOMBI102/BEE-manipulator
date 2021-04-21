@@ -1,13 +1,29 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
+from pathlib import Path
+
+from PyInstaller.building.build_main import Analysis
+
+blacklist: list = ['cache']
+resources: list = []
+DISTPATH: str
+
+
+for file in Path('../resources').glob('*'):
+	if file.name in blacklist:
+		continue
+	if file.is_dir():
+		for file2 in file.glob('*'):
+			resources.append( ( '/'.join(file2.parts), '/'.join(file2.parts[1:-1]) ) )
+	else:
+		resources.append( ( '/'.join(file.parts), '/'.join(file.parts[1:-1]) ) )
+
 
 a = Analysis(
 	['BEEManipulator.pyw'],
 	pathex=['./'],
 	binaries=[],
-	datas=[
-		('../assets/about.md', 'assets'),
-		('../assets/icons/*', 'assets/icons')
-	],
+	datas=resources,
 	hiddenimports=['wx._xml'],
 	hookspath=['.'],
 	runtime_hooks=[],
@@ -42,7 +58,7 @@ exe = EXE(
 	upx=False,
 	console=False,
 	windowed=True,
-	icon='../assets/icons/icon.ico'
+	icon='../resources/icons/icon.ico'
 )
 coll = COLLECT(
 	exe,
@@ -54,3 +70,12 @@ coll = COLLECT(
 	upx_exclude=[],
 	name='BEE Manipulator'
 )
+
+for dll in Path(f'{DISTPATH}/BEE Manipulator').glob('api-ms-win-*.dll'):
+	os.remove( dll )
+
+Path(f'{DISTPATH}/BEE Manipulator/BEE Manipulator.exe')\
+	.rename(f'{DISTPATH}/BEE Manipulator/BEEManipulator.exe')
+
+Path(f'{DISTPATH}/BEE Manipulator/BEE Manipulator.exe.manifest')\
+	.rename(f'{DISTPATH}/BEE Manipulator/BEEManipulator.exe.manifest')
