@@ -14,6 +14,7 @@ from wx.py import dispatcher
 
 import config
 import ipc
+from api.pluginSystem import RegisterHandler as AbsRegisterHandler
 from srctools.logger import get_logger
 
 logger = get_logger()
@@ -43,7 +44,7 @@ class Errors:
 		pass
 
 
-class RegisterHandler:
+class RegisterHandler(AbsRegisterHandler):
 
 	_mainWindow = None
 	_ipcManager: ipc.ipcManager = None
@@ -335,8 +336,8 @@ class system:
 		# dispatch events
 		try:
 			dispatcher.send( Events.RegisterEvent, handler=RegisterHandler() )
-			from logWindow import logWindow
-			dispatcher.send(Events.LogWindowCreated, window=logWindow.instance)
+			from logWindow import LogWindow
+			dispatcher.send( Events.LogWindowCreated, window=LogWindow.instance )
 		except Errors.DupeMenuFoundException as e:
 			logger.error( 'Found duplicate menus while registering! reload can\'t countinue!' )
 			logger.error( ''.join( traceback.format_exception( type( e ), e, e.__traceback__ ) ) )

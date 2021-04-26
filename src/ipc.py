@@ -7,6 +7,7 @@ from typing import Callable, List, Dict, Tuple
 import ipc_mngr
 from wx.py import dispatcher
 
+from api.manager import Manager
 from srctools.logger import get_logger
 
 logger = get_logger()
@@ -29,7 +30,7 @@ class Command:
 		self.parameters = url.split('/')[1:]
 
 
-def sendToServer( origin: Tuple[ str, int ], url: str ):
+def sendToServer( origin: Tuple[ str, int ], url: str ) -> None:
 	"""
 	Very simple function to send a bmurl to another instance of BM
 	:param origin: origin's socket (ip, port)
@@ -44,7 +45,7 @@ def sendToServer( origin: Tuple[ str, int ], url: str ):
 	conn.send( Command( origin, url ) )
 
 
-class ipcManager:
+class ipcManager(Manager):
 
 	_handlers: Dict[ str, List[ Callable[ [ PipeConnection, Command ], None ] ] ] = {}
 	queue: List[str]

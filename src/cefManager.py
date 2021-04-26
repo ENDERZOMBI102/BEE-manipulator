@@ -6,12 +6,13 @@ from cefpython3 import cefpython as cef
 
 import config
 import utilities
+from api.manager import Manager
 from srctools.logger import get_logger
 
 LOGGER = get_logger()
 
 
-class CefManager:
+class CefManager(Manager):
 
 	_timer: wx.Timer
 

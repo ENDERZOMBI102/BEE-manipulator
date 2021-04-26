@@ -18,7 +18,7 @@ visible: bool = config.load('logWindowVisibility')
 logger = srctools.logger.get_logger()
 
 
-class logHandler(logging.Handler):
+class LogHandler( logging.Handler ):
 	"""
 	this class represents the log handler, this will
 	receive, format and send the log message to the window
@@ -36,26 +36,26 @@ class logHandler(logging.Handler):
 		"""
 
 		if record.levelno == logging.INFO:
-			logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(0, 80, 255) ) )  # blue/cyan
+			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 0, 80, 255 ) ) )  # blue/cyan
 		#
 		elif record.levelno == logging.WARNING:
-			logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 125, 0) ) )  # orange
+			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 125, 0 ) ) )  # orange
 		#
 		elif record.levelno == logging.ERROR:
-			logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 0, 0) ) )  # red
+			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 0, 0 ) ) )  # red
 		#
 		elif record.levelno == logging.DEBUG:
-			logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(128, 128, 128) ) )  # grey
+			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 128, 128, 128 ) ) )  # grey
 		#
 		elif record.levelno == logging.CRITICAL:
-			logWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour(255, 255, 255) ) )  # white
+			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 255, 255 ) ) )  # white
 		# display the log message
-		logWindow.instance.text.AppendText( self.format(record) )
+		LogWindow.instance.text.AppendText( self.format( record ) )
 
 
-class logWindow(wx.Frame):
+class LogWindow( wx.Frame ):
 
-	instance: 'logWindow' = None
+	instance: 'LogWindow' = None
 
 	def __init__(self):
 		super().__init__(
@@ -64,7 +64,7 @@ class logWindow(wx.Frame):
 			# those styles make so that the window can't minimize, maximize, resize and show on the taskbar
 			style=wx.FRAME_NO_TASKBAR | wxStyles.TITLEBAR_ONLY_BUTTON_CLOSE ^ wx.RESIZE_BORDER
 		)  # init the window
-		logWindow.instance = self
+		LogWindow.instance = self
 		self.SetIcon( utilities.icon )
 		self.SetSize(0, 0, 500, 365)
 		sizer = wx.FlexGridSizer( rows=2, cols=1, gap=wx.Size(0, 0) )
@@ -81,7 +81,7 @@ class logWindow(wx.Frame):
 			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.VSCROLL | wx.TE_RICH,
 			size=wx.Size( self.GetSize()[0], 300 )
 		)  # make the textbox
-		self.logHandler = logHandler()
+		self.logHandler = LogHandler()
 		# set the log message format
 		self.logHandler.setFormatter(
 			logging.Formatter(
@@ -152,7 +152,7 @@ async def init() -> None:
 	"""
 	a function that initiate the log window
 	"""
-	logWindow()
+	LogWindow()
 
 
 def toggleVisibility(placeHolder=None):
@@ -171,19 +171,19 @@ def toggleVisibility(placeHolder=None):
 
 def updateVisibility():
 	"""
-	actually update and save the log window visibility
+	actually _update and save the log window visibility
 	"""
 	global visible
 	# save the visibility
 	config.save(visible, 'logWindowVisibility')
 	logger.debug(f'saved window visibility')
 	if visible:
-		logWindow.instance.Raise()
-		logWindow.instance.ShowWithEffect( wx.SHOW_EFFECT_BLEND )
-		logWindow.instance.levelChoice.Refresh()
+		LogWindow.instance.Raise()
+		LogWindow.instance.ShowWithEffect( wx.SHOW_EFFECT_BLEND )
+		LogWindow.instance.levelChoice.Refresh()
 		wx.GetTopLevelWindows()[0].Raise()
 	else:
-		logWindow.instance.HideWithEffect(wx.SHOW_EFFECT_BLEND)
+		LogWindow.instance.HideWithEffect( wx.SHOW_EFFECT_BLEND )
 
 
 def changeLevel(level: str) -> None:
@@ -202,7 +202,7 @@ def changeLevel(level: str) -> None:
 	logger.info(f'changed log level to {level}')
 	logger.info(f'saved log level {level} to config')
 	config.save(level, 'logLevel')
-	logWindow.instance.logHandler.setLevel(data)
+	LogWindow.instance.logHandler.setLevel( data )
 
 
 def getLevel() -> int:

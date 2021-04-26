@@ -1,5 +1,6 @@
 import os
 import sys
+from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
 from sys import platform
@@ -23,16 +24,12 @@ class wxStyles:
 	TITLEBAR_ONLY_BUTTON_CLOSE = wx.DEFAULT_FRAME_STYLE ^ wx.MINIMIZE_BOX ^ wx.MAXIMIZE_BOX
 
 
+@dataclass
 class UpdateInfo:
 
 	version: VersionInfo
 	url: str
 	description: str
-
-	def __init__(self, ver: VersionInfo, url: str, desc: str):
-		self.version = ver
-		self.url = url
-		self.description = desc
 
 
 def _App__setIcon():

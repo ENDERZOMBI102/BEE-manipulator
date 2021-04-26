@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, Union, Any, List
+from typing import Dict, Any, List
 from winreg import QueryValueEx, ConnectRegistry, HKEY_CURRENT_USER, OpenKey
 
 from semver import VersionInfo
@@ -36,6 +36,7 @@ default_config = {
 	'databasePath': './assets/database.json' if utilities.frozen() else './../assets/database.json',
 	'pluginsPath': './plugins' if utilities.frozen() else './../plugins',
 	'cachePath': f'{resourcesPath}/cache',
+	'rpcReconnectTime': 30,
 	'onlineDatabaseUrl': '',
 	'lang': 'en_US',
 	'showVerifyDialog': True,
@@ -58,7 +59,7 @@ def createConfig():
 		json.dump(default_config, file, indent=3)
 
 
-def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, None, dict, list]:  # load a config
+def load(section: str, default=None, useDisk=False) -> [str, int, bool, None, dict, list]:  # load a config
 	"""
 	loads a section of the config (json-formatted) and return the data.
 	raise an exception if the config or the requested section doesn't exist
@@ -172,7 +173,6 @@ def overwrite(section: str, data: any) -> None:
 	overwrite in run time a config
 	:param section: the section that has to be overwritten
 	:param data: the value the section is overwritten with
-	:return: None
 	"""
 	overwriteDict[section] = data
 	logger.debug(f'Overwritten config {section}!')
@@ -215,7 +215,6 @@ def overwriteOnNextLaunch(**kwargs) -> None:
 
 
 def steamDir() -> str:
-
 	"""
 	a function that retrieves the steam installation folder by reading the win registry
 	:return: path to steam folder
@@ -245,7 +244,6 @@ def steamDir() -> str:
 
 
 def portalDir() -> str:
-
 	"""
 	a function that retrieves the portal 2 folder by searching in all possible libraries
 	:return: path to p2 folder
@@ -274,8 +272,7 @@ def portalDir() -> str:
 discordToken: str = '655075172767760384'
 
 
-def libraryFolders() -> list:
-
+def libraryFolders() -> List[str]:
 	"""
 	Retrieves the steam library folders by parsing the libraryfolders.vdf file
 	:return: a list with all library paths
@@ -300,10 +297,9 @@ def libraryFolders() -> list:
 	return paths
 
 
-def steamUsername():
-
+def steamUsername() -> str:
 	"""
-	retrives the steam username
+	Retrieves the steam username
 	:return: steam username
 	"""
 	try:
@@ -319,9 +315,7 @@ def steamUsername():
 
 
 class ConfigError(BaseException):
-	"""
-	base error for config operations
-	"""
+	""" Base error for config operations """
 
 
 if __name__ == '__main__':

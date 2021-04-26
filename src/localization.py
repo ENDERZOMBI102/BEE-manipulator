@@ -31,9 +31,7 @@ class LangNotSupportedError(Exception):
 
 
 class Localize:
-	"""
-	class that helps with localizing applications
-	"""
+	""" Class that helps with localizing applications """
 	lang: str
 	localizations: Dict[str, Dict[str, str]] = {}
 
