@@ -1,6 +1,6 @@
 future>=0.18.2
 markdown2>=2.3.10
-pypresence>=4.0.0
+pypresence>=4.2.0
 requests>=2.25.0
 wxPython>=4.1.1
 pydantic>=1.7.3
