@@ -26,11 +26,11 @@ class CefManager:
 				uncaught_exception_stack_size=4,
 				downloads_enabled=True,
 				debug=utilities.devEnv,
-				# remote_debugging_port=54008,
+				remote_debugging_port=58198,
 				log_severity=cef.LOGSEVERITY_VERBOSE if utilities.devEnv else cef.LOGSEVERITY_INFO,
 				log_file=utilities.getCorrectPath( './logs/cef.log' ),
 				context_menu={
-					'devtools': utilities.devEnv,
+					'devtools': False,
 					'view_source': utilities.devEnv,
 					'navigation': utilities.devEnv,
 					'print': False,
@@ -92,28 +92,6 @@ class _ClientHandler:
 			)
 		)
 		return False
-
-# 	def ShowDevTools( self, browser: cef.PyBrowser ) -> None:
-# 		mp.Process(
-# 			target=_DevTools,
-# 			name='CEF DevTools',
-# 			daemon=False,
-# 			kwargs=dict(
-# 				DEVTOOLS_URL=f'http://127.0.0.1:{54008}/'
-# 			)
-# 		).start()
-#
-#
-# def _DevTools(DEVTOOLS_URL: str):
-# 	from cefpython3 import cefpython as cef
-# 	import sys
-#
-# 	print( f'[devtools.py] url={DEVTOOLS_URL}' )
-# 	sys.excepthook = cef.ExceptHook  # To shutdown all CEF processes on error
-# 	cef.Initialize()
-# 	cef.CreateBrowserSync( url=DEVTOOLS_URL, window_title='DevTools' )
-# 	cef.MessageLoop()
-# 	cef.Shutdown()
 
 
 manager: CefManager = CefManager()
