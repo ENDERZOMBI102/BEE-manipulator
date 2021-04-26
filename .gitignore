@@ -13,7 +13,7 @@ resources/cache
 logs
 src/.env
 plugins
-docs/console.py
+docs/plugins
 packages
 f
 docs/h.html
