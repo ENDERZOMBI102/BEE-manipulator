@@ -11,15 +11,15 @@ from srctools.logger import get_logger
 
 logger = get_logger()
 overwriteDict: dict = {}
-configPath: Path = Path( './config.cfg' if utilities.frozen() else './../config.cfg' )
-resourcesPath: str = './resources/' if utilities.frozen() else './../resources/'
-""" The path to the assets folder (finishes with /) """
+configPath: Path = Path( utilities.getCorrectPath( './config.cfg' ) )
+resourcesPath: str = utilities.getCorrectPath( './resources' )
+""" The path to the assets folder """
 version: VersionInfo = VersionInfo(
 	major=1,
 	minor=0,
 	patch=0,
-	prerelease='pre2',
-	build='build6'
+	prerelease='pre3',
+	build='build0'
 )
 """ current app version """
 
