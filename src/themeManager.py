@@ -1,18 +1,24 @@
-import wx
+from typing import Dict
+
+from api.themeManager import ThemeManager as AbstractThemeManager, Theme
 
 
-class theme:
-	background: wx.Colour
-	foreground: wx.Colour
-	button: wx.Colour
+class ThemeManager(AbstractThemeManager):
 
-
-class manager:
-
-	def __init__(self):
+	def init( self ) -> None:
 		pass
 
-	def getThemes(self):
+	def stop( self ) -> None:
 		pass
 
-	
+	def registerTheme( self, theme: Theme ) -> None:
+		pass
+
+	def getThemes( self ) -> Dict[ str, Theme ]:
+		pass
+
+	def getTheme( self ) -> Theme:
+		pass
+
+
+manager: ThemeManager = ThemeManager()
