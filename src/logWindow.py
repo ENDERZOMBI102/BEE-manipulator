@@ -178,8 +178,8 @@ def updateVisibility():
 	config.save(visible, 'logWindowVisibility')
 	logger.debug(f'saved window visibility')
 	if visible:
-		logWindow.instance.ShowWithEffect(wx.SHOW_EFFECT_BLEND)
 		logWindow.instance.Raise()
+		logWindow.instance.ShowWithEffect( wx.SHOW_EFFECT_BLEND )
 		logWindow.instance.levelChoice.Refresh()
 		wx.GetTopLevelWindows()[0].Raise()
 	else:
