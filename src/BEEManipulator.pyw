@@ -86,7 +86,7 @@ class App( wx.App ):
 			os.environ[ 'SRCTOOLS_DEBUG' ] = '1'
 		# use a window to show the uncaught exception to the user
 		srctools.logger.init_logging(
-			filename='./logs/latest.log' if utilities.frozen() else './../logs/latest.log',
+			filename=utilities.getCorrectPath('./logs/latest.log'),
 			main_logger='BEE Manipulator',
 			on_error=self.OnError
 		)
