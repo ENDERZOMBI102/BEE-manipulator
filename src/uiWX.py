@@ -64,29 +64,34 @@ class root(wx.Frame):
 		A menu bar is composed of menus, which are composed of menu items.
 		This section builds the menu bar and binds actions to them
 		"""
-		# file menu bar
+		# file menu
 		self.fileMenu = wx.Menu()
 		self.menus['openPortalDir'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.openportaldir.name')+'\tCtrl-P', loc('menu.file.openportaldir.description') )
 		self.menus['openBeeDir'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.openbeedir.name')+"\tCtrl-B", loc('menu.file.openbeedir.description') )
 		self.menus['syncGames'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.syncgames.name'), loc('menu.file.syncgames.description') )
 		self.menus['exit'] = self.fileMenu.Append( newMenuIndex(), loc('menu.file.exit.name'), loc('menu.file.exit.description') )
 
-		# options menu bar
+		# options menu
 		self.optionsMenu = wx.Menu()
 		self.menus['settings'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.settings.name')+'\tCtrl-S', loc('menu.options.settings.description') )
 		self.menus['toggleLogWindow'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.logtoggle.name')+'\tCtrl-L', loc('menu.options.logtoggle.description') )
 		self.menus['reloadPlugins'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadplugins.name')+'\tCtrl-R', loc('menu.options.reloadplugins.description') )
 		self.menus['reloadPackages'] = self.optionsMenu.Append( newMenuIndex(), loc('menu.options.reloadpackages.name'), loc('menu.options.reloadpackages.description') )
 
-		# portal 2 menu bar
+		# portal 2 menu
 		self.portalMenu = wx.Menu()
 		self.menus['verifyGameFiles'] = self.portalMenu.Append( newMenuIndex(), loc('menu.portal.vgf.name'), loc('menu.portal.vgf.description') )
 		self.menus['uninstallBee'] = self.portalMenu.Append( newMenuIndex(), loc('menu.portal.uninstallbee.name'), loc('menu.portal.uninstallbee.description') )
 		self.menus['installBee'] = self.portalMenu.Append( newMenuIndex(), loc('menu.portal.installbee.name'), loc('menu.portal.installbee.description') )
 		self.menus['openP2'] = self.portalMenu.Append( newMenuIndex(), loc( 'menu.portal.openp2.name' ), loc( 'menu.portal.openp2.description' ) )
 		self.menus['openBee'] = self.portalMenu.Append( newMenuIndex(), loc( 'menu.portal.openbee.name' ), loc( 'menu.portal.openbee.description' ) )
+		self.menus['createMod'] = self.portalMenu.Append( newMenuIndex(), loc( 'menu.portal.createmod.name' ), loc( 'menu.portal.createmod.description' ) )
 
-		# help menu bar
+		# hammer menu
+		self.hammerMenu = wx.Menu()
+		self.menus['installAddons'] = self.hammerMenu.Append( newMenuIndex(), loc('menu.hammer.installaddons.name'), loc('menu.hammer.installaddons.description') )
+
+		# help menu
 		self.helpMenu = wx.Menu()
 		self.menus['about'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.about.name'), loc('menu.help.about.description') )
 		self.menus['checkUpdates'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.cupdates.name'), loc('menu.help.cupdates.description') )
@@ -95,18 +100,19 @@ class root(wx.Frame):
 		self.menus['discord'] = self.helpMenu.Append( newMenuIndex(), loc('menu.help.discord.name'), loc('menu.help.discord.description') )
 
 		# set menu item icons
-		self.menus['about'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_bm.png' ) )
-		self.menus['checkUpdates'].SetBitmap( wx.Bitmap( f'{config.resourcesPath}icons/materialdesign/menu_update_black.png' ) )
-		self.menus['wiki'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_github.png' ) )
-		self.menus['github'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_github.png' ) )
-		self.menus['discord'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}icons/menu_discord.png' ) )
+		self.menus['about'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}/icons/menu_bm.png' ) )
+		self.menus['checkUpdates'].SetBitmap( wx.Bitmap( f'{config.resourcesPath}/icons/materialdesign/menu_update_black.png' ) )
+		self.menus['wiki'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}/icons/menu_github.png' ) )
+		self.menus['github'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}/icons/menu_github.png' ) )
+		self.menus['discord'].SetBitmap( wx.Bitmap(f'{config.resourcesPath}/icons/menu_discord.png' ) )
 
 		# makes the menu bar
 		self.menuBar = wx.MenuBar()
-		self.menuBar.Append( self.fileMenu, loc('menu.file.name') )
-		self.menuBar.Append( self.optionsMenu, loc('menu.options.name') )
-		self.menuBar.Append( self.portalMenu, loc('menu.portal.name') )
-		self.menuBar.Append( self.helpMenu, loc('menu.help.name') )
+		self.menuBar.Append( self.fileMenu, loc( 'menu.file.name' ) )
+		self.menuBar.Append( self.optionsMenu, loc( 'menu.options.name' ) )
+		self.menuBar.Append( self.portalMenu, loc( 'menu.portal.name' ) )
+		self.menuBar.Append( self.hammerMenu, loc( 'menu.hammer.name' ) )
+		self.menuBar.Append( self.helpMenu, loc( 'menu.help.name' ) )
 
 		# Give the menu bar to the frame
 		self.SetMenuBar(self.menuBar)
@@ -129,6 +135,9 @@ class root(wx.Frame):
 		self.Bind( wx.EVT_MENU, self.installBee, self.menus['installBee'] )
 		self.Bind( wx.EVT_MENU, self.openP2, self.menus['openP2'] )
 		self.Bind( wx.EVT_MENU, self.openBee, self.menus['openBee'] )
+		self.Bind( wx.EVT_MENU, lambda evt: print( 'this creates a mod' ), self.menus['createMod'] )
+		# hammer menu
+		self.Bind( wx.EVT_MENU, lambda evt: print('this installs hammer addons'), self.menus['installAddons'] )
 		# help menu
 		self.Bind( wx.EVT_MENU, self.openAboutWindow, self.menus['about'] )
 		self.Bind( wx.EVT_MENU, self.checkUpdates, self.menus['checkUpdates'] )
