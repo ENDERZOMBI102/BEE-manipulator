@@ -1,5 +1,6 @@
 import wx
 
+from srctools.logger import get_logger
 
 stopwatch = wx.StopWatch()
 
@@ -13,6 +14,6 @@ def stop():
 	# stops the timer
 	global stopwatch
 	stopwatch.Pause()
-	print(f'time taken to start: { stopwatch.Time() // 1000 }.{stopwatch.Time() % 1000}s')
+	get_logger().info(f'time taken to start: { stopwatch.Time() // 1000 }.{stopwatch.Time() % 1000}s')
 	del stopwatch
 
