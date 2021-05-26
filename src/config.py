@@ -192,7 +192,7 @@ class __dynConfig:
 	def parseFlags( self, rawFlags: str ):
 		flags: List[ List[str] ] = [ flag.split('=') for flag in rawFlags.split( ';' ) ]
 		for flag in flags:
-			self[ flags[0] ] = utilities.parseValue( flag[1] )
+			self[ flag[0] ] = utilities.parseValue( flag[1] )
 
 	def __getitem__(self, item):
 		return self.__configs.get(item, None)
