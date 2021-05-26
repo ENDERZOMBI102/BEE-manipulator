@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 
-from PyInstaller.building.build_main import Analysis
+from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT
 
 blacklist: list = ['cache']
 resources: list = []
@@ -55,7 +55,7 @@ exe = EXE(
 	debug=False,
 	bootloader_ignore_signals=False,
 	strip=True,
-	upx=False,
+	upx=True,
 	console=False,
 	windowed=True,
 	icon='../resources/icons/icon.ico'
@@ -65,8 +65,8 @@ coll = COLLECT(
 	a.binaries,
 	a.zipfiles,
 	a.datas,
-	strip=False,
-	upx=False,
+	strip=True,
+	upx=True,
 	upx_exclude=[],
 	name='BEE Manipulator'
 )
@@ -74,8 +74,10 @@ coll = COLLECT(
 for dll in Path(f'{DISTPATH}/BEE Manipulator').glob('api-ms-win-*.dll'):
 	os.remove( dll )
 
-Path(f'{DISTPATH}/BEE Manipulator/BEE Manipulator.exe')\
-	.rename(f'{DISTPATH}/BEE Manipulator/BEEManipulator.exe')
+Path(f'{DISTPATH}/BEE Manipulator/BEE Manipulator.exe').rename(
+	f'{DISTPATH}/BEE Manipulator/BEEManipulator.exe'
+)
 
-Path(f'{DISTPATH}/BEE Manipulator/BEE Manipulator.exe.manifest')\
-	.rename(f'{DISTPATH}/BEE Manipulator/BEEManipulator.exe.manifest')
+Path(f'{DISTPATH}/BEE Manipulator/BEE Manipulator.exe.manifest').rename(
+	f'{DISTPATH}/BEE Manipulator/BEEManipulator.exe.manifest'
+)
