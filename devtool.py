@@ -32,7 +32,7 @@ if '--install' in argv:
 
 if '--start' in argv:
 	chdir('./src')
-	system(f'{envActPath}py BEEManipulator.py')
+	system(f'{envActPath}py BEEManipulator.pyw')
 
 if '--build' in argv:
 	if '--release' in argv:
