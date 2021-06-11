@@ -77,7 +77,7 @@ def load(section: str, default=None, useDisk=False) -> Union[str, int, bool, Non
 		logger.debug('using overwrited data!')
 		return overwriteDict[section]
 	# is that section present?
-	if section in currentConfigData.keys() and not useDisk:
+	if section in currentConfigData and not useDisk:
 		if dynConfig['logConfigActions']:
 			logger.info( f'loading {section}: {currentConfigData[ section ]}' )
 		return currentConfigData[section]
@@ -222,10 +222,10 @@ def steamDir() -> str:
 	:return: path to steam folder
 	:raises KeyError:
 	"""
-	if 'steamDir' not in currentConfigData.keys():
+	if 'steamDir' not in currentConfigData:
 		save(None, 'steamDir')  # create the config without value in case it doesn't exist
 
-	if not load('steamDir') is None:
+	if load('steamDir') is not None:
 		return load('steamDir')  # return the folder
 	elif utilities.platform == 'win32':
 		# get the steam directory from the windows registry
@@ -252,7 +252,7 @@ def portalDir() -> str:
 	:return: path to p2 folder
 	:raises FileNotFoundError:
 	"""
-	if not load('portal2Dir') is None:
+	if load('portal2Dir') is not None:
 		return load('portal2Dir')  # check if we already saved the path, in case, return it
 	else:
 		# check every library if has p2 installed in it
