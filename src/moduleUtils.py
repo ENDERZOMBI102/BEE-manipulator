@@ -8,9 +8,6 @@ from wx.py import dispatcher
 _RELOADING = {}
 
 
-dispatcher.connect()
-
-
 def reload(module: ModuleType, additionalSearchDict: Dict[str, ModuleType] = None) -> ModuleType:
 	"""
 	Reload the module and return it.
@@ -66,6 +63,13 @@ def reload(module: ModuleType, additionalSearchDict: Dict[str, ModuleType] = Non
 		if spec is None:
 			raise ModuleNotFoundError( f"spec not found for the module {name!r}", name=name )
 		_bootstrap._exec(spec, module)
+
+		# ModuleReloadEvent
+		dispatcher.send(
+			signal='ModuleReloadEvent',
+			module=additionalSearchDict[name] if useCustom else sys.modules[name]
+		)
+
 		# The module may have replaced itself in sys.modules!
 		return additionalSearchDict[name] if useCustom else sys.modules[name]
 	finally:
