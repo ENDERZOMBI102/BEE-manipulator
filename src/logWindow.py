@@ -100,6 +100,19 @@ class LogWindow( wx.Frame ):
 			size=wx.Size(52, 22),
 			pos=wx.Point(10, 3)
 		)
+		self.clearBtn.SetToolTip(
+			wx.ToolTip(
+				'Clear the log.' )
+		)
+		self.copyBtn = wx.Button(
+			self.bottomBar,
+			label='Copy',
+			size=wx.Size(52, 22),
+			pos=wx.Point(70, 3)
+		)
+		self.copyBtn.SetToolTip(
+			wx.ToolTip( 'Copies the ENTIRE log to the clipboard.\nClick when shift is pressed to get the log as code block.' )
+		)
 		self.levelChoice = wx.Choice(
 			parent=self.bottomBar,
 			size=wx.Size(80, 22),
@@ -114,6 +127,7 @@ class LogWindow( wx.Frame ):
 		self.Bind( wx.EVT_CLOSE, self.OnClose, self )
 		self.Bind( wx.EVT_MOVE_END, self.OnMoveEnd, self )
 		self.Bind( wx.EVT_BUTTON, self.OnClearButtonPressed, self.clearBtn )
+		self.Bind( wx.EVT_BUTTON, self.OnCopyButtonPressed, self.copyBtn )
 		self.Bind( wx.EVT_CHOICE, self.OnLevelChoice, self.levelChoice )
 		dispatcher.send(Events.LogWindowCreated, window=self)
 		updateVisibility()
@@ -121,6 +135,13 @@ class LogWindow( wx.Frame ):
 
 	def OnClearButtonPressed(self, evt: wx.CommandEvent):
 		self.text.Clear()
+
+	def OnCopyButtonPressed( self, evt: wx.CommandEvent ):
+		wx.TheClipboard: wx.Clipboard
+		if wx.TheClipboard.Open():
+			addin = '' if wx.KeyboardState().ShiftDown() else '```'
+			wx.TheClipboard.SetData( wx.TextDataObject( f'{addin}\n{self.text.GetValue()}{addin}' ) )
+			wx.TheClipboard.Close()
 
 	def OnLevelChoice( self, evt: wx.CommandEvent ):
 		if evt.GetSelection() == 0:
