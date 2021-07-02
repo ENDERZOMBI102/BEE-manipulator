@@ -248,7 +248,7 @@ def __getbee() -> Union[None, str]:
 	return None
 
 
-def notimplementedyet():
+def notImplementedYet():
 	"""
 	shows a dialog that says that this feature its not implemented
 	"""
