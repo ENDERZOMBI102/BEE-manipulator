@@ -10,7 +10,7 @@ from pluginSystem import Events
 from utilities import wxStyles
 
 if __name__ == '__main':
-	pass
+	from localization import loc
 
 # the visibility of the log window, is initially setted to the value saved in the config file
 
@@ -96,23 +96,18 @@ class LogWindow( wx.Frame ):
 		self.bottomBar = wx.Panel( self, size=wx.Size( self.GetSize()[0], 30) )  # makes the bottom "menu" bar
 		self.clearBtn = wx.Button(  # makes the clear button
 			self.bottomBar,
-			label='Clear',
+			label=loc('window.log.btn.clear.name'),
 			size=wx.Size(52, 22),
 			pos=wx.Point(10, 3)
 		)
-		self.clearBtn.SetToolTip(
-			wx.ToolTip(
-				'Clear the log.' )
-		)
+		self.clearBtn.SetToolTip( wx.ToolTip( loc('window.log.btn.clear.name') ) )
 		self.copyBtn = wx.Button(
 			self.bottomBar,
-			label='Copy',
+			label=loc('window.log.btn.copy.name'),
 			size=wx.Size(52, 22),
 			pos=wx.Point(70, 3)
 		)
-		self.copyBtn.SetToolTip(
-			wx.ToolTip( 'Copies the ENTIRE log to the clipboard.\nClick when shift is pressed to get the log as code block.' )
-		)
+		self.copyBtn.SetToolTip( wx.ToolTip( loc('window.log.btn.copy.tooltip') ) )
 		self.levelChoice = wx.Choice(
 			parent=self.bottomBar,
 			size=wx.Size(80, 22),
