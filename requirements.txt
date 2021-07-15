@@ -5,4 +5,4 @@ requests>=2.25.0
 wxPython>=4.1.1
 pydantic>=1.7.3
 semver>=2.13.0
-SQLAlchemy~=1.4.15
+SQLAlchemy~=1.4.21
