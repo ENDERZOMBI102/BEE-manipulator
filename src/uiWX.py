@@ -259,7 +259,7 @@ class root(wx.Frame):
 		:param evt: placeholder
 		"""
 		# stop all plugins
-		asyncio.run( pluginSystem.systemObj.unloadAndStop() )
+		pluginSystem.systemObj.unloadAndStop()
 		# get the window position and save it
 		pos = list(self.GetPosition().Get())
 		LOGGER.debug( f'saved main window position: {pos}' )
@@ -338,7 +338,9 @@ class root(wx.Frame):
 	@staticmethod
 	def reloadPlugins(evt: wx.CommandEvent):
 		""" reloads the plugins """
-		asyncio.run( pluginSystem.systemObj.reload() )
+		import themeManager
+		pluginSystem.systemObj.reload()
+		themeManager.manager.onReload()
 
 	def reloadPackages(self, evt: wx.CommandEvent):
 		""" reloads the package view """
