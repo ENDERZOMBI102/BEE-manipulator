@@ -91,7 +91,7 @@ class CefManager(Manager):
 			logLevel = cef.LOGSEVERITY_INFO
 		cef.Initialize(
 			settings=dict(
-				cache_path=utilities.getCorrectPath( './resources/cache' ),
+				cache_path=utilities.cacheDirPath(),
 				product_version=config.version.__str__(),
 				user_agent='BEEManipulator',
 				persist_user_preferences=False,
@@ -100,7 +100,7 @@ class CefManager(Manager):
 				debug=utilities.devEnv,
 				remote_debugging_port=58198,
 				log_severity=logLevel,
-				log_file=utilities.getCorrectPath( './logs/cef.log' ),
+				log_file='./logs/cef.log',
 				context_menu={
 					'devtools': False,
 					'view_source': utilities.devEnv,
@@ -112,7 +112,7 @@ class CefManager(Manager):
 		)
 		cef.DpiAware.EnableHighDpiSupport()
 		cef.SetGlobalClientHandler( _GlobalHandler() )
-		cef.CookieManager.GetGlobalManager().SetStoragePath( utilities.getCorrectPath('./resources/cache') )
+		cef.CookieManager.GetGlobalManager().SetStoragePath( utilities.cacheDirPath() )
 
 		self._timer = wx.Timer()
 		self._timer.Notify = lambda: cef.MessageLoopWork()

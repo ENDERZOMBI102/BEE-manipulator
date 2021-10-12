@@ -1,29 +1,17 @@
-import asyncio
 import builtins
 import json
 from pathlib import Path
-from sys import argv
 from typing import Dict, Callable
 
 import requests
 
 import config
+from cli import parsedArguments
 from srctools.logger import get_logger
 
 logger = get_logger()
 loc: Callable
 localizeObj: 'Localize' = None
-
-# check if a language is forced
-if '--lang' in argv:
-	try:
-		lang = argv[argv.index('--lang') + 1]
-		if lang.startswith('--'):
-			raise IndexError()
-	except IndexError:
-		logger.error('missing value for command line parameter --lang! it will be ignored!')
-	else:
-		config.overwrite('lang', lang)
 
 
 class LangNotSupportedError(Exception):
@@ -38,32 +26,26 @@ class Localize:
 	def __init__(self):
 		# get globals
 		global loc, localizeObj
+		# check language overwrite
+		if parsedArguments.lang is not None:
+			config.overwrite( 'lang', parsedArguments.lang )
 		# inject loc function to builtins
 		self.install()
 		# set globals
 		loc = self.loc
 		localizeObj = self
-		# run initialization
-		asyncio.run(self.init())
-
-	async def init(self):
-		"""
-		initialize localizations
-		this will load all .jlang files and the current language
-		:return:
-		"""
+		# Initialize localizations by loading all .jlang files and the current language
 		self.lang = config.load('lang')
-		await self.loadLocFiles()
+		self.loadLocFiles()
 
 	def install(self):
-		"""
-		makes the loc() function available to everyone
-		"""
+		"""	Makes the loc() function available to everyone """
 		builtins.loc = self.loc
 
 	def loc(self, textId: str, **kwargs) -> str:
 		"""
-		returns the localized text from a token
+		Returns the localized text from a token
+		\t
 		:param textId: the text id/token
 		:return: localized text
 		"""
@@ -80,7 +62,8 @@ class Localize:
 
 	def setLang(self, newLang: str):
 		"""
-		set the current application language
+		Set the current application language
+		\t
 		:param newLang: the language to set to
 		"""
 		logger.debug(f'checking if language {newLang} is supported..')
@@ -91,10 +74,8 @@ class Localize:
 		else:
 			logger.error( LangNotSupportedError(f'unsupported language {newLang}!') )
 
-	async def loadLocFiles(self):
-		"""
-		load all .jlang files
-		"""
+	def loadLocFiles(self):
+		""" Load all .jlang files """
 		logger.debug('loading lang folder path..')
 		# create Path obj with the lang file path
 		folder = Path( config.load('l18nFolderPath') )
@@ -116,9 +97,11 @@ class Localize:
 			logger.info(f'loaded lang file {langFile.name}!')
 		# repeat for all files
 
-	def downloadLanguage( self, langToDownload: str ):
+	@staticmethod
+	def downloadLanguage( langToDownload: str ):
 		"""
-		downloads a language
+		Downloads a language
+		\t
 		:param langToDownload: id of the language
 		:return:
 		"""

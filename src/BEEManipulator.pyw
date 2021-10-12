@@ -5,20 +5,20 @@ import sys
 import traceback
 from logging import Logger
 from pathlib import Path
-from sys import argv
 from types import TracebackType
 from typing import Type
 
 import wx
 
 import cefManager
-import config  # must be first import
+import config  # must be second import
 import downloadManager
 import ipc
 import localization
 import srctools.logger
 import timeTest
 import utilities
+from cli import parsedArguments  # must be first import
 
 
 class WxLogHandler( wx.Log ):
@@ -70,8 +70,8 @@ class App( wx.App ):
 	def OnPreInit( self ):
 		# check if there's another instance running
 		if self.instanceChecker.IsAnotherRunning():
-			if '--bmurl' in argv:
-				ipc.sendToServer( ('127.0.0.1', 30206), argv[ argv.index( '--bmurl' ) + 1 ] )
+			if parsedArguments.bmurl is not None:
+				ipc.sendToServer( ('127.0.0.1', 30206), parsedArguments.bmurl )
 			else:
 				wx.MessageBox(
 					message='Another instance of BEE Manipulator is running, aborting.',
@@ -85,24 +85,21 @@ class App( wx.App ):
 		if not utilities.frozen():
 			os.environ[ 'SRCTOOLS_DEBUG' ] = '1'
 		# use a window to show the uncaught exception to the user
-		srctools.logger.init_logging(
-			filename=utilities.getCorrectPath('./logs/latest.log'),
+		self.logger = srctools.logger.init_logging(
+			filename='./logs/latest.log',
 			main_logger='BEE Manipulator',
 			on_error=self.OnError
 		)
-		self.logger = srctools.logger.get_logger( 'BEE Manipulator' )
 		# log wx logging to python's logging module
 		wx.Log.SetActiveTarget( WxLogHandler() )
 		# if we started with --dev parameter, set loglevel to debug
-		if '--dev' in argv:
+		if parsedArguments.dev:
 			config.overwrite( 'logLevel', 'DEBUG' )
 			config.overwrite( 'logWindowVisibility', True )
 			utilities.devEnv = True
-		if '--flags' in argv:
+		if parsedArguments.flags is not None:
 			# add all flags
-			flagIndex = argv.index( '--flags' ) + 1
-			if not argv[ flagIndex ].startswith( '--' ):
-				config.dynConfig.parseFlags( argv[ flagIndex ] )
+			config.dynConfig.parseFlags( parsedArguments.flags )
 		# check configs
 		self.logger.info( 'Checking config file..' )
 		if config.check():
@@ -135,9 +132,8 @@ class App( wx.App ):
 		# create all folders
 		for folder in ( config.load('cachePath') ):
 			Path( folder ).mkdir(exist_ok=True)
-		# create icon object
-		# noinspection PyUnresolvedReferences
-		utilities.__setIcon()
+		# initialize various things
+		utilities.init()
 		# initialize modules
 		cefManager.manager.init()
 		downloadManager.manager.init()
@@ -196,21 +192,9 @@ class App( wx.App ):
 
 
 if __name__ == '__main__':
-	# use file dir as working dir
-	path: [Path, None] = None
-	if utilities.frozen():
-		path = Path( sys.executable ).resolve()
-		print( 'BM is running in a packed environment.' )
-		print( f'BM exe path: {path.parent.resolve()}' )
-	else:
-		path = Path( __file__ ).resolve()
-		print( 'BM is running in a developer environment.' )
-		print( f'BM source path: {path.parent}' )
-	os.chdir( path.parent )
-	timeStartup = '--time' in argv
-	if timeStartup:
-		timeTest.start()
+	print( f'BM is running in a {"packed" if utilities.frozen() else "developer"} enviroment.' )
+	timeTest.start()
 	app = App()
-	if timeStartup:
+	if parsedArguments.time:
 		timeTest.stop()
 	app.MainLoop()

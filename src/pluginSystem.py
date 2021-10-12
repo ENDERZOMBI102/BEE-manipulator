@@ -6,7 +6,7 @@ from enum import Enum
 from multiprocessing.connection import PipeConnection
 from pathlib import Path
 from types import ModuleType
-from typing import Dict, Callable
+from typing import Dict, Callable, Type
 
 import wx
 from semver import VersionInfo
@@ -82,7 +82,7 @@ class Plugin:
 		self.version = version
 		self.pluginid = pluginid
 
-	def __call__( self, cls ):
+	def __call__( self, cls: Type ):
 		# make a subclass to check for methods
 		class WrappedPlugin(cls):
 			__state__ = 'unloaded'
@@ -105,11 +105,11 @@ class Plugin:
 		logger.debug(f'instantiated plugin "{self.pluginid}" from {WrappedPlugin.__base__.__module__}.py')
 		# checks if the plugin has the NEEDED methods
 		# load
-		if not asyncio.iscoroutinefunction( getattr( WrappedPlugin, 'load', Callable ) ):
-			raise PluginNotValid('missing required coroutine "load"!')
+		if isinstance( Callable, getattr( WrappedPlugin, 'load', None ) ):
+			raise PluginNotValid('missing required method "load"!')
 		# unload
-		if not asyncio.iscoroutinefunction( getattr( WrappedPlugin, 'unload', Callable ) ):
-			raise PluginNotValid('missing required coroutine "unload"!')
+		if isinstance( Callable, getattr( WrappedPlugin, 'unload', None ) ):
+			raise PluginNotValid('missing required method "unload"!')
 
 		# reload
 		# check reload only if its present
@@ -148,14 +148,14 @@ def placeholder(*args, **kwargs):
 class BasePlugin(metaclass=ABCMeta):
 
 	@abstractmethod
-	async def load(self):
+	def load(self):
 		"""
 		this is called when the plugin should load things and create stuff
 		"""
 		pass
 
 	@abstractmethod
-	async def unload(self):
+	def unload(self):
 		"""
 		called when the plugin is being unloaded, do clean up stuff here
 		"""
@@ -177,7 +177,7 @@ class BasePlugin(metaclass=ABCMeta):
 		"""
 		pass
 
-	async def reload(self):
+	def reload(self):
 		"""
 		called when the plugin is being reloaded
 		"""
@@ -208,14 +208,14 @@ class system:
 		instantiate and loads the plugins
 		"""
 		logger.info('started loading plugins!')
-		asyncio.run( self.start() )
+		self.start()
 		logger.info('finished loading plugins!')
 
-	async def start(self):
-		await self.instantiate()
-		await self.load()
+	def start(self):
+		self.instantiate()
+		self.load()
 
-	async def instantiate(self):
+	def instantiate(self):
 		"""
 		instantiate all plugins in the plugins folder
 		"""
@@ -234,7 +234,7 @@ class system:
 				error = ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) )
 				logger.error(f"can't load plugin! error: {error}")
 
-	async def load(self, identifier: str = None):
+	def load(self, identifier: str = None):
 		"""
 		trigger the load event/method on every plugin/a specified plugin
 		:param identifier: plugin to trigger load for
@@ -243,16 +243,16 @@ class system:
 			if self.plugins[identifier].__state__ == 'loaded':
 				raise Exception('trying to load an already loaded plugin!')
 			try:
-				await self.plugins[identifier].load()
+				self.plugins[identifier].load()
 				self.plugins[ identifier ].__state__ = 'loaded'
 			except Exception as e:
 				logger.error(f'caught exception while loading plugin "{identifier}"')
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
-			return
-		for plg in self.plugins.keys():
-			await self.load(plg)
+		else:
+			for plg in self.plugins.keys():
+				self.load(plg)
 
-	async def unload(self, identifier: str = None):
+	def unload(self, identifier: str = None):
 		"""
 		trigger the unload event/method on every plugin/a specified plugin
 		:param identifier: plugin to trigger unload for
@@ -261,18 +261,19 @@ class system:
 			if self.plugins[identifier].__state__ == 'unloaded':
 				raise Exception('trying to unload an already unloaded plugin!')
 			try:
-				await self.plugins[identifier].unload()
+				self.plugins[identifier].unload()
 			except Exception as e:
 				logger.error(f'caught exception while unloading plugin "{identifier}"')
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
 			self.plugins[identifier].__state__ = 'unloaded'
 			return
-		for plg in self.plugins.keys():
-			await self.unload(plg)
+		else:
+			for plg in self.plugins.keys():
+				self.unload(plg)
 		# redraw the menu bar in case a plugin added something
 		wx.GetTopLevelWindows()[0].menuBar.Refresh()
 
-	async def reload( self ):
+	def reload( self ):
 		"""
 		hard reloads a specified plugin
 		- if the identifier is all reloads all plugins
@@ -301,7 +302,7 @@ class system:
 				module = self.modules[ self.plugins[pluginid].__class__.__base__.__module__ ]
 			# wait for the plugin to unload
 			try:
-				await self.plugins[pluginid].unload()
+				self.plugins[pluginid].unload()
 			except Exception as e:
 				logger.error(f'caught exception while unloading plugin "{pluginid}"')
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
@@ -323,7 +324,7 @@ class system:
 			self.modules[module.__name__] = module
 			# wait for the plugin to load
 			try:
-				await self.plugins[pluginid].load()
+				self.plugins[pluginid].load()
 			except Exception as e:
 				logger.error(f'caught exception while loading plugin "{pluginid}"')
 				logger.error( ''.join( traceback.format_exception( type(e), e, e.__traceback__ ) ) )
@@ -345,11 +346,11 @@ class system:
 			logger.error( 'caught exception while processing reload events "RegisterEvent", reload can\'t countinue!' )
 			logger.error( ''.join( traceback.format_exception( type( e ), e, e.__traceback__ ) ) )
 
-	async def unloadAndStop(self):
+	def unloadAndStop(self):
 		"""
 		unload all plugins and delete them, used to stop the system
 		"""
-		await self.unload()
+		self.unload()
 		x = []
 		for identifier in self.plugins.keys():
 			x.append(identifier)
