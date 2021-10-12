@@ -5,6 +5,7 @@ from types import FunctionType
 from typing import Callable, List, Dict, Tuple
 
 import ipc_mngr
+import wx
 from wx.py import dispatcher
 
 from api.manager import Manager
@@ -33,6 +34,7 @@ class Command:
 def sendToServer( origin: Tuple[ str, int ], url: str ) -> None:
 	"""
 	Very simple function to send a bmurl to another instance of BM
+	\t
 	:param origin: origin's socket (ip, port)
 	:param url: the url to send
 	"""
@@ -62,6 +64,12 @@ class ipcManager(Manager):
 
 		makes sure to manage the call correctly
 		"""
+		if not isinstance(cmd, Command):
+			logger.error('Received IPC call with invalid data, the ipc server will be disabled for security reasons.')
+			self.securityStop = True
+			wx.CallAfter( self.stop )
+			return
+
 		logger.info(f'Call received from {cmd.origin} on port {self._listener.last_accepted}')
 		if cmd.protocol not in self._handlers:
 			logger.warning(
@@ -103,11 +111,14 @@ class ipcManager(Manager):
 
 	def stop(self):
 		if isinstance(self._listener, ipc_mngr.Listener):
+			logger.info('shutting down ipc server')
 			self._listener.close()
 			self._listener.stop()
 			self._thread.join()
+			logger.info('ipc server stopped')
 		else:
-			raise RuntimeError('called ipcManager.stop() before starting it.')
+			if not hasattr(self, 'securityStop'):
+				raise RuntimeError('called ipcManager.stop() before starting it.')
 
 
 manager: ipcManager = ipcManager()
