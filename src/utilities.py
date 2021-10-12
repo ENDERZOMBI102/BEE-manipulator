@@ -1,7 +1,6 @@
 import os
 import sys
 from dataclasses import dataclass
-from io import BytesIO
 from pathlib import Path
 from sys import platform
 from typing import Union
@@ -10,10 +9,12 @@ import wx
 from requests import get, RequestException
 from semver import VersionInfo
 
-if __name__ == '__main__':
-	from localization import loc
 import config
 from srctools.logger import get_logger
+
+if __name__ == '__main__':
+	from localization import loc
+
 
 logger = get_logger("utils")
 icon: wx.Icon
@@ -32,7 +33,7 @@ class UpdateInfo:
 	description: str
 
 
-def _App__setIcon():
+def init():
 	global icon
 	icon = wx.Icon(f'{config.resourcesPath}/icons/icon.png' )
 
@@ -134,59 +135,6 @@ def isnegative(value: Union[None, bool]) -> bool:
 		return not value
 
 
-def Downloader(url: str, title: str, message: str, animadots: bool = True) -> BytesIO:
-	"""
-
-	:param url: url of the file to download
-	:param title: the title of the popup
-	:param message: the message of the popup
-	:param animadots: if the message has animated dots (defaults to True)
-	:return: a buffer with the downloaded bytes
-	"""
-	dots = 1
-	showProgress = config.dynConfig['logDownloadProgress']
-	if showProgress is None:
-		showProgress = False
-	# create progress dialog
-	dialog = wx.ProgressDialog(
-		parent=wx.GetTopLevelWindows()[0],
-		title=title,
-		message=message,
-		maximum=100
-	)
-	dialog.Update(0)  # update to 0 so it doesn't glitch
-	# working variables
-	messageWdots = message  # defaulting to the message
-	request = get(url, stream=True)  # the request
-	bytesdata = BytesIO()  # downloaded bytes
-	dl = 0  # how much has been downloaded
-	total_length = int(request.headers.get('content-length'))  # total length of the download (bytes)
-	# download!
-	if showProgress is True:
-		logger.info(f'downloading {url}!')
-	for data in request.iter_content(chunk_size=1024):
-		dl += len(data)
-		bytesdata.write(data)
-		done = int(100 * dl / total_length)
-		if animadots:
-			# set the message with dots for the animation
-			if dots == 1:
-				dots = 2
-				messageWdots = message + '.'
-			elif dots == 2:
-				dots = 3
-				messageWdots = message + '..'
-			elif dots == 3:
-				dots = 1
-				messageWdots = message + '...'
-		# if showProgress is true, show the progress on the log
-		if showProgress is True:
-			logger.info(f'total: {total_length}, bytes done: {dl}, done: {done}%')
-		# update with total % done and the message
-		dialog.Update(done, newmsg=messageWdots)
-	return bytesdata
-
-
 def frozen() -> bool:
 	"""
 	if BM is in a frozen state (exe), returns True
@@ -227,18 +175,10 @@ def removeDir(path):
 
 
 def cacheDirPath() -> str:
-	if frozen():
-		path = './../resources/cache'  # frozen
-	else:
-		path = './resources/cache'  # not frozen
-	fdr = Path(path)
+	fdr = Path( config.load( "cachePath" ) )
 	if not fdr.exists():
 		fdr.mkdir()
-	return path
-
-
-def getCorrectPath(path: str) -> str:
-	return path if frozen() else f'{path[:2]}../{path[2:]}'
+	return str( fdr )
 
 
 def __getbee() -> Union[None, str]:
@@ -290,11 +230,16 @@ def registerProtocol():
 		[HKEY_CLASSES_ROOT\bm\shell\open\command]
 		@="\"{exe} --bmurl\" \"%1\""
 	""".replace( '\t', '' ).replace( '\n', '', 1 ).format( exe=sys.executable.replace( '\\', '\\\\' ) )
-	Path( config.load('cachePath') ).mkdir( exist_ok=True )
-	regFile = Path( f'{config.load( "cachePath" )}/protocol.reg' )
+	regFile = Path( f'{cacheDirPath()}/protocol.reg' )
 	regFile.touch( exist_ok=True )
 	regFile.write_text( regCode )
 	os.system( f'{str( regFile )}' )
+
+
+def replaceAll(data: str, **kwargs) -> str:
+	for string in kwargs:
+		data = data.replace( '{{' + string + '}}', kwargs[string] )
+	return data
 
 
 defBeePath = str( Path( str( Path( os.getenv('appdata') ).parent ) + '/Local/Programs/').resolve() ).replace(r'\\', '/')
