@@ -1,15 +1,14 @@
 from abc import ABCMeta, abstractmethod
+from dataclasses import dataclass
 from typing import Dict
-
-import wx
 
 from .manager import Manager
 
 
+@dataclass
 class Theme:
-	background: wx.Colour
-	foreground: wx.Colour
-	button: wx.Colour
+	background: str
+	foreground: str
 
 
 class ThemeManager( Manager, metaclass=ABCMeta ):
