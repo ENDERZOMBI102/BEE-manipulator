@@ -52,4 +52,3 @@ myVar = f'{yourVar} World!'
 ### Opening a Pull Request
 
 Please make sure that you have been working with the "dev" branch. Pull request should use the "dev" branch as their base.
-(as 12/08/2020 the dev branch isn't available yet, it will be created when BEE Manipulator v.1.0 is released)
