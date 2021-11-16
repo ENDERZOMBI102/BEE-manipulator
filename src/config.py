@@ -181,6 +181,9 @@ class __dynConfig:
 
 	__flags: Dict[ str, Any ]
 
+	def __init__(self) -> None:
+		self.__flags = {}
+
 	def parseFlags( self, rawFlags: str ):
 		flags: List[ List[str] ] = [ flag.split('=') for flag in rawFlags.split( ';' ) ]
 		self.__flags = {flag[0 ]: utilities.parseValue( flag[1 ] ) for flag in flags}
@@ -189,7 +192,7 @@ class __dynConfig:
 		return self.__flags.get( item, None )
 
 	def __setitem__(self, key, value):
-		self.__flags[key ] = value
+		self.__flags[key] = value
 
 
 dynConfig: __dynConfig = __dynConfig()
