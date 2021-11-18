@@ -24,10 +24,21 @@ class LogHandler( logging.Handler ):
 	receive, format and send the log message to the window
 	using the same BEE2.4 log format people are familiar with
 	"""
-	def __init__(self, wxDest=None):
+	logTextCtrl: wx.TextCtrl
+
+	def __init__( self, logTextBox: wx.TextCtrl ):
 		logger.debug(f'initialised log handler with level NOTSET')
 		super().__init__(logging.NOTSET)
-		self.setLevel(logging.NOTSET)
+		# set the log message format
+		self.setFormatter(
+			logging.Formatter(
+				# One letter for level name
+				'[{levelname[0]}] {module}.{funcName}(): {message}\n',
+				style='{',
+			)
+		)
+		self.setLevel( getLevel() )
+		self.logTextCtrl = logTextBox
 
 	def emit(self, record: logging.LogRecord):
 		"""
@@ -35,22 +46,26 @@ class LogHandler( logging.Handler ):
 		:param record: logging.LogRecord object
 		"""
 
+		# prevent logging to window if we're closing
+		if not self.logTextCtrl:
+			return
+
 		if record.levelno == logging.INFO:
-			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 0, 80, 255 ) ) )  # blue/cyan
+			self.logTextCtrl.SetDefaultStyle( wx.TextAttr( wx.Colour( 0, 80, 255 ) ) )  # blue/cyan
 		#
 		elif record.levelno == logging.WARNING:
-			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 125, 0 ) ) )  # orange
+			self.logTextCtrl.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 125, 0 ) ) )  # orange
 		#
 		elif record.levelno == logging.ERROR:
-			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 0, 0 ) ) )  # red
+			self.logTextCtrl.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 0, 0 ) ) )  # red
 		#
 		elif record.levelno == logging.DEBUG:
-			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 128, 128, 128 ) ) )  # grey
+			self.logTextCtrl.SetDefaultStyle( wx.TextAttr( wx.Colour( 128, 128, 128 ) ) )  # grey
 		#
 		elif record.levelno == logging.CRITICAL:
-			LogWindow.instance.text.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 255, 255 ) ) )  # white
+			self.logTextCtrl.SetDefaultStyle( wx.TextAttr( wx.Colour( 255, 255, 255 ) ) )  # white
 		# display the log message
-		LogWindow.instance.text.AppendText( self.format( record ) )
+		self.logTextCtrl.AppendText( self.format( record ) )
 
 
 class LogWindow( wx.Frame ):
@@ -81,16 +96,7 @@ class LogWindow( wx.Frame ):
 			style=wx.TE_MULTILINE | wx.TE_READONLY | wx.VSCROLL | wx.TE_RICH,
 			size=wx.Size( self.GetSize()[0], 300 )
 		)  # make the textbox
-		self.logHandler = LogHandler()
-		# set the log message format
-		self.logHandler.setFormatter(
-			logging.Formatter(
-				# One letter for level name
-				'[{levelname[0]}] {module}.{funcName}(): {message}\n',
-				style='{',
-			)
-		)
-		self.logHandler.setLevel(getLevel())
+		self.logHandler = LogHandler(self.text)
 		logging.getLogger().addHandler(self.logHandler)
 		# create bottom bar
 		self.bottomBar = wx.Panel( self, size=wx.Size( self.GetSize()[0], 30) )  # makes the bottom "menu" bar
