@@ -132,6 +132,8 @@ class App( wx.App ):
 		# create all folders
 		for folder in ( config.load('cachePath') ):
 			Path( folder ).mkdir(exist_ok=True)
+		# init locale
+		wx.Locale()
 		# initialize various things
 		utilities.init()
 		# initialize modules
@@ -193,6 +195,9 @@ class App( wx.App ):
 
 if __name__ == '__main__':
 	print( f'BM is running in a {"packed" if utilities.frozen() else "developer"} enviroment.' )
+	if sys.platform.startswith( 'win' ):
+		import locale
+		locale.setlocale( locale.LC_ALL, 'C' )
 	timeTest.start()
 	app = App()
 	if parsedArguments.time:
