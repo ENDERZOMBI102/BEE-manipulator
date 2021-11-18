@@ -1,4 +1,3 @@
-import asyncio
 from pathlib import Path
 
 import wx
@@ -140,7 +139,7 @@ class GeneralPage(wx.PreferencesPage):
 
 	@staticmethod
 	def reloadLangFiles(evt: wx.CommandEvent):
-		asyncio.run( localizeObj.loadLocFiles() )
+		localizeObj.loadLocFiles()
 
 
 class PathsPage(wx.PreferencesPage):
