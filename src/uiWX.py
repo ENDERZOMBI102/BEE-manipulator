@@ -229,6 +229,12 @@ class root(wx.Frame):
 		self.Bind( wx.EVT_SIZING, self.OnResize, self )
 		self.Bind( wx.EVT_MAXIMIZE, self.OnMaximize, self )
 
+		# acc table
+		logWindowRaiseReqID = wx.NewId()
+		self.Bind( wx.EVT_MENU, self.OnLogWindowRaiseRequest, id=logWindowRaiseReqID )
+		accel_tbl = wx.AcceleratorTable( [ (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord( 'L' ), logWindowRaiseReqID) ] )
+		self.SetAcceleratorTable( accel_tbl )
+
 		if config.load('beePath') is None:
 			self.menus['uninstallBee'].Enable(False)
 			self.menus['openBeeDir'].Enable(False)
@@ -277,6 +283,10 @@ class root(wx.Frame):
 
 	def OnMaximize( self, evt: wx.MaximizeEvent ):
 		self.browserTab.browserObj.OnResize( self.GetSize() )
+
+	def OnLogWindowRaiseRequest( self, evt: wx.KeyEvent ):
+		logWindow.LogWindow.instance.Raise()
+
 
 	# file menu items actions
 	@staticmethod
