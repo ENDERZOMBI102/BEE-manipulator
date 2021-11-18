@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/config.cfg" />
     <file url="file://$PROJECT_DIR$/f/maxSum" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7.8 (BEE-manipulator)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (BEE-manipulatorwx)" project-jdk-type="Python SDK" />
 </project>
