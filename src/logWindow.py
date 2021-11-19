@@ -169,7 +169,7 @@ class LogWindow( wx.Frame ):
 		logger.removeHandler(self.logHandler)
 
 
-async def init() -> None:
+def init() -> None:
 
 	"""
 	a function that initiate the log window

@@ -48,8 +48,8 @@ class root(wx.Frame):
 		# sets the app icon
 		self.SetIcon( utilities.icon )
 		# init the logging window
-		asyncio.run( logWindow.init() )
-		asyncio.run( appDateCheck() )
+		logWindow.init()
+		appDateCheck()
 		# set the utilities.root pointer to the object of this class
 		root.instance = self
 		try:
@@ -232,7 +232,13 @@ class root(wx.Frame):
 		# acc table
 		logWindowRaiseReqID = wx.NewId()
 		self.Bind( wx.EVT_MENU, self.OnLogWindowRaiseRequest, id=logWindowRaiseReqID )
-		accel_tbl = wx.AcceleratorTable( [ (wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord( 'L' ), logWindowRaiseReqID) ] )
+		accel_tbl = wx.AcceleratorTable(
+			[
+				(
+					wx.ACCEL_CTRL | wx.ACCEL_SHIFT, ord( 'L' ), logWindowRaiseReqID
+				)
+			]
+		)
 		self.SetAcceleratorTable( accel_tbl )
 
 		if config.load('beePath') is None:
@@ -286,7 +292,6 @@ class root(wx.Frame):
 
 	def OnLogWindowRaiseRequest( self, evt: wx.KeyEvent ):
 		logWindow.LogWindow.instance.Raise()
-
 
 	# file menu items actions
 	@staticmethod
@@ -517,7 +522,7 @@ def openUrl(url: str):
 	wb.open(url)
 
 
-async def appDateCheck():
+def appDateCheck():
 	"""	Checks app updates """
 	if not utilities.isonline():  # if we're not online return false
 		return False
