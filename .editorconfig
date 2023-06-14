@@ -1,18 +1,18 @@
 [*]
-charset = utf-8
-end_of_line = lf
-indent_size = 4
-indent_style = tab
-insert_final_newline = false
-max_line_length = 120
-tab_width = 4
-ij_continuation_indent_size = 8
-ij_formatter_off_tag = @formatter:off
-ij_formatter_on_tag = @formatter:on
-ij_formatter_tags_enabled = true
-ij_smart_tabs = false
-ij_visual_guides = none
-ij_wrap_on_typing = false
+    charset = utf-8
+    end_of_line = lf
+    indent_size = 4
+    indent_style = tab
+    insert_final_newline = true
+    max_line_length = 120
+    tab_width = 4
+    ij_continuation_indent_size = 8
+    ij_formatter_off_tag = @formatter:off
+    ij_formatter_on_tag = @formatter:on
+    ij_formatter_tags_enabled = true
+    ij_smart_tabs = false
+    ij_visual_guides = none
+    ij_wrap_on_typing = false
 
 [*.css]
     indent_style = space
@@ -562,10 +562,10 @@ ij_wrap_on_typing = false
     ij_python_spaces_around_power_operator = true
     ij_python_spaces_around_relational_operators = true
     ij_python_spaces_around_shift_operators = true
-    ij_python_spaces_within_braces = false
-    ij_python_spaces_within_brackets = false
-    ij_python_spaces_within_method_call_parentheses = false
-    ij_python_spaces_within_method_parentheses = false
+    ij_python_spaces_within_braces = true
+    ij_python_spaces_within_brackets = true
+    ij_python_spaces_within_method_call_parentheses = true
+    ij_python_spaces_within_method_parentheses = true
     ij_python_use_continuation_indent_for_arguments = false
     ij_python_use_continuation_indent_for_collection_and_comprehensions = false
     ij_python_use_continuation_indent_for_parameters = true

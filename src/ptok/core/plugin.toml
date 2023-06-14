@@ -1,0 +1,13 @@
+[plugin]
+    id = 'portal-toolkit-core' # must match /[a-z0-9_-]{4,}/
+    name = 'Portal Toolkit: Core'
+    description = 'Implementation of the core features of Portal Toolkit'
+    authors = [ 'ENDERZOMBI102 <enderzombi102.end@gmail.com>' ]
+    tags = [ 'builtin', 'base' ]
+    version = '0.1.0'
+
+[plugin.entrypoints]
+    main = 'ptok.core'
+
+[plugin.dependencies]
+    portal-toolkit = '0.1.0'
