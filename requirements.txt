@@ -1,8 +1,0 @@
-markdown2>=2.3.10
-pypresence>=4.2.0
-requests>=2.26.0
-wxPython>=4.1.1
-semver>=2.13.0
-cefpython3>=66.1
-ipc-mngr>=1.0.1
-PySide6>=6.2.1
