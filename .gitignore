@@ -4,6 +4,7 @@
 .idea
 __pycache__
 run
+.mypy_cache
 dist
 build
 *.pyc

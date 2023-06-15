@@ -1,3 +1,4 @@
+import datetime
 from logging import Logger
 from pathlib import Path
 
@@ -5,7 +6,7 @@ import srctools.logger
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStyleFactory
 
-import ptok.utilities
+import ptok.util
 from ptok.plugin import pluginSystem
 from ptok.window import RootWindow
 
@@ -13,7 +14,7 @@ logger: Logger
 
 
 def main( argv: list[str] ) -> int:
-	if not ptok.utilities.isFrozen():
+	if not ptok.util.isFrozen():
 		# avoid running anywhere but inside `run`
 		cwd = Path.cwd()
 		shouldExit = False
@@ -29,19 +30,20 @@ def main( argv: list[str] ) -> int:
 			shouldExit = True
 
 		if shouldExit:
-			print( 'fatal: started with working directory not set to `$REPO/run`, do not do this! aborting...', file=sys.stderr )
+			print( '[F] startup: Started with working directory not set to `$REPO/run`, do not do this! aborting...', file=sys.stderr )
 			return 1
 
 		import os
 		# overwrite stdout log level if launched from source
 		os.environ[ 'SRCTOOLS_DEBUG' ] = '1'
-		print( f'[I] Running in a developer environment.' )
+		print( f'[I] startup: Running in a developer environment.' )
 	else:
-		print( f'[I] Running in a packed environment.' )
+		print( f'[I] startup: Running in a packed environment.' )
 
 	global logger
 	logger = srctools.logger.init_logging( filename='./logs/latest.log', main_logger='PortalTk', error=onUncaughtException )
 
+	logger.info( f'Initialized logging at {datetime.datetime.now().strftime("%H:%M:%S")}' )
 	QApplication( argv )
 	QApplication.setStyle( QStyleFactory.create( 'Fusion' ) )
 	QApplication.setWindowIcon( QIcon( 'resources/icon.png' ) )
@@ -54,7 +56,7 @@ def main( argv: list[str] ) -> int:
 	return QApplication.exec()
 
 
-def onUncaughtException():
+def onUncaughtException( exc: BaseException ):
 	pass
 
 

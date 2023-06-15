@@ -4,13 +4,11 @@ BEE Manipulator plugin documentation
 this is how a basic plugin looks:
 
 ```python
-from pluginSystem import PluginBase
-
-class Plugin(PluginBase):
-    async def load(self):
-        self.logger.info('load!')
-    async def unload(self):
-        self.logger.info('unload!')
+class Plugin:
+    def load( self ):
+        self.logger.info( 'load!' )
+    def unload( self ):
+        self.logger.info( 'unload!' )
 ```
 
 there's a list of coroutines that BM calls on a plugin and that you may implement;
