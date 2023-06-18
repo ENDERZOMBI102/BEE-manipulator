@@ -1,5 +1,5 @@
 [plugin]
-    id = 'portal-toolkit-core' # must match /[a-z0-9_-]{4,}/
+    id = 'portal-toolkit-core'
     name = 'Portal Toolkit: Core'
     description = 'Implementation of the core features of Portal Toolkit'
     authors = [ 'ENDERZOMBI102 <enderzombi102.end@gmail.com>' ]

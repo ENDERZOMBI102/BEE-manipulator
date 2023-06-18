@@ -70,15 +70,6 @@ class PluginSystem:
 
 		self._checkDependencies( containers )
 
-	def reloadAll( self ) -> None:
-		""" Reload all plugins. """
-
-	def reload( self, pluginid: str ) -> None:
-		"""
-		Reload a specific plugin.
-		:param pluginid: the id of the plugin to load.
-		"""
-
 	def _search( self ) -> list[Path]:
 		self.pluginFolder.mkdir( exist_ok=True )
 		candidates = [  ]
