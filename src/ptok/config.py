@@ -1,4 +1,3 @@
-from enum import Enum
 from pathlib import Path
 
 import pydantic
@@ -14,18 +13,23 @@ class Config( pydantic.BaseModel ):
 		validate_assignment = True
 
 
-__path: Path = Path.cwd() / 'config.toml'
-__config: Config | None = None
-
-
 def get() -> Config:
+	global __config
 	if __config is None:
-		if not __path.exists():
+		if __path.exists():
+			__config = Config( **tomlkit.loads( __path.read_text() ).unwrap() )
+		else:
 			__config = Config()
-		Config( tomlkit.load() )
-
 	return __config
 
 
 def save() -> None:
+	""" Save the config to disk """
+	global __config
+	if __config is not None:
+		with open( __path, 'w' ) as file:
+			tomlkit.dump( __config.dict(), file )
 
+
+__path: Path = Path.cwd() / 'config.toml'
+__config: Config | None = None
