@@ -14,7 +14,6 @@ class RootWindow( QMainWindow ):
 		eventSystem.emit( 'ptok.window.root.init', window=self )
 
 		self.show()
-		self.connect( self, SIGNAL( self.hideEvent() ) )
 
 	def closeEvent( self, evt: PySide6.QtGui.QCloseEvent ) -> None:
 		eventSystem.emit( '' )
