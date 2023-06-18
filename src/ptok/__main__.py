@@ -7,8 +7,10 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QStyleFactory
 
 import ptok.util
+import ptok.config
 from ptok.plugin import pluginSystem
 from ptok.window import RootWindow
+
 
 logger: Logger
 
@@ -18,7 +20,9 @@ def main( argv: list[str] ) -> int:
 		# avoid running anywhere but inside `run`
 		cwd = Path.cwd()
 		shouldExit = False
-		if 'src' in cwd.parts:
+		if cwd.name != 'run':
+			shouldExit = True
+		elif 'src' in cwd.parts:
 			path = Path( cwd.root )
 			for part in cwd.parts[ 1 :]:
 				if part == 'src':
@@ -26,15 +30,12 @@ def main( argv: list[str] ) -> int:
 				path /= part
 			shouldExit = ( path / 'run' ).exists()
 
-		if cwd.name != 'run':
-			shouldExit = True
-
 		if shouldExit:
 			print( '[F] startup: Started with working directory not set to `$REPO/run`, do not do this! aborting...', file=sys.stderr )
 			return 1
 
-		import os
 		# overwrite stdout log level if launched from source
+		import os
 		os.environ[ 'SRCTOOLS_DEBUG' ] = '1'
 		print( f'[I] startup: Running in a developer environment.' )
 	else:
@@ -53,10 +54,14 @@ def main( argv: list[str] ) -> int:
 	pluginSystem.init()
 	root = RootWindow()
 	logger.info( 'Startup completed!' )
-	return QApplication.exec()
+
+	code = QApplication.exec()
+
+	ptok.config.save()
+	return code
 
 
-def onUncaughtException( exc: BaseException ):
+def onUncaughtException( exc: BaseException ) -> None:
 	pass
 
 
