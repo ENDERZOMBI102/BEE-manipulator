@@ -1,23 +1,30 @@
-import importlib
+import abc
 from importlib.abc import SourceLoader, InspectLoader
-from importlib.resources.abc import TraversableResources
-
-from srctools import FileSystem
+from importlib.resources.abc import TraversableResources, Traversable
 
 
-class Importer( SourceLoader, InspectLoader, TraversableResources ):
-	""" "Small" class to overwrite the concept of `import` for plugins """
-	_fs: FileSystem
+class Importer( SourceLoader, InspectLoader, TraversableResources, metaclass=abc.ABCMeta ):
+	""" "Small" abstract class to overwrite the concept of `import` for plugins """
 
-	def __init__( self, fs: FileSystem ) -> None:
-		self._fs = fs
+	@abc.abstractmethod
+	def get_data( self, path: str ) -> bytes:
+		"""
+		Abstract method which returns the bytes for the specified path.
+		:param path: path of the file to read the data from.
+		:returns: the bytes read for that file.
+		"""
 
-	def get_data( self, path: bytes | str ) -> bytes:
-		with self._fs.open_bin( path ) as file:
-			return file.read()
-
+	@abc.abstractmethod
 	def get_filename( self, fullname: str ) -> bytes | str:
-		pass
+		"""
 
-	def files( self ) -> importlib.resources.abc.Traversable:
-		return importlib.resources.abc.Traversable()
+		"""
+
+	@abc.abstractmethod
+	def files( self ) -> Traversable:
+		"""
+
+		"""
+
+
+from .sandboxedImporter import SandboxedImporter

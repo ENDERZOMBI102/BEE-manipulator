@@ -1,11 +1,11 @@
 import random
 import zipfile
 from dataclasses import dataclass
-from logging import Logger
+import logging
 from pathlib import Path
 
 import pydantic
-import srctools.logger
+import srctools
 import tomlkit
 from pydantic import BaseModel, constr
 from srctools import FileSystem
@@ -34,7 +34,7 @@ class PluginContainer:
 	path: Path
 	contents: FileSystem
 	manifest: Manifest
-	importer: 'imporlib.Importer'
+	importer: 'imporlib.SandboxedImporter'
 	builtin: bool = False
 
 	def __post_init__( self ) -> None:
@@ -43,7 +43,7 @@ class PluginContainer:
 
 
 class PluginSystem:
-	_logger: Logger
+	_logger: logging.Logger
 
 	def __init__( self ) -> None:
 		self._logger = srctools.logger.get_logger( 'PluginSystem' )
@@ -116,7 +116,7 @@ class PluginSystem:
 				continue
 
 			try:
-				importer = ptok.plugin.imporlib.Importer( fs )
+				importer = ptok.plugin.imporlib.SandboxedImporter( fs )
 				self._logger.debug( f'Created Importer for `{manifest.id}`' )
 			except Exception as e:
 				self._logger.exception( 'Error during manifest loading:', e )
