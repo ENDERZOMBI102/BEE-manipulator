@@ -14,9 +14,9 @@ class RootWindow( QMainWindow ):
 		self.show()
 
 	def show( self ) -> None:
-		eventSystem.emit( 'ptok.window.root.shown', window=self )
 		super().show()
+		eventSystem.emit( 'ptok.window.root.shown', window=self )
 
 	def hide( self ) -> None:
-		eventSystem.emit( 'ptok.window.root.hidden', window=self )
 		super().hide()
+		eventSystem.emit( 'ptok.window.root.hidden', window=self )
