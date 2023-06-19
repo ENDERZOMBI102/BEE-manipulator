@@ -52,6 +52,7 @@ def main( argv: list[str] ) -> int:
 	QApplication.setApplicationDisplayName( 'Portal Toolkit' )
 	QApplication.setApplicationVersion( '0.1.0' )
 	pluginSystem.init()
+	pluginSystem.getEntrypoints( 'main' )()
 	root = RootWindow()
 	logger.info( 'Startup completed!' )
 

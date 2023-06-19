@@ -1,8 +1,9 @@
+import logging
 import random
 import zipfile
 from dataclasses import dataclass
-import logging
 from pathlib import Path
+from typing import Self
 
 import pydantic
 import srctools
@@ -13,6 +14,7 @@ from srctools.filesys import ZipFileSystem
 
 import ptok
 from . import imporlib
+from ..util import TODO
 
 
 class Manifest(BaseModel):
@@ -34,7 +36,7 @@ class PluginContainer:
 	path: Path
 	contents: FileSystem
 	manifest: Manifest
-	importer: 'imporlib.SandboxedImporter'
+	importer: 'imporlib.Importer'
 	builtin: bool = False
 
 	def __post_init__( self ) -> None:
@@ -42,8 +44,30 @@ class PluginContainer:
 			raise ValueError( 'External plugins cannot have the "base" or "builtin" tags.' )
 
 
+@dataclass( frozen=True )
+class EntrypointContainer:
+	_name: str
+	_entrypoints: list[ tuple[str, str] ]
+
+	def __iadd__( self, other: tuple[str, str] ) -> Self:
+		self._entrypoints.append( other )
+		return self
+
+	def __call__( self, *args, **kwargs ) -> None:
+		for entrypoint in self._entrypoints:
+			pluginId, handlerPath = entrypoint
+			if pluginId != 'portal-toolkit-core':
+				continue
+			getattr(
+				pluginSystem.getContainer( pluginId ).importer.load( handlerPath, last=True ),
+				f'on{self._name[0].upper()}{self._name[ 1 :]}'
+			)( *args, **kwargs )
+
+
 class PluginSystem:
 	_logger: logging.Logger
+	_containers: list[ PluginContainer ]
+	_entrypoints: dict[ str, EntrypointContainer ]
 
 	def __init__( self ) -> None:
 		self._logger = srctools.logger.get_logger( 'PluginSystem' )
@@ -52,6 +76,15 @@ class PluginSystem:
 	def pluginFolder( self ) -> Path:
 		return Path( './plugins' )
 
+	def getEntrypoints( self, name: str ) -> EntrypointContainer:
+		return self._entrypoints[ name ]
+
+	def getContainer( self, pluginId: str ) -> PluginContainer:
+		for container in self._containers:
+			if container.manifest.id == pluginId:
+				return container
+		raise KeyError( f'Plugin with id `{pluginId}` was not found!' )
+
 	def init( self ) -> None:
 		"""
 		Initializes the plugin system by executing these steps.
@@ -59,16 +92,17 @@ class PluginSystem:
 		 - [x] Load the manifests
 		 - [x] Add builtin plugins
 		 - [ ] Check dependencies
-		 - [ ] Load core
-		 - [ ] Load plugins
+		 - [x] Create entrypoint containers
 		"""
 		candidates = self._search()
 		containers = self._load( candidates )
 		random.shuffle( containers )
 		containers += self._loadBuiltins()
 		containers.reverse()  # make sure builtins are the first plugins
+		self._containers = containers
 
 		self._checkDependencies( containers )
+		self._entrypoints = self._loadEntrypoints( containers )
 
 	def _search( self ) -> list[Path]:
 		self.pluginFolder.mkdir( exist_ok=True )
@@ -120,6 +154,7 @@ class PluginSystem:
 		return containers
 
 	def _loadBuiltins( self ) -> list[PluginContainer]:
+		from .imporlib.builtinImporter import BuiltinImporter
 		base = PluginContainer(
 			path=Path( ptok.__file__ ),
 			contents=None,
@@ -133,7 +168,7 @@ class PluginSystem:
 				entrypoints={ },
 				dependencies={ },
 			),
-			importer=None,
+			importer=BuiltinImporter( 'ptok' ),
 			builtin=True
 		)
 
@@ -142,16 +177,25 @@ class PluginSystem:
 			path=Path(),
 			contents=None,
 			manifest=Manifest( **doc['plugin'].unwrap() ),
-			importer=None,
+			importer=BuiltinImporter( 'ptok.core' ),
 			builtin=True
 		)
-		builtins = [ base, core ]
 
-		self._logger.debug( f'Loaded {len( builtins )} builtin plugins ( {", ".join( map( lambda builtin: builtin.manifest.id, builtins ) )} )' )
-		return builtins
+		self._logger.debug( f'Loaded 2 builtin plugins ( base, core )' )
+		return [ base, core ]
 
 	def _checkDependencies( self, containers ):
 		pass
+
+	def _loadEntrypoints( self, containers: list[PluginContainer] ) -> dict[str, EntrypointContainer]:
+		entrypoints = { }
+		for plugin in containers:
+			for key, path in plugin.manifest.entrypoints.items():
+				if key not in entrypoints:
+					entrypoints[ key ] = EntrypointContainer( key, [] )
+				entrypoints[key] += ( plugin.manifest.id, path )
+
+		return entrypoints
 
 
 pluginSystem = PluginSystem = PluginSystem()

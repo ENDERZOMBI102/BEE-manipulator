@@ -1,10 +1,15 @@
 import abc
+import types
 from importlib.abc import SourceLoader, InspectLoader
 from importlib.resources.abc import TraversableResources, Traversable
 
 
 class Importer( SourceLoader, InspectLoader, TraversableResources, metaclass=abc.ABCMeta ):
 	""" "Small" abstract class to overwrite the concept of `import` for plugins """
+
+	@abc.abstractmethod
+	def load( self, path: str, last: bool = False ) -> types.ModuleType:
+		""" Loads a module with this importer, taking care of everything """
 
 	@abc.abstractmethod
 	def get_data( self, path: str ) -> bytes:
